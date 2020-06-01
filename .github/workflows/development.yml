@@ -26,7 +26,10 @@ jobs:
           cp install.sh /tmp/tidio
 
     - name: test
-      run: go test ./...
+      run: |
+          go get github.com/gregoryv/uncover/...
+          go test -coverprofile /tmp/c.out ./...
+          $GOPATH/bin/uncover /tmp/c.out
 
     - name: deploy
       env:
