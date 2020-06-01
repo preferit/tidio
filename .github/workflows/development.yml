@@ -29,7 +29,7 @@ jobs:
       run: |
           go get github.com/gregoryv/uncover/...
           go test -coverprofile /tmp/c.out ./...
-          $GOPATH/bin/uncover /tmp/c.out
+          $GOPATH/bin/uncover -min 80 /tmp/c.out
 
     - name: deploy
       env:
