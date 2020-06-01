@@ -24,5 +24,5 @@ jobs:
     - name: deploy
       run: |
         mkdir -p $HOME/.ssh
-        echo ${{secrets.LINODE_PRIVATE_KEY}} >> $HOME/.ssh/id_rsa
+        echo "${{secrets.LINODE_PRIVATE_KEY}}" > $HOME/.ssh/id_rsa
         scp README.md tidio.preferit.se:
