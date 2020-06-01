@@ -22,7 +22,9 @@ jobs:
       run: go test ./...
 
     - name: deploy
+      env:
+        LINODE_PRIVATE_KEY: ${{secrets.LINODE_PRIVATE_KEY}}
       run: |
         mkdir -p $HOME/.ssh
-        echo "${{secrets.LINODE_PRIVATE_KEY}}" > $HOME/.ssh/id_rsa
+        go run ./internal/cmd/setupGithubSSH/
         scp README.md tidio.preferit.se:
