@@ -31,16 +31,4 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	// Write ~/.ssh/id_rsa.pub
-	err = ioutil.WriteFile(
-		path.Join(sshDir, "id_rsa.pub"),
-		[]byte("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD0LBHGJENWuQLVzQ3NTRxmiimyOIO3XtbN+fBEYevC7U2h8xj6ihdhCJ04WnnUskuj2lYDTeg8pDGqPggsfOwkHuw7e7znlKzFo3HPAeoXo51JONykrbFCcokWIIrsQiy2Q8GafBQUQ2iQYvEoZ8Ko2L8nVaoUIuGslyEzU6D1YZj4g/O4/Hud35hB6VVzB7m54YQ2KE4vB99HQocoFbzhDdMFthnkvotAyz/lGyPSDWv622sUyECHhF1P18PyOl5DlQ0Y8/kXKbFWFn9gKhmGAHPa7Gxi3sVIQnsTKWcBFV+jkrcXzDSjdAvKprGdgpTmXbZYlR9XkbVu5KqVDKsj gregory@larnic"),
-		0600,
-	)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
 }
