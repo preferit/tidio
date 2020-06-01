@@ -18,6 +18,11 @@ jobs:
       with:
         go-version: '1.14.3'
 
+    - name: build
+      run: |
+          mkdir -p /tmp/tidio
+          cp -r ./etc /tmp/tidio
+
     - name: test
       run: go test ./...
 
@@ -27,4 +32,4 @@ jobs:
       run: |
         mkdir -p $HOME/.ssh
         go run ./internal/cmd/setupGithubSSH/
-        scp README.md ${{secrets.LINODE_USER}}@tidio.preferit.se:
+        rsync -av /tmp/tidio/ ${{secrets.LINODE_USER}}@tidio.preferit.se:tidio/
