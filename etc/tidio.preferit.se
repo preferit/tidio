@@ -1,0 +1,9 @@
+server {
+    server_name     tidio.preferit.se;
+    root            /var/www/tidio.preferit.se;
+    access_log      /var/log/nginx/tidio.preferit.se;
+
+    location / {
+        autoindex on;
+    }
+}
