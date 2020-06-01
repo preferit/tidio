@@ -1,3 +1,7 @@
 #!/bin/bash -e
-echo "installing..."
-ls -alR
+systemctl stop tidio
+cp tidio ../bin/tidio
+systemctl start tidio
+
+cp etc/tidio.preferit.se /etc/nginx/sites-available/
+systemctl reload nginx
