@@ -22,6 +22,7 @@ jobs:
       run: |
           mkdir -p /tmp/tidio
           cp -r ./etc /tmp/tidio
+          cp install.sh /tmp/tidio
 
     - name: test
       run: go test ./...
@@ -33,3 +34,4 @@ jobs:
         mkdir -p $HOME/.ssh
         go run ./internal/cmd/setupGithubSSH/
         rsync -av /tmp/tidio/ ${{secrets.LINODE_USER}}@tidio.preferit.se:tidio/
+        ssh ${{secrets.LINODE_USER}}@tidio.preferit.se 'cd tidio; sudo ./install.sh'
