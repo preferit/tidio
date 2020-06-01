@@ -27,4 +27,4 @@ jobs:
       run: |
         mkdir -p $HOME/.ssh
         go run ./internal/cmd/setupGithubSSH/
-        scp README.md tidio.preferit.se:
+        scp README.md ${{secrets.LINODE_USER}}@tidio.preferit.se:
