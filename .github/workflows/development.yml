@@ -21,6 +21,7 @@ jobs:
     - name: build
       run: |
           mkdir -p /tmp/tidio
+          go build -o /tmp/tidio/tidio ./cmd/tidio
           cp -r ./etc /tmp/tidio
           cp install.sh /tmp/tidio
 
