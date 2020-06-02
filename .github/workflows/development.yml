@@ -30,7 +30,6 @@ jobs:
           go build -o /tmp/tidio/website ./website
           cp -r ./etc /tmp/tidio
           cp install.sh /tmp/tidio
-          cp -r website /tmp/tidio/
     - name: test
       env:
         GOPATH: "/tmp"
@@ -45,5 +44,5 @@ jobs:
       run: |
         mkdir -p $HOME/.ssh
         go run ./internal/cmd/setupGithubSSH/
-        rsync -av /tmp/tidio/ ${{secrets.LINODE_USER}}@tidio.preferit.se:tidio/
+        rsync -av --delete-after /tmp/tidio/ ${{secrets.LINODE_USER}}@tidio.preferit.se:tidio/
         ssh ${{secrets.LINODE_USER}}@tidio.preferit.se 'cd tidio; sudo ./install.sh'
