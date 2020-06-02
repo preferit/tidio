@@ -1,5 +1,8 @@
+README
 \.md
-.go
+package
+filestore.go
+_test.go
 .ini
 .sh
 etc
