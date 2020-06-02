@@ -26,5 +26,4 @@ func Test_cli(t *testing.T) {
 			t.Error("starter not called")
 		}
 	})
-
 }

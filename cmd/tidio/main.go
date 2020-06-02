@@ -28,8 +28,6 @@ func (c *cli) run() error {
 	if c.bind == "" {
 		return fmt.Errorf("empty bind")
 	}
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "tidio API")
-	})
-	return c.starter(c.bind, nil)
+	router := NewRouter()
+	return c.starter(c.bind, router)
 }
