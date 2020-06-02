@@ -24,7 +24,7 @@ jobs:
           go build -o /tmp/tidio/tidio ./cmd/tidio
           cp -r ./etc /tmp/tidio
           cp install.sh /tmp/tidio
-
+          cp -r website /tmp/tidio/
     - name: test
       env:
         GOPATH: "/tmp"
