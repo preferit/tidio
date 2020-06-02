@@ -26,7 +26,7 @@ func Test_store_writefile(t *testing.T) {
 	store, cleanup := newTempStore(t)
 	defer cleanup()
 	store.Init()
-	if err := store.WriteFile("something.x", []byte(".."), 0644); err != nil {
+	if err := store.WriteFile("a/b/something.x", []byte(".."), 0644); err != nil {
 		t.Fatal(err)
 	}
 	time.Sleep(10 * time.Millisecond)

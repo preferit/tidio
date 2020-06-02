@@ -55,6 +55,7 @@ func (s *Store) Init() error {
 
 func (s *Store) WriteFile(file string, data []byte, perm os.FileMode) error {
 	filename := path.Join(s.dir, file)
+	os.MkdirAll(path.Dir(filename), 0755)
 	err := ioutil.WriteFile(filename, data, perm)
 	s.writeOp <- fmt.Sprintf("write %s", file)
 	return err
