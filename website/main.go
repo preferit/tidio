@@ -34,7 +34,7 @@ func indexPage() *Page {
 		H1("Tidio"),
 		A(Href("/api"), "/api"),
 		Footer(
-			"Generated: ", time.Now().String(),
+			"Generated: ", time.Now().Round(time.Second).String(),
 		),
 	)
 	return NewPage("index.html", Html(Body(article)))
