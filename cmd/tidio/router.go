@@ -29,8 +29,12 @@ type authMid struct {
 func (m *authMid) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		key := r.Header.Get("Authorization")
+		if key == "" {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 		_, found := m.keys[key]
-		if key == "" || !found {
+		if !found {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
