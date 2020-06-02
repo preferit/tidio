@@ -1,7 +1,8 @@
-README
+\.md
 .go
 .ini
 .sh
 etc
 cmd
 internal
+website
