@@ -71,7 +71,7 @@ func Test_cli(t *testing.T) {
 
 func newTempStore(t *testing.T) (*tidio.Store, func()) {
 	t.Helper()
-	dir, err := ioutil.TempDir("", "tidio")
+	dir, err := ioutil.TempDir("", "tidiocmd")
 	if err != nil {
 		t.Fatal(err)
 	}

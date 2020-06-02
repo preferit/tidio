@@ -2,10 +2,10 @@ package main
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/gregoryv/asserter"
-	"github.com/preferit/tidio"
 )
 
 func Test_router(t *testing.T) {
@@ -14,7 +14,8 @@ func Test_router(t *testing.T) {
 		"KEY": "john",
 	}
 	headers := http.Header{}
-	store := tidio.NewStore("")
+	store, cleanup := newTempStore(t)
+	defer cleanup()
 
 	exp := assert().ResponseFrom(NewRouter(apikeys, store))
 	exp.StatusCode(200, "GET", "/api", nil)
@@ -26,10 +27,11 @@ func Test_router(t *testing.T) {
 	headers = http.Header{}
 	headers.Set("Authorization", "NO SUCH KEY")
 	exp.StatusCode(401, "GET", "/api/timesheets/", headers)
-	exp.StatusCode(401, "POST", "/api/timesheets/")
+	exp.StatusCode(401, "POST", "/api/timesheets/x/", strings.NewReader("body"), headers)
 
 	// authenticated
 	headers = http.Header{}
 	headers.Set("Authorization", "KEY")
 	exp.StatusCode(200, "GET", "/api/timesheets/", headers)
+	exp.StatusCode(204, "POST", "/api/timesheets/john/", strings.NewReader("some content"), headers)
 }
