@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/gregoryv/stamp"
+	"github.com/preferit/tidio"
 )
 
 //go:generate stamp -clfile ../../changelog.md -go build_stamp.go
@@ -17,6 +18,7 @@ func main() {
 		starter: http.ListenAndServe,
 	}
 	stamp.InitFlags()
+	flag.StringVar(&c.storeDir, "store-dir", "./store", "file storage repository")
 	flag.StringVar(&c.keysfile, "keys", "apikeys.json", "map of apikeys")
 	flag.StringVar(&c.bind, "bind", ":13001", "[host]:port to bind to")
 	flag.Parse()
@@ -29,6 +31,7 @@ func main() {
 }
 
 type cli struct {
+	storeDir string
 	bind     string
 	keysfile string
 	starter  func(string, http.Handler) error
@@ -38,7 +41,7 @@ func (c *cli) run() error {
 	if c.bind == "" {
 		return fmt.Errorf("empty bind")
 	}
-
+	// load apikeys
 	fh, err := os.Open(c.keysfile)
 	if err != nil {
 		return err
@@ -48,6 +51,12 @@ func (c *cli) run() error {
 		return err
 	}
 	fh.Close()
-	router := NewRouter(apikeys)
+	// use store
+	os.MkdirAll(c.storeDir, 0644)
+	store := tidio.NewStore(c.storeDir)
+	if !store.IsInitiated() {
+		store.Init()
+	}
+	router := NewRouter(apikeys, store)
 	return c.starter(c.bind, router)
 }

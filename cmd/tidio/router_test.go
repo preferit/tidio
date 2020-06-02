@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/gregoryv/asserter"
+	"github.com/preferit/tidio"
 )
 
 func Test_router(t *testing.T) {
@@ -13,8 +14,9 @@ func Test_router(t *testing.T) {
 		"KEY": "john",
 	}
 	headers := http.Header{}
+	store := tidio.NewStore("")
 
-	exp := assert().ResponseFrom(NewRouter(apikeys))
+	exp := assert().ResponseFrom(NewRouter(apikeys, store))
 	exp.StatusCode(200, "GET", "/api", nil)
 	exp.Contains("revision", "GET", "/api")
 	exp.Contains("version", "GET", "/api")

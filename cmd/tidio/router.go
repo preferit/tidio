@@ -6,9 +6,10 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gregoryv/stamp"
+	"github.com/preferit/tidio"
 )
 
-func NewRouter(apikeys map[string]string) *mux.Router {
+func NewRouter(apikeys map[string]string, store *tidio.Store) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/api", serveAPIRoot())
 
