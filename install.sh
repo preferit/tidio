@@ -10,4 +10,4 @@ cp etc/tidio.preferit.se /etc/nginx/sites-available/
 systemctl reload nginx
 
 # static website
-rsync -av website/ /var/www/tidio.preferit.se/
+./website -o /var/www/tidio.preferit.se
