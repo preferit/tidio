@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 )
 
 func Test_store(t *testing.T) {
@@ -28,6 +29,7 @@ func Test_store_writefile(t *testing.T) {
 	if err := store.WriteFile("something.x", []byte(".."), 0644); err != nil {
 		t.Fatal(err)
 	}
+	time.Sleep(10 * time.Millisecond)
 }
 
 func newTempStore(t *testing.T) (*Store, func()) {
@@ -36,5 +38,7 @@ func newTempStore(t *testing.T) (*Store, func()) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return NewStore(dir), func() { os.RemoveAll(dir) }
+	store := NewStore(dir)
+	store.Logger = t
+	return store, func() { os.RemoveAll(dir) }
 }

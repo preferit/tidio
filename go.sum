@@ -33,11 +33,15 @@ github.com/gregoryv/asserter v0.2.2 h1:fZ+Ch2p+SGqQnGrODVvArzgXPm8v6xioAwdRNoAKN
 github.com/gregoryv/asserter v0.2.2/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
 github.com/gregoryv/asserter v0.2.3-0.20200503053251-4408c80eea3a h1:MNyfrpT4n9EXBsmIeSe54j+//TvNHR4Fw55InzklowA=
 github.com/gregoryv/asserter v0.2.3-0.20200503053251-4408c80eea3a/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
+github.com/gregoryv/draw v0.9.0/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
 github.com/gregoryv/ex v0.3.0/go.mod h1:m5suTcbRkA2j4NZogj/DYTFmh4Ff9U29tpRzeiYlx+0=
 github.com/gregoryv/find v0.0.0-20180328085109-1bbc2d70c482/go.mod h1:/xxQlO62bzxhyabf2iKJzGJa+VAJy25spLI/6ICTrxU=
 github.com/gregoryv/find v0.1.1 h1:ETW9JKrNN1zRbySlTKELfqC+pJHhIQYj8mZo5F93GpQ=
 github.com/gregoryv/find v0.1.1/go.mod h1:ZxH/FkVt6VM//T7edeCqCc2dJRrLAtCYvtvdM6Hk398=
+github.com/gregoryv/fox v0.2.0 h1:K+2Wc4JiAb+cH2A189G7SOeXCnD2GjndG9NpOkaqA3E=
+github.com/gregoryv/fox v0.2.0/go.mod h1:TIjp1KNSs4u5psYeHElpkZTAuj2SKuELviyJokIqjSs=
 github.com/gregoryv/gocyclo v0.0.0-20180305144948-0be7902fabdc/go.mod h1:x/QA8cT1gfn/XriQ/CVNX7I8IM4Z2YJAAEWFym2clZI=
+github.com/gregoryv/golden v0.3.1/go.mod h1:gwYSBOmvGF+fefo7P1PyBpAqqvYx6S85dmkUaI6QMU4=
 github.com/gregoryv/must v0.1.0/go.mod h1:1HQ/4FuSFr52clBKUWSaibQTnZRKnWtbBZRxC5cii1A=
 github.com/gregoryv/nexus v0.3.0 h1:/V/TwUbKB/VhS2dt1HMTLWx2mDeaNQyoayPgrS664/g=
 github.com/gregoryv/nexus v0.3.0/go.mod h1:DJ2Ia6WpPX26edFW6LCl+9nYyX2h6Ot/kyJ83J+SAL0=

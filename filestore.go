@@ -1,18 +1,44 @@
 package tidio
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
+
+	"github.com/gregoryv/fox"
 )
 
 func NewStore(dir string) *Store {
-	return &Store{dir: dir}
+	ch := make(chan string)
+	store := &Store{
+		Logger:  fox.NewSyncLog(ioutil.Discard),
+		writeOp: ch, // synchronize all write operations
+		dir:     dir,
+	}
+	go func() {
+		for {
+			if err := store.Commit(<-ch); err != nil {
+				store.Log(err)
+			}
+		}
+	}()
+	return store
 }
 
 type Store struct {
-	dir string
+	fox.Logger
+	writeOp chan string
+	dir     string
+}
+
+func (s *Store) Commit(msg string) error {
+	err := exec.Command("git", "-C", s.dir, "add", ".").Run()
+	if err != nil {
+		return err
+	}
+	return exec.Command("git", "-C", s.dir, "commit", "-m", msg).Run()
 }
 
 func (s *Store) IsInitiated() bool {
@@ -28,5 +54,8 @@ func (s *Store) Init() error {
 }
 
 func (s *Store) WriteFile(file string, data []byte, perm os.FileMode) error {
-	return ioutil.WriteFile(path.Join(s.dir, file), data, perm)
+	filename := path.Join(s.dir, file)
+	err := ioutil.WriteFile(filename, data, perm)
+	s.writeOp <- fmt.Sprintf("write %s", file)
+	return err
 }
