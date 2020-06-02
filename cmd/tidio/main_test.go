@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"testing"
+
+	"github.com/preferit/tidio"
 )
 
 func Test_cli(t *testing.T) {
@@ -46,6 +48,12 @@ func Test_cli(t *testing.T) {
 	fh.Close()
 	defer os.RemoveAll(fh.Name())
 
+	// setup store
+	storeDir, err := ioutil.TempDir("", "tidio")
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	ok := func(c *cli) {
 		t.Helper()
 
@@ -54,8 +62,18 @@ func Test_cli(t *testing.T) {
 		}
 	}
 	ok(&cli{
+		storeDir: storeDir,
 		bind:     ":80",
 		keysfile: fh.Name(),
 		starter:  func(string, http.Handler) error { return nil },
 	})
+}
+
+func newTempStore(t *testing.T) (*tidio.Store, func()) {
+	t.Helper()
+	dir, err := ioutil.TempDir("", "tidio")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return tidio.NewStore(dir), func() { os.RemoveAll(dir) }
 }

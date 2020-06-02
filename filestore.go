@@ -1,6 +1,7 @@
 package tidio
 
 import (
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -24,4 +25,8 @@ func (s *Store) IsInitiated() bool {
 
 func (s *Store) Init() error {
 	return exec.Command("git", "-C", s.dir, "init").Run()
+}
+
+func (s *Store) WriteFile(file string, data []byte, perm os.FileMode) error {
+	return ioutil.WriteFile(path.Join(s.dir, file), data, perm)
 }
