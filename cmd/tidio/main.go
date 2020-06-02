@@ -52,7 +52,7 @@ func (c *cli) run() error {
 	}
 	fh.Close()
 	// use store
-	os.MkdirAll(c.storeDir, 0644)
+	os.MkdirAll(c.storeDir, 0755)
 	store := tidio.NewStore(c.storeDir)
 	if !store.IsInitiated() {
 		store.Init()
