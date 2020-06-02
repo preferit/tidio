@@ -57,6 +57,13 @@ func writeTimesheets(store *tidio.Store) http.HandlerFunc {
 		account, _ := r.Context().Value("account").(string)
 		body, _ := ioutil.ReadAll(r.Body)
 		r.Body.Close()
+		vars := mux.Vars(r)
+		// only allow account to write it's own timesheet
+		if vars["user"] != account {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
 		filename := path.Join(account, "somefile.txt")
 		if err := store.WriteFile(filename, body, 0644); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

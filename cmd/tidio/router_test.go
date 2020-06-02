@@ -27,11 +27,12 @@ func Test_router(t *testing.T) {
 	headers = http.Header{}
 	headers.Set("Authorization", "NO SUCH KEY")
 	exp.StatusCode(401, "GET", "/api/timesheets/", headers)
-	exp.StatusCode(401, "POST", "/api/timesheets/x/", strings.NewReader("body"), headers)
+	exp.StatusCode(401, "POST", "/api/timesheets/not_there/", strings.NewReader("body"), headers)
 
 	// authenticated
 	headers = http.Header{}
 	headers.Set("Authorization", "KEY")
 	exp.StatusCode(200, "GET", "/api/timesheets/", headers)
 	exp.StatusCode(204, "POST", "/api/timesheets/john/", strings.NewReader("some content"), headers)
+	exp.StatusCode(403, "POST", "/api/timesheets/eva/", strings.NewReader("body"), headers)
 }
