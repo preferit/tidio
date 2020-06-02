@@ -19,8 +19,12 @@ jobs:
         go-version: '1.14.3'
 
     - name: build
+      env:
+        GOPATH: "/tmp"
+        PATH: "/bin:/usr/bin:/tmp/bin"
       run: |
           mkdir -p /tmp/tidio
+          go get github.com/gregoryv/stamp/cmd/stamp
           go generate ./...
           go build -o /tmp/tidio/tidio ./cmd/tidio
           cp -r ./etc /tmp/tidio

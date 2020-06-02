@@ -5,14 +5,21 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/gregoryv/stamp"
 )
+
+//go:generate stamp -clfile ../../changelog.md -go build_stamp.go
 
 func main() {
 	c := &cli{
 		starter: http.ListenAndServe,
 	}
+	stamp.InitFlags()
 	flag.StringVar(&c.bind, "bind", ":13001", "[host]:port to bind to")
 	flag.Parse()
+	stamp.AsFlagged()
+
 	if err := c.run(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
