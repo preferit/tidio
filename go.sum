@@ -4,6 +4,8 @@ github.com/gregoryv/asserter v0.1.0 h1:p+0pvUOuUCn/rVy7YxafoxfXnYPfVptbExJOrWQy9
 github.com/gregoryv/asserter v0.1.0/go.mod h1:iLD46IKZjjleTkmDikemRaDZQldDrq8uwTnygV/hC/M=
 github.com/gregoryv/asserter v0.2.2 h1:fZ+Ch2p+SGqQnGrODVvArzgXPm8v6xioAwdRNoAKNI0=
 github.com/gregoryv/asserter v0.2.2/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
+github.com/gregoryv/asserter v0.2.3-0.20200503053251-4408c80eea3a h1:MNyfrpT4n9EXBsmIeSe54j+//TvNHR4Fw55InzklowA=
+github.com/gregoryv/asserter v0.2.3-0.20200503053251-4408c80eea3a/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
 github.com/gregoryv/find v0.0.0-20180328085109-1bbc2d70c482/go.mod h1:/xxQlO62bzxhyabf2iKJzGJa+VAJy25spLI/6ICTrxU=
 github.com/gregoryv/gocyclo v0.0.0-20180305144948-0be7902fabdc/go.mod h1:x/QA8cT1gfn/XriQ/CVNX7I8IM4Z2YJAAEWFym2clZI=
 github.com/gregoryv/nexus v0.3.0 h1:/V/TwUbKB/VhS2dt1HMTLWx2mDeaNQyoayPgrS664/g=
