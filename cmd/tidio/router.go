@@ -8,7 +8,7 @@ import (
 	"github.com/gregoryv/stamp"
 )
 
-func NewRouter() *mux.Router {
+func NewRouter(apikeys map[string]string) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/api", serveAPIRoot())
 
@@ -17,11 +17,16 @@ func NewRouter() *mux.Router {
 	rt.HandleFunc("/", readTimesheets()).Methods("GET")
 	rt.HandleFunc("/", writeTimesheets()).Methods("POST")
 
-	rt.Use(mustBeAuthenticated)
+	auth := &authMid{keys: apikeys}
+	rt.Use(auth.Middleware)
 	return r
 }
 
-func mustBeAuthenticated(next http.Handler) http.Handler {
+type authMid struct {
+	keys map[string]string
+}
+
+func (m *authMid) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		auth := r.Header.Get("Authorization")
 		if auth == "" {

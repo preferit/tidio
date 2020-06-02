@@ -8,7 +8,8 @@ import (
 
 func Test_router(t *testing.T) {
 	assert := asserter.New(t)
-	exp := assert().ResponseFrom(NewRouter())
+	apikeys := make(map[string]string)
+	exp := assert().ResponseFrom(NewRouter(apikeys))
 	exp.StatusCode(200, "GET", "/api", nil)
 	exp.Contains("revision", "GET", "/api")
 	exp.Contains("version", "GET", "/api")

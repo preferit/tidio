@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
@@ -16,6 +17,7 @@ func main() {
 		starter: http.ListenAndServe,
 	}
 	stamp.InitFlags()
+	flag.StringVar(&c.keysfile, "keys", "apikeys.json", "map of apikeys")
 	flag.StringVar(&c.bind, "bind", ":13001", "[host]:port to bind to")
 	flag.Parse()
 	stamp.AsFlagged()
@@ -27,14 +29,25 @@ func main() {
 }
 
 type cli struct {
-	bind    string
-	starter func(string, http.Handler) error
+	bind     string
+	keysfile string
+	starter  func(string, http.Handler) error
 }
 
 func (c *cli) run() error {
 	if c.bind == "" {
 		return fmt.Errorf("empty bind")
 	}
-	router := NewRouter()
+
+	fh, err := os.Open(c.keysfile)
+	if err != nil {
+		return err
+	}
+	apikeys := make(map[string]string)
+	if err := json.NewDecoder(fh).Decode(&apikeys); err != nil {
+		return err
+	}
+	fh.Close()
+	router := NewRouter(apikeys)
 	return c.starter(c.bind, router)
 }
