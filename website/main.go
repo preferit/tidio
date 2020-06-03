@@ -33,9 +33,36 @@ func indexPage() *Page {
 	article := Article(
 		H1("Tidio"),
 		A(Href("/api"), "/api"),
-		Footer(
-			"Generated: ", time.Now().Round(time.Second).String(),
+	)
+	css := NewCSS()
+	css.Style("html, body",
+		"margin: 0 0",
+		"padding: 0 0",
+		"background-color: #e2e2e2",
+	)
+	css.Style("article",
+		"background-color: white",
+		"padding: 1em 1em 2em 1em",
+		"min-height: 300",
+	)
+	css.Style("footer",
+		"border-top: 1px solid #727272",
+		"padding: 0.6em 0.6em",
+	)
+
+	return NewPage(
+		"index.html",
+		Html(
+			Head(
+				Style(css),
+			),
+			Body(article,
+
+				Footer(
+					"Generated: ",
+					time.Now().Round(time.Second).String(),
+				),
+			),
 		),
 	)
-	return NewPage("index.html", Html(Body(article)))
 }

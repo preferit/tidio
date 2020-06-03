@@ -8,5 +8,5 @@ require (
 	github.com/gregoryv/fox v0.2.0
 	github.com/gregoryv/stamp v0.2.0
 	github.com/gregoryv/uncover v0.4.0 // indirect
-	github.com/gregoryv/web v0.8.3
+	github.com/gregoryv/web v0.9.0
 )
