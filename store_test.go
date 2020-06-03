@@ -52,6 +52,21 @@ func Test_store_fileio(t *testing.T) {
 	})
 }
 
+func Test_store_Glob(t *testing.T) {
+	store, cleanup := newTempStore(t)
+	defer cleanup()
+	store.Init()
+	store.WriteFile("john/file1", aFile(""))
+	store.WriteFile("john/file2", aFile(""))
+	files, err := store.Glob("john", "*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(files) != 2 {
+		t.Error("expected 2 files:", files)
+	}
+}
+
 func newTempStore(t *testing.T) (*Store, func()) {
 	t.Helper()
 	dir, err := ioutil.TempDir("", "tidiostore")

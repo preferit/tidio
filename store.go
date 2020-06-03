@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 
 	"github.com/gregoryv/fox"
 )
@@ -71,4 +72,8 @@ func (s *Store) ReadFile(w io.Writer, file string) error {
 	defer fh.Close()
 	_, err = io.Copy(w, fh)
 	return err
+}
+
+func (s *Store) Glob(user, pattern string) ([]string, error) {
+	return filepath.Glob(path.Join(s.dir, user, pattern))
 }
