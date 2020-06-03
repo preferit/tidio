@@ -2,6 +2,7 @@ package tidio
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -53,5 +54,16 @@ func (s *Store) WriteFile(file string, data []byte, perm os.FileMode) error {
 	os.MkdirAll(path.Dir(filename), 0755)
 	err := ioutil.WriteFile(filename, data, perm)
 	s.writeOp <- fmt.Sprintf("write %s", file)
+	return err
+}
+
+func (s *Store) ReadFile(w io.Writer, file string) error {
+	filename := path.Join(s.dir, file)
+	fh, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer fh.Close()
+	_, err = io.Copy(w, fh)
 	return err
 }

@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
-	"time"
 )
 
 func Test_store(t *testing.T) {
@@ -22,14 +21,24 @@ func Test_store(t *testing.T) {
 	}
 }
 
-func Test_store_writefile(t *testing.T) {
+func Test_store_fileio(t *testing.T) {
 	store, cleanup := newTempStore(t)
 	defer cleanup()
 	store.Init()
-	if err := store.WriteFile("a/b/something.x", []byte(".."), 0644); err != nil {
+	filename := "a/b/something.x"
+
+	if err := store.WriteFile(filename, []byte(".."), 0644); err != nil {
 		t.Fatal(err)
 	}
-	time.Sleep(10 * time.Millisecond)
+	if err := store.ReadFile(ioutil.Discard, filename); err != nil {
+		t.Error(err)
+	}
+
+	t.Run("no such file", func(t *testing.T) {
+		if err := store.ReadFile(ioutil.Discard, "no such file"); err == nil {
+			t.Error("did not fail")
+		}
+	})
 }
 
 func newTempStore(t *testing.T) (*Store, func()) {
