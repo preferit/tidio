@@ -38,19 +38,20 @@ type authMid struct {
 func (m *authMid) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		key := r.Header.Get("Authorization")
-		account, ok := m.service.IsAuthenticated(key)
+		role, ok := m.service.IsAuthenticated(key)
 		if !ok {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		r = r.WithContext(context.WithValue(r.Context(), "account", account))
+		r = r.WithContext(context.WithValue(r.Context(), "role", role))
 		next.ServeHTTP(w, r)
 	})
 }
 
 func writeTimesheets(store *tidio.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		account, _ := r.Context().Value("account").(string)
+		role, _ := r.Context().Value("role").(*tidio.Role)
+		account := role.Account()
 		body, _ := ioutil.ReadAll(r.Body)
 		r.Body.Close()
 		vars := mux.Vars(r)

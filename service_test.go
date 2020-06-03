@@ -1,10 +1,21 @@
 package tidio
 
-import "testing"
+import (
+	"io/ioutil"
+	"strings"
+	"testing"
+)
 
 func Test_service_write_operations(t *testing.T) {
-	_, cleanup := newTestService(t)
+	service, cleanup := newTestService(t)
 	defer cleanup()
+
+	file := ioutil.NopCloser(strings.NewReader("x"))
+	format := "xx.txt"
+	role, _ := service.IsAuthenticated("KEY")
+	if err := role.CreateTimesheet(format, file); err == nil {
+		t.Errorf("CreateTimesheet ok with fileformat %q", format)
+	}
 }
 
 func Test_service(t *testing.T) {
@@ -25,12 +36,17 @@ func Test_service(t *testing.T) {
 }
 
 func newTestService(t *testing.T) (*Service, func()) {
-	store := &Store{}
+	store, rmstore := newTempStore(t)
+	if err := store.Init(); err != nil {
+		t.Fatal(err)
+	}
 	apikeys := APIKeys{
 		"KEY": "john",
 	}
 	service := NewService(apikeys, store)
-	cleanup := func() {}
+	cleanup := func() {
+		rmstore()
+	}
 	return service, cleanup
 }
 

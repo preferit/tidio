@@ -26,13 +26,16 @@ type Service struct {
 
 type APIKeys map[string]string
 
-func (s *Service) IsAuthenticated(key string) (string, bool) {
+func (s *Service) IsAuthenticated(key string) (*Role, bool) {
 	if key == "" {
-		return "", false
+		return nil, false
 	}
 	account, found := s.apikeys[key]
 	if !found {
-		return "", false
+		return nil, false
 	}
-	return account, true
+	return &Role{
+		account: account,
+		service: s,
+	}, true
 }
