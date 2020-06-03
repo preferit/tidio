@@ -13,11 +13,13 @@ import (
 	"github.com/preferit/tidio"
 )
 
-func NewRouter(apikeys map[string]string, store *tidio.Store, s *tidio.Service) *mux.Router {
+func NewRouter(store *tidio.Store, service *tidio.Service) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/api", serveAPIRoot())
 
-	auth := &authMid{keys: apikeys}
+	auth := &authMid{
+		service: service,
+	}
 	r.Handle(
 		"/api/timesheets/{user}/{filename}",
 		auth.Middleware(writeTimesheets(store)),
@@ -30,18 +32,14 @@ func NewRouter(apikeys map[string]string, store *tidio.Store, s *tidio.Service) 
 }
 
 type authMid struct {
-	keys map[string]string
+	service *tidio.Service
 }
 
 func (m *authMid) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		key := r.Header.Get("Authorization")
-		if key == "" {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		account, found := m.keys[key]
-		if !found {
+		account, ok := m.service.IsAuthenticated(key)
+		if !ok {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}

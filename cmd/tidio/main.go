@@ -46,7 +46,7 @@ func (c *cli) run() error {
 	if err != nil {
 		return err
 	}
-	apikeys := make(map[string]string)
+	apikeys := tidio.APIKeys{}
 	if err := json.NewDecoder(fh).Decode(&apikeys); err != nil {
 		return err
 	}
@@ -58,6 +58,6 @@ func (c *cli) run() error {
 		store.Init()
 	}
 	service := tidio.NewService(store, apikeys)
-	router := NewRouter(apikeys, store, service)
+	router := NewRouter(store, service)
 	return c.starter(c.bind, router)
 }

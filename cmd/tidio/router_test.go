@@ -11,7 +11,7 @@ import (
 
 func Test_router(t *testing.T) {
 	assert := asserter.New(t)
-	apikeys := map[string]string{
+	apikeys := tidio.APIKeys{
 		"KEY": "john",
 	}
 	headers := http.Header{}
@@ -19,7 +19,7 @@ func Test_router(t *testing.T) {
 	defer cleanup()
 
 	service := tidio.NewService(store, apikeys)
-	router := NewRouter(apikeys, store, service)
+	router := NewRouter(store, service)
 	exp := assert().ResponseFrom(router)
 	exp.StatusCode(200, "GET", "/api", nil)
 	exp.Contains("revision", "GET", "/api")
