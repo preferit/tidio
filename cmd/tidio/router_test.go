@@ -44,3 +44,15 @@ func Test_router(t *testing.T) {
 	exp.StatusCode(400, "POST", "/api/timesheets/john/202001xtimesheet",
 		strings.NewReader("body"), headers)
 }
+
+func Test_convert_error(t *testing.T) {
+	ok := func(err error, exp int) {
+		t.Helper()
+		got := statusOf(err)
+		if got != exp {
+			t.Error("got:", got, "exp:", exp)
+		}
+	}
+	ok(nil, http.StatusOK)
+	ok(tidio.ErrForbidden, http.StatusForbidden)
+}
