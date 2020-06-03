@@ -1,6 +1,7 @@
 package tidio
 
 import (
+	"bytes"
 	"io/ioutil"
 	"os"
 	"path"
@@ -27,21 +28,23 @@ func Test_store_fileio(t *testing.T) {
 	defer cleanup()
 	store.Init()
 	filename := "a/b/something.x"
+	content := "body"
 
-	t.Run("cannot write read only file", func(t *testing.T) {
-		if err := store.WriteFile(filename, aFile("..")); err != nil {
-			t.Fatal(err)
-		}
-		os.Chmod(path.Join(store.dir, filename), 0400)
-		if err := store.WriteFile(filename, aFile("..")); err == nil {
-			t.Error("wrote read only file")
-		}
-	})
-
-	if err := store.ReadFile(ioutil.Discard, filename); err != nil {
+	if err := store.WriteFile(filename, aFile(content)); err != nil {
+		t.Fatal(err)
+	}
+	os.Chmod(path.Join(store.dir, filename), 0400)
+	if err := store.WriteFile(filename, aFile(content)); err == nil {
+		t.Error("wrote read only file")
+	}
+	var buf bytes.Buffer
+	if err := store.ReadFile(&buf, filename); err != nil {
 		t.Error(err)
 	}
-
+	got := buf.String()
+	if got != content {
+		t.Error("wrong content:", got)
+	}
 	t.Run("no such file", func(t *testing.T) {
 		if err := store.ReadFile(ioutil.Discard, "no such file"); err == nil {
 			t.Error("did not fail")

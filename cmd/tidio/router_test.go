@@ -26,23 +26,29 @@ func Test_router(t *testing.T) {
 	exp.Contains("version", "GET", "/api")
 	exp.Contains("resources", "GET", "/api")
 
-	exp.StatusCode(401, "GET", "/api/timesheets/")
 	headers = http.Header{}
 	headers.Set("Authorization", "NO SUCH KEY")
-	exp.StatusCode(401, "GET", "/api/timesheets/", headers)
 	exp.StatusCode(401, "POST", "/api/timesheets/not_there/202001.timesheet",
 		strings.NewReader("body"), headers)
 
 	// authenticated
 	headers = http.Header{}
 	headers.Set("Authorization", "KEY")
-	exp.StatusCode(200, "GET", "/api/timesheets/", headers)
+	exp.StatusCode(404, "GET", "/api/timesheets/", headers)
 	exp.StatusCode(204, "POST", "/api/timesheets/john/202001.timesheet",
 		strings.NewReader("some content"), headers)
 	exp.StatusCode(403, "POST", "/api/timesheets/eva/199601.timesheet",
 		strings.NewReader("body"), headers)
 	exp.StatusCode(400, "POST", "/api/timesheets/john/202001xtimesheet",
 		strings.NewReader("body"), headers)
+
+	// read timesheet
+	content := "TEST content"
+	exp.StatusCode(204, "POST", "/api/timesheets/john/197604.timesheet",
+		strings.NewReader(content), headers)
+	exp.StatusCode(200, "GET", "/api/timesheets/john/197604.timesheet", headers)
+	exp.Contains(content, "GET", "/api/timesheets/john/197604.timesheet", headers)
+
 }
 
 func Test_convert_error(t *testing.T) {

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -17,7 +19,9 @@ func NewRouter(service *tidio.Service) *mux.Router {
 	r.Handle(
 		"/api/timesheets/{user}/{filename}", auth(writeTimesheets()),
 	).Methods("POST")
-	r.Handle("/api/timesheets/", auth(readTimesheets())).Methods("GET")
+	r.Handle(
+		"/api/timesheets/{user}/{filename}", auth(readTimesheets()),
+	).Methods("GET")
 	return r
 }
 
@@ -35,19 +39,20 @@ func writeTimesheets() http.HandlerFunc {
 	}
 }
 
-func statusOf(err error) int {
-	switch {
-	case err == nil:
-		return http.StatusOK
-	case err == tidio.ErrForbidden:
-		return http.StatusForbidden
-	default:
-		return http.StatusBadRequest
-	}
-}
-
 func readTimesheets() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {}
+	return func(w http.ResponseWriter, r *http.Request) {
+		role, _ := r.Context().Value("role").(*tidio.Role)
+		vars := mux.Vars(r)
+		filename := vars["filename"]
+		user := vars["user"]
+		var buf bytes.Buffer
+		if err := role.ReadTimesheet(&buf, filename, user); err != nil {
+			w.WriteHeader(statusOf(err))
+			return
+		}
+		fmt.Println(buf.String())
+		buf.WriteTo(w)
+	}
 }
 
 func serveAPIRoot() http.HandlerFunc {
@@ -60,5 +65,16 @@ func serveAPIRoot() http.HandlerFunc {
 				"/api/timesheets/",
 			},
 		})
+	}
+}
+
+func statusOf(err error) int {
+	switch {
+	case err == nil:
+		return http.StatusOK
+	case err == tidio.ErrForbidden:
+		return http.StatusForbidden
+	default:
+		return http.StatusBadRequest
 	}
 }

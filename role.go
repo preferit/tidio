@@ -2,6 +2,7 @@ package tidio
 
 import (
 	"io"
+	"path"
 )
 
 type Role struct {
@@ -20,9 +21,19 @@ func (r *Role) CreateTimesheet(filename, user string, content io.ReadCloser) err
 	if user != r.Account() {
 		return ErrForbidden
 	}
+	filename = path.Join(user, filename)
 	return r.store.WriteFile(filename, content)
 }
 
 func (r *Role) ReadTimesheet(w io.Writer, filename, user string) error {
-	return nil
+	if err := checkTimesheetFilename(filename); err != nil {
+		return err
+	}
+	// todo Role implementation should not have permissions checks
+	// move to eg. admin
+	if user != r.Account() {
+		return ErrForbidden
+	}
+	filename = path.Join(user, filename)
+	return r.store.ReadFile(w, filename)
 }
