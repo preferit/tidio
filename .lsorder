@@ -1,6 +1,7 @@
 README
 package
 service\.
+role\.
 filestore.go
 _test.go
 .ini
