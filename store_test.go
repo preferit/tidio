@@ -58,10 +58,7 @@ func Test_store_Glob(t *testing.T) {
 	store.Init()
 	store.WriteFile("john/file1", aFile(""))
 	store.WriteFile("john/file2", aFile(""))
-	files, err := store.Glob("john", "*")
-	if err != nil {
-		t.Fatal(err)
-	}
+	files := store.Glob("john", "*")
 	if len(files) != 2 {
 		t.Error("expected 2 files:", files)
 	}

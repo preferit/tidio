@@ -42,6 +42,14 @@ func Test_role(t *testing.T) {
 			t.Error("read non existing file")
 		}
 	})
+
+	t.Run("ListTimesheet", func(t *testing.T) {
+		// depends on above tests creating some
+		sheets := role.ListTimesheet("john")
+		if len(sheets) == 0 {
+			t.Error("did not found any timesheets")
+		}
+	})
 }
 
 func aFile(content string) io.ReadCloser {

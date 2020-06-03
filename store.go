@@ -74,6 +74,8 @@ func (s *Store) ReadFile(w io.Writer, file string) error {
 	return err
 }
 
-func (s *Store) Glob(user, pattern string) ([]string, error) {
-	return filepath.Glob(path.Join(s.dir, user, pattern))
+func (s *Store) Glob(user, pattern string) []string {
+	found, err := filepath.Glob(path.Join(s.dir, user, pattern))
+	warn(err)
+	return found
 }

@@ -22,6 +22,9 @@ func NewRouter(service *tidio.Service) *mux.Router {
 	r.Handle(
 		"/api/timesheets/{user}/{filename}", auth(readTimesheets()),
 	).Methods("GET")
+	r.Handle(
+		"/api/timesheets/{user}/", auth(listTimesheets()),
+	).Methods("GET")
 	return r
 }
 
@@ -52,6 +55,20 @@ func readTimesheets() http.HandlerFunc {
 		}
 		fmt.Println(buf.String())
 		buf.WriteTo(w)
+	}
+}
+
+func listTimesheets() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var (
+			role, _ = r.Context().Value("role").(*tidio.Role)
+			vars    = mux.Vars(r)
+			user    = vars["user"]
+		)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"timesheets": role.ListTimesheet(user),
+		})
 	}
 }
 

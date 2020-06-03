@@ -34,3 +34,7 @@ func (r *Role) ReadTimesheet(w io.Writer, filename, user string) error {
 	filename = path.Join(user, filename)
 	return r.store.ReadFile(w, filename)
 }
+
+func (r *Role) ListTimesheet(user string) []string {
+	return r.store.Glob(user, "*.timesheet")
+}
