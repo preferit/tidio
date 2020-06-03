@@ -36,6 +36,6 @@ func (s *Service) IsAuthenticated(key string) (*Role, bool) {
 	}
 	return &Role{
 		account: account,
-		service: s,
+		store:   s.store,
 	}, true
 }

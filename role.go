@@ -9,7 +9,7 @@ import (
 
 type Role struct {
 	account string
-	service *Service
+	store   *Store
 }
 
 func (r *Role) Account() string {
@@ -24,7 +24,11 @@ func (r *Role) CreateTimesheet(filename, user string, content io.ReadCloser) err
 		return ErrForbidden
 	}
 	body, _ := ioutil.ReadAll(content)
-	return r.service.store.WriteFile(filename, body, 0644)
+	return r.store.WriteFile(filename, body, 0644)
+}
+
+func (r *Role) ReadTimesheet(w io.Writer, filename, user string) error {
+	return nil
 }
 
 var ErrForbidden = fmt.Errorf("forbidden")
