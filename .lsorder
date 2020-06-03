@@ -2,12 +2,12 @@ README
 package
 service\.
 role\.
-filestore.go
-_test.go
-.ini
+store.go
 .sh
+.ini
 etc
 cmd
 internal
 website
+_test.go
 changelog
