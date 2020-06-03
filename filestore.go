@@ -49,10 +49,15 @@ func (s *Store) Init() error {
 	return exec.Command("git", "-C", s.dir, "init").Run()
 }
 
-func (s *Store) WriteFile(file string, data []byte, perm os.FileMode) error {
+func (s *Store) WriteFile(file string, data io.ReadCloser) error {
 	filename := path.Join(s.dir, file)
 	os.MkdirAll(path.Dir(filename), 0755)
-	err := ioutil.WriteFile(filename, data, perm)
+	fh, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer fh.Close()
+	_, err = io.Copy(fh, data)
 	s.writeOp <- fmt.Sprintf("write %s", file)
 	return err
 }

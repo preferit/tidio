@@ -27,7 +27,7 @@ func Test_store_fileio(t *testing.T) {
 	store.Init()
 	filename := "a/b/something.x"
 
-	if err := store.WriteFile(filename, []byte(".."), 0644); err != nil {
+	if err := store.WriteFile(filename, aFile("..")); err != nil {
 		t.Fatal(err)
 	}
 	if err := store.ReadFile(ioutil.Discard, filename); err != nil {

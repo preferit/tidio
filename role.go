@@ -2,7 +2,6 @@ package tidio
 
 import (
 	"io"
-	"io/ioutil"
 )
 
 type Role struct {
@@ -21,8 +20,7 @@ func (r *Role) CreateTimesheet(filename, user string, content io.ReadCloser) err
 	if user != r.Account() {
 		return ErrForbidden
 	}
-	body, _ := ioutil.ReadAll(content)
-	return r.store.WriteFile(filename, body, 0644)
+	return r.store.WriteFile(filename, content)
 }
 
 func (r *Role) ReadTimesheet(w io.Writer, filename, user string) error {
