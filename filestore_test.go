@@ -3,6 +3,7 @@ package tidio
 import (
 	"io/ioutil"
 	"os"
+	"path"
 	"testing"
 )
 
@@ -27,9 +28,16 @@ func Test_store_fileio(t *testing.T) {
 	store.Init()
 	filename := "a/b/something.x"
 
-	if err := store.WriteFile(filename, aFile("..")); err != nil {
-		t.Fatal(err)
-	}
+	t.Run("cannot write read only file", func(t *testing.T) {
+		if err := store.WriteFile(filename, aFile("..")); err != nil {
+			t.Fatal(err)
+		}
+		os.Chmod(path.Join(store.dir, filename), 0400)
+		if err := store.WriteFile(filename, aFile("..")); err == nil {
+			t.Error("wrote read only file")
+		}
+	})
+
 	if err := store.ReadFile(ioutil.Discard, filename); err != nil {
 		t.Error(err)
 	}
