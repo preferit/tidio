@@ -11,11 +11,9 @@ func Test_service(t *testing.T) {
 	if service == nil {
 		t.Fail()
 	}
-
 	if _, ok := service.IsAuthenticated("KEY"); !ok {
 		t.Error("KEY is in apikeys")
 	}
-
 	if _, ok := service.IsAuthenticated(""); ok {
 		t.Error("empty key ok")
 	}
