@@ -3,5 +3,10 @@ package tidio
 import "testing"
 
 func Test_service(t *testing.T) {
-	NewService()
+	store := &Store{}
+	apikeys := map[string]string{}
+	service := NewService(apikeys, store)
+	if service == nil {
+		t.Fail()
+	}
 }
