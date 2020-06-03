@@ -58,6 +58,6 @@ func (c *cli) run() error {
 		store.Init()
 	}
 	service := tidio.NewService(store, apikeys)
-	router := NewRouter(store, service)
+	router := NewRouter(service)
 	return c.starter(c.bind, router)
 }

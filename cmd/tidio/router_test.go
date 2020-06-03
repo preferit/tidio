@@ -17,9 +17,9 @@ func Test_router(t *testing.T) {
 	headers := http.Header{}
 	store, cleanup := newTempStore(t)
 	defer cleanup()
-
 	service := tidio.NewService(store, apikeys)
-	router := NewRouter(store, service)
+	router := NewRouter(service)
+
 	exp := assert().ResponseFrom(router)
 	exp.StatusCode(200, "GET", "/api", nil)
 	exp.Contains("revision", "GET", "/api")

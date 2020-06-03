@@ -10,21 +10,15 @@ import (
 	"github.com/preferit/tidio"
 )
 
-func NewRouter(store *tidio.Store, service *tidio.Service) *mux.Router {
+func NewRouter(service *tidio.Service) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/api", serveAPIRoot())
 
-	auth := &authMid{
-		service: service,
-	}
+	auth := (&authMid{service: service}).Middleware
 	r.Handle(
-		"/api/timesheets/{user}/{filename}",
-		auth.Middleware(writeTimesheets(store)),
+		"/api/timesheets/{user}/{filename}", auth(writeTimesheets()),
 	).Methods("POST")
-
-	r.Handle(
-		"/api/timesheets/", auth.Middleware(readTimesheets()),
-	).Methods("GET")
+	r.Handle("/api/timesheets/", auth(readTimesheets())).Methods("GET")
 	return r
 }
 
@@ -45,7 +39,7 @@ func (m *authMid) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-func writeTimesheets(store *tidio.Store) http.HandlerFunc {
+func writeTimesheets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		role, _ := r.Context().Value("role").(*tidio.Role)
 		vars := mux.Vars(r)
