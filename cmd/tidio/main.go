@@ -57,6 +57,7 @@ func (c *cli) run() error {
 	if !store.IsInitiated() {
 		store.Init()
 	}
-	router := NewRouter(apikeys, store)
+	service := tidio.NewService(store, apikeys)
+	router := NewRouter(apikeys, store, service)
 	return c.starter(c.bind, router)
 }

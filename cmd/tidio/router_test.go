@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/gregoryv/asserter"
+	"github.com/preferit/tidio"
 )
 
 func Test_router(t *testing.T) {
@@ -17,7 +18,9 @@ func Test_router(t *testing.T) {
 	store, cleanup := newTempStore(t)
 	defer cleanup()
 
-	exp := assert().ResponseFrom(NewRouter(apikeys, store))
+	service := tidio.NewService(store, apikeys)
+	router := NewRouter(apikeys, store, service)
+	exp := assert().ResponseFrom(router)
 	exp.StatusCode(200, "GET", "/api", nil)
 	exp.Contains("revision", "GET", "/api")
 	exp.Contains("version", "GET", "/api")

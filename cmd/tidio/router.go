@@ -13,7 +13,7 @@ import (
 	"github.com/preferit/tidio"
 )
 
-func NewRouter(apikeys map[string]string, store *tidio.Store) *mux.Router {
+func NewRouter(apikeys map[string]string, store *tidio.Store, s *tidio.Service) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/api", serveAPIRoot())
 
