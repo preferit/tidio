@@ -36,10 +36,20 @@ func indexPage() *Page {
 		A(Href("/api"), "/api"),
 		H2("Timesheets"),
 		H3("Create or update"),
-		Pre(`POST {host}/api/timesheets/{account}/{yyyymm}.timesheet
-Authorization {key}
+		Pre(`HTTP/1.1 POST {host}/api/timesheets/{account}/{yyyymm}.timesheet
+Authorization: {key}
 
 -- body contains timesheet --`),
+
+		H3("Read specific timesheet"),
+		Pre(`HTTP/1.1 GET {host}/api/timesheets/{account}/{yyyymm}.timesheet
+Authorization: {key}`),
+		"Responds with timesheet",
+
+		H3("List timesheets of a specific user"),
+		Pre(`HTTP/1.1 GET {host}/api/timesheets/{account}/
+Authorization: {key}`),
+		`Responds with json {"timesheets": []}`,
 	)
 
 	return NewPage(
