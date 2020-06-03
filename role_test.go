@@ -38,6 +38,9 @@ func Test_role(t *testing.T) {
 		if err := role.ReadTimesheet(ioutil.Discard, filename, "john"); err != nil {
 			t.Error(err)
 		}
+		if err := role.ReadTimesheet(ioutil.Discard, filename, "unknown"); err == nil {
+			t.Error("read non existing file")
+		}
 	})
 }
 

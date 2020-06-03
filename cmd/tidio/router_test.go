@@ -43,6 +43,7 @@ func Test_router(t *testing.T) {
 		strings.NewReader("body"), headers)
 
 	// read timesheet
+	exp.StatusCode(400, "GET", "/api/timesheets/john/999900.timesheet", headers)
 	content := "TEST content"
 	exp.StatusCode(204, "POST", "/api/timesheets/john/197604.timesheet",
 		strings.NewReader(content), headers)
