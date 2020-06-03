@@ -3,10 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"net/http"
-	"regexp"
 
 	"github.com/gorilla/mux"
 	"github.com/gregoryv/stamp"
@@ -51,35 +48,26 @@ func (m *authMid) Middleware(next http.Handler) http.Handler {
 func writeTimesheets(store *tidio.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		role, _ := r.Context().Value("role").(*tidio.Role)
-		account := role.Account()
-		body, _ := ioutil.ReadAll(r.Body)
-		r.Body.Close()
 		vars := mux.Vars(r)
 		filename := vars["filename"]
-		if err := checkTimesheetFilename(filename); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		// only allow account to write it's own timesheet
-		if vars["user"] != account {
-			w.WriteHeader(http.StatusForbidden)
-			return
-		}
-
-		if err := store.WriteFile(filename, body, 0644); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+		user := vars["user"]
+		if err := role.CreateTimesheet(filename, user, r.Body); err != nil {
+			w.WriteHeader(statusOf(err))
 			return
 		}
 		w.WriteHeader(http.StatusNoContent)
 	}
 }
 
-func checkTimesheetFilename(name string) error {
-	format := `\d\d\d\d\d\d\.timesheet`
-	if ok, _ := regexp.MatchString(format, name); !ok {
-		return fmt.Errorf("bad filename: expected format %s", format)
+func statusOf(err error) int {
+	switch {
+	case err == nil:
+		return http.StatusOK
+	case err == tidio.ErrForbidden:
+		return http.StatusForbidden
+	default:
+		return http.StatusBadRequest
 	}
-	return nil
 }
 
 func readTimesheets() http.HandlerFunc {

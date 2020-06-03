@@ -13,7 +13,7 @@ func Test_service_write_operations(t *testing.T) {
 	file := ioutil.NopCloser(strings.NewReader("x"))
 	format := "xx.txt"
 	role, _ := service.IsAuthenticated("KEY")
-	if err := role.CreateTimesheet(format, file); err == nil {
+	if err := role.CreateTimesheet(format, "john", file); err == nil {
 		t.Errorf("CreateTimesheet ok with fileformat %q", format)
 	}
 }
