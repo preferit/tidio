@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
-	"path"
+	"regexp"
 
 	"github.com/gorilla/mux"
 	"github.com/gregoryv/stamp"
@@ -18,7 +19,8 @@ func NewRouter(apikeys map[string]string, store *tidio.Store) *mux.Router {
 
 	auth := &authMid{keys: apikeys}
 	r.Handle(
-		"/api/timesheets/{user}/", auth.Middleware(writeTimesheets(store)),
+		"/api/timesheets/{user}/{filename}",
+		auth.Middleware(writeTimesheets(store)),
 	).Methods("POST")
 
 	r.Handle(
@@ -48,29 +50,41 @@ func (m *authMid) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-func readTimesheets() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {}
-}
-
 func writeTimesheets(store *tidio.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		account, _ := r.Context().Value("account").(string)
 		body, _ := ioutil.ReadAll(r.Body)
 		r.Body.Close()
 		vars := mux.Vars(r)
+		filename := vars["filename"]
+		if err := checkTimesheetFilename(filename); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		// only allow account to write it's own timesheet
 		if vars["user"] != account {
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
 
-		filename := path.Join(account, "somefile.txt")
 		if err := store.WriteFile(filename, body, 0644); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		w.WriteHeader(http.StatusNoContent)
 	}
+}
+
+func checkTimesheetFilename(name string) error {
+	format := `\d\d\d\d\d\d\.timesheet`
+	if ok, _ := regexp.MatchString(format, name); !ok {
+		return fmt.Errorf("bad filename: expected format %s", format)
+	}
+	return nil
+}
+
+func readTimesheets() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {}
 }
 
 func serveAPIRoot() http.HandlerFunc {
