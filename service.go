@@ -1,12 +1,14 @@
 package tidio
 
-func NewService(opts ...interface{}) *Service {
+// NewService returns a service with preconfigured options.
+// Options may be *Store or APIKeys
+func NewService(options ...interface{}) *Service {
 	service := &Service{}
-	for _, opt := range opts {
+	for _, opt := range options {
 		switch opt := opt.(type) {
 		case *Store:
 			service.store = opt
-		case map[string]string:
+		case APIKeys:
 			service.apikeys = opt
 		}
 	}
@@ -15,5 +17,7 @@ func NewService(opts ...interface{}) *Service {
 
 type Service struct {
 	store   *Store
-	apikeys map[string]string
+	apikeys APIKeys
 }
+
+type APIKeys map[string]string

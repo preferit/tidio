@@ -1,6 +1,6 @@
 README
-\.md
 package
+service\.
 filestore.go
 _test.go
 .ini
@@ -9,3 +9,4 @@ etc
 cmd
 internal
 website
+changelog

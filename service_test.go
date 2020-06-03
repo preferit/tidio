@@ -4,7 +4,7 @@ import "testing"
 
 func Test_service(t *testing.T) {
 	store := &Store{}
-	apikeys := map[string]string{}
+	apikeys := APIKeys{}
 	service := NewService(apikeys, store)
 	if service == nil {
 		t.Fail()
