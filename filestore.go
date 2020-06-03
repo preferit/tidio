@@ -19,9 +19,7 @@ func NewStore(dir string) *Store {
 	}
 	go func() {
 		for {
-			if err := store.Commit(<-ch); err != nil {
-				store.Log(err)
-			}
+			warn(store.Commit(<-ch))
 		}
 	}()
 	return store
@@ -34,10 +32,7 @@ type Store struct {
 }
 
 func (s *Store) Commit(msg string) error {
-	err := exec.Command("git", "-C", s.dir, "add", ".").Run()
-	if err != nil {
-		return err
-	}
+	warn(exec.Command("git", "-C", s.dir, "add", ".").Run())
 	return exec.Command("git", "-C", s.dir, "commit", "-m", msg).Run()
 }
 
