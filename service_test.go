@@ -2,12 +2,14 @@ package tidio
 
 import "testing"
 
+func Test_service_write_operations(t *testing.T) {
+	_, cleanup := newTestService(t)
+	defer cleanup()
+}
+
 func Test_service(t *testing.T) {
-	store := &Store{}
-	apikeys := APIKeys{
-		"KEY": "john",
-	}
-	service := NewService(apikeys, store)
+	service, cleanup := newTestService(t)
+	defer cleanup()
 	if service == nil {
 		t.Fail()
 	}
@@ -20,6 +22,16 @@ func Test_service(t *testing.T) {
 	if _, ok := service.IsAuthenticated("not there"); ok {
 		t.Error("wrong key ok")
 	}
+}
+
+func newTestService(t *testing.T) (*Service, func()) {
+	store := &Store{}
+	apikeys := APIKeys{
+		"KEY": "john",
+	}
+	service := NewService(apikeys, store)
+	cleanup := func() {}
+	return service, cleanup
 }
 
 func Test_service_options(t *testing.T) {

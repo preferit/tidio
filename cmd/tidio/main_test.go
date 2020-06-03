@@ -53,10 +53,9 @@ func Test_cli(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	defer os.RemoveAll(storeDir)
 	ok := func(c *cli) {
 		t.Helper()
-
 		if err := c.run(); err != nil {
 			t.Error(err)
 		}
