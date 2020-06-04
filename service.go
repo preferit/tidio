@@ -24,7 +24,7 @@ type Service struct {
 	apikeys APIKeys
 }
 
-type APIKeys map[string]string
+type APIKeys map[string]*Account
 
 func (s *Service) IsAuthenticated(key string) (*Role, bool) {
 	if key == "" {

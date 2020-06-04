@@ -12,7 +12,7 @@ import (
 func Test_router(t *testing.T) {
 	assert := asserter.New(t)
 	apikeys := tidio.APIKeys{
-		"KEY": "john",
+		"KEY": tidio.NewAccount("john", "admin"),
 	}
 	headers := http.Header{}
 	store, cleanup := newTempStore(t)

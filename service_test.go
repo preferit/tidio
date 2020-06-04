@@ -27,7 +27,7 @@ func newTestService(t *testing.T) (*Service, func()) {
 		t.Fatal(err)
 	}
 	apikeys := APIKeys{
-		"KEY": "john",
+		"KEY": NewAccount("john", "admin"),
 	}
 	service := NewService(apikeys, store)
 	cleanup := func() {

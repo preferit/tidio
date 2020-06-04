@@ -2,6 +2,7 @@ README
 package
 service\.
 role\.
+account\.
 store.go
 .sh
 .ini

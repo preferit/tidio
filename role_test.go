@@ -11,12 +11,8 @@ func Test_role(t *testing.T) {
 	store, cleanup := newTempStore(t)
 	defer cleanup()
 	role := &Role{
-		account: "john",
+		account: NewAccount("john", "admin"),
 		store:   store,
-	}
-
-	if got := role.Account(); got != "john" {
-		t.Errorf("Account() returned %q", got)
 	}
 
 	t.Run("CreateTimesheet", func(t *testing.T) {
@@ -35,10 +31,12 @@ func Test_role(t *testing.T) {
 	t.Run("ReadTimesheet", func(t *testing.T) {
 		filename := "199902.timesheet"
 		role.CreateTimesheet(filename, "john", aFile("..."))
-		if err := role.ReadTimesheet(ioutil.Discard, filename, "john"); err != nil {
+		err := role.ReadTimesheet(ioutil.Discard, filename, "john")
+		if err != nil {
 			t.Error(err)
 		}
-		if err := role.ReadTimesheet(ioutil.Discard, filename, "unknown"); err == nil {
+		err = role.ReadTimesheet(ioutil.Discard, filename, "unknown")
+		if err == nil {
 			t.Error("read non existing file")
 		}
 	})

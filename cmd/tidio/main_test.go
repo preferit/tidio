@@ -41,8 +41,8 @@ func Test_cli(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	apikeys := map[string]string{
-		"john": "KEY",
+	apikeys := map[string]*tidio.Account{
+		"KEY": tidio.NewAccount("john", "admin"),
 	}
 	json.NewEncoder(fh).Encode(apikeys)
 	fh.Close()

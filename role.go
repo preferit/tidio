@@ -6,29 +6,25 @@ import (
 )
 
 type Role struct {
-	account string
+	account *Account
 	store   *Store
-}
-
-func (r *Role) Account() string {
-	return r.account
 }
 
 func (r *Role) CreateTimesheet(filename, user string, content io.ReadCloser) error {
 	if err := checkTimesheetFilename(filename); err != nil {
 		return err
 	}
-	if user != r.Account() {
+	if user != r.account.Username {
 		return ErrForbidden
 	}
 	filename = path.Join(user, filename)
-	return r.store.WriteFile(r.Account(), filename, content)
+	return r.store.WriteFile(r.account.Username, filename, content)
 }
 
 func (r *Role) ReadTimesheet(w io.Writer, filename, user string) error {
 	// todo Role implementation should not have permissions checks
 	// move to eg. admin
-	if user != r.Account() {
+	if user != r.account.Username {
 		return ErrForbidden
 	}
 	filename = path.Join(user, filename)
