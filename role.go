@@ -22,7 +22,7 @@ func (r *Role) CreateTimesheet(filename, user string, content io.ReadCloser) err
 		return ErrForbidden
 	}
 	filename = path.Join(user, filename)
-	return r.store.WriteFile(filename, content)
+	return r.store.WriteFile(r.Account(), filename, content)
 }
 
 func (r *Role) ReadTimesheet(w io.Writer, filename, user string) error {

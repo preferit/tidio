@@ -30,11 +30,11 @@ func Test_store_fileio(t *testing.T) {
 	filename := "a/b/something.x"
 	content := "body"
 
-	if err := store.WriteFile(filename, aFile(content)); err != nil {
+	if err := store.WriteFile("john", filename, aFile(content)); err != nil {
 		t.Fatal(err)
 	}
 	os.Chmod(path.Join(store.dir, filename), 0400)
-	if err := store.WriteFile(filename, aFile(content)); err == nil {
+	if err := store.WriteFile("john", filename, aFile(content)); err == nil {
 		t.Error("wrote read only file")
 	}
 	var buf bytes.Buffer
@@ -56,8 +56,8 @@ func Test_store_Glob(t *testing.T) {
 	store, cleanup := newTempStore(t)
 	defer cleanup()
 	store.Init()
-	store.WriteFile("john/file1", aFile(""))
-	store.WriteFile("john/file2", aFile(""))
+	store.WriteFile("john", "john/file1", aFile(""))
+	store.WriteFile("eva", "john/file2", aFile(""))
 	files := store.Glob("john", "*")
 	if len(files) != 2 {
 		t.Error("expected 2 files:", files)
