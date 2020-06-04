@@ -13,28 +13,30 @@ type Role struct {
 type Timesheet struct {
 	Filename string
 	Owner    string
-	Content  io.ReadCloser
+	io.ReadCloser
 }
 
-func (r *Role) CreateTimesheet(s *Timesheet) error {
-	if err := checkTimesheetFilename(s.Filename); err != nil {
+func (s *Timesheet) SetStream(stream io.ReadCloser) {
+	s.ReadCloser = stream
+}
+
+func (r *Role) CreateTimesheet(sheet *Timesheet) error {
+	if err := checkTimesheetFilename(sheet.Filename); err != nil {
 		return err
 	}
-	if s.Owner != r.account.Username {
+	if sheet.Owner != r.account.Username {
 		return ErrForbidden
 	}
-	out := path.Join(s.Owner, s.Filename)
-	return r.store.WriteFile(r.account.Username, out, s.Content)
+	out := path.Join(sheet.Owner, sheet.Filename)
+	return r.store.WriteFile(r.account.Username, out, sheet)
 }
 
-func (r *Role) ReadTimesheet(w io.Writer, filename, user string) error {
-	// todo Role implementation should not have permissions checks
-	// move to eg. admin
-	if user != r.account.Username {
+func (r *Role) OpenTimesheet(sheet *Timesheet) error {
+	if sheet.Owner != r.account.Username {
 		return ErrForbidden
 	}
-	filename = path.Join(user, filename)
-	return r.store.ReadFile(w, filename)
+	filename := path.Join(sheet.Owner, sheet.Filename)
+	return r.store.OpenFile(sheet, filename)
 }
 
 func (r *Role) ListTimesheet(user string) []string {

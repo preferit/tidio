@@ -1,7 +1,6 @@
 package tidio
 
 import (
-	"bytes"
 	"io/ioutil"
 	"os"
 	"path"
@@ -37,16 +36,21 @@ func Test_store_fileio(t *testing.T) {
 	if err := store.WriteFile("john", filename, aFile(content)); err == nil {
 		t.Error("wrote read only file")
 	}
-	var buf bytes.Buffer
-	if err := store.ReadFile(&buf, filename); err != nil {
+	var sheet Timesheet
+	if err := store.OpenFile(&sheet, filename); err != nil {
 		t.Error(err)
 	}
-	got := buf.String()
+	body, err := ioutil.ReadAll(&sheet)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sheet.Close()
+	got := string(body)
 	if got != content {
 		t.Error("wrong content:", got)
 	}
 	t.Run("no such file", func(t *testing.T) {
-		if err := store.ReadFile(ioutil.Discard, "no such file"); err == nil {
+		if err := store.OpenFile(&Timesheet{}, "no such file"); err == nil {
 			t.Error("did not fail")
 		}
 	})

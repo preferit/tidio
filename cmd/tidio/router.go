@@ -1,9 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -35,9 +34,9 @@ func writeTimesheets() http.HandlerFunc {
 		filename := vars["filename"]
 		user := vars["user"]
 		s := &tidio.Timesheet{
-			Filename: filename,
-			Owner:    user,
-			Content:  r.Body,
+			Filename:   filename,
+			Owner:      user,
+			ReadCloser: r.Body,
 		}
 		if err := role.CreateTimesheet(s); err != nil {
 			w.WriteHeader(statusOf(err))
@@ -51,15 +50,16 @@ func readTimesheets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		role, _ := r.Context().Value("role").(*tidio.Role)
 		vars := mux.Vars(r)
-		filename := vars["filename"]
-		user := vars["user"]
-		var buf bytes.Buffer
-		if err := role.ReadTimesheet(&buf, filename, user); err != nil {
+		sheet := tidio.Timesheet{
+			Filename: vars["filename"],
+			Owner:    vars["user"],
+		}
+		if err := role.OpenTimesheet(&sheet); err != nil {
 			w.WriteHeader(statusOf(err))
 			return
 		}
-		fmt.Println(buf.String())
-		buf.WriteTo(w)
+		io.Copy(w, sheet)
+		sheet.Close()
 	}
 }
 

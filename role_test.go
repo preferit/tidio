@@ -21,36 +21,38 @@ func Test_role(t *testing.T) {
 	ok, bad := assert().Errors()
 
 	bad(john.CreateTimesheet(&Timesheet{
-		Filename: "xx.txt",
-		Owner:    "john",
-		Content:  aFile("x")},
+		Filename:   "xx.txt",
+		Owner:      "john",
+		ReadCloser: aFile("x")},
 	))
 
 	ok(john.CreateTimesheet(&Timesheet{
-		Filename: "202001.timesheet",
-		Owner:    "john",
-		Content:  aFile("."),
+		Filename:   "202001.timesheet",
+		Owner:      "john",
+		ReadCloser: aFile("."),
 	}))
 
 	bad(john.CreateTimesheet(&Timesheet{
-		Filename: "202001.timesheet",
-		Owner:    "not-user",
-		Content:  aFile("."),
+		Filename:   "202001.timesheet",
+		Owner:      "not-user",
+		ReadCloser: aFile("."),
 	}))
 
 	t.Run("ReadTimesheet", func(t *testing.T) {
 		filename := "199902.timesheet"
 		s := &Timesheet{
-			Filename: filename,
-			Owner:    "john",
-			Content:  aFile("..."),
+			Filename:   filename,
+			Owner:      "john",
+			ReadCloser: aFile("..."),
 		}
 		john.CreateTimesheet(s)
-		err := john.ReadTimesheet(ioutil.Discard, filename, "john")
+		err := john.OpenTimesheet(s)
 		if err != nil {
 			t.Error(err)
 		}
-		err = john.ReadTimesheet(ioutil.Discard, filename, "unknown")
+		err = john.OpenTimesheet(&Timesheet{
+			Filename: filename,
+			Owner:    "unknown"})
 		if err == nil {
 			t.Error("read non existing file")
 		}

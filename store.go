@@ -65,14 +65,9 @@ func (s *Store) WriteFile(account, file string, data io.ReadCloser) error {
 	return err
 }
 
-func (s *Store) ReadFile(w io.Writer, file string) error {
-	filename := path.Join(s.dir, file)
-	fh, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer fh.Close()
-	_, err = io.Copy(w, fh)
+func (s *Store) OpenFile(obj Streamable, filename string) error {
+	fh, err := os.Open(path.Join(s.dir, filename))
+	obj.SetStream(fh)
 	return err
 }
 
@@ -80,4 +75,8 @@ func (s *Store) Glob(user, pattern string) []string {
 	found, err := filepath.Glob(path.Join(s.dir, user, pattern))
 	warn(err)
 	return found
+}
+
+type Streamable interface {
+	SetStream(io.ReadCloser)
 }
