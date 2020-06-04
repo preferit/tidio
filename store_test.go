@@ -5,6 +5,8 @@ import (
 	"os"
 	"path"
 	"testing"
+
+	"github.com/gregoryv/asserter"
 )
 
 func Test_store(t *testing.T) {
@@ -28,32 +30,21 @@ func Test_store_fileio(t *testing.T) {
 	store.Init()
 	filename := "a/b/something.x"
 	content := "body"
+	assert := asserter.New(t)
+	ok, bad := assert().Errors()
 
-	if err := store.WriteFile("john", filename, aFile(content)); err != nil {
-		t.Fatal(err)
-	}
+	ok(store.WriteFile("john", filename, aFile(content)))
 	os.Chmod(path.Join(store.dir, filename), 0400)
-	if err := store.WriteFile("john", filename, aFile(content)); err == nil {
-		t.Error("wrote read only file")
-	}
+	bad(store.WriteFile("john", filename, aFile(content)), "read only")
+
 	var sheet Timesheet
-	if err := store.OpenFile(&sheet, filename); err != nil {
-		t.Error(err)
-	}
+	ok(store.OpenFile(&sheet, filename))
 	body, err := ioutil.ReadAll(&sheet)
-	if err != nil {
-		t.Fatal(err)
-	}
+	ok(err)
 	sheet.Close()
-	got := string(body)
-	if got != content {
-		t.Error("wrong content:", got)
-	}
-	t.Run("no such file", func(t *testing.T) {
-		if err := store.OpenFile(&Timesheet{}, "no such file"); err == nil {
-			t.Error("did not fail")
-		}
-	})
+	assert().Equals(string(body), content)
+
+	bad(store.OpenFile(&Timesheet{}, "no such file"))
 }
 
 func Test_store_Glob(t *testing.T) {

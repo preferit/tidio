@@ -31,6 +31,10 @@ github.com/gregoryv/asserter v0.1.0 h1:p+0pvUOuUCn/rVy7YxafoxfXnYPfVptbExJOrWQy9
 github.com/gregoryv/asserter v0.1.0/go.mod h1:iLD46IKZjjleTkmDikemRaDZQldDrq8uwTnygV/hC/M=
 github.com/gregoryv/asserter v0.2.3-0.20200604193355-15b65c385a23 h1:y0HEJaFY0aH53D6eXxa61d7BC/3v26Bm4E23kvo0mME=
 github.com/gregoryv/asserter v0.2.3-0.20200604193355-15b65c385a23/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
+github.com/gregoryv/asserter v0.2.3-0.20200604203358-210bf9472293 h1:gZbnu5YL2xjpEk0/L4h24fPWKr2uutoLaepTn9BJjKc=
+github.com/gregoryv/asserter v0.2.3-0.20200604203358-210bf9472293/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
+github.com/gregoryv/asserter v0.2.3-0.20200604204219-cc98dbaa395f h1:mo8t8e+1eBn/hDltBObMmPhh+xF4Vx1IjJTKdCYOl6M=
+github.com/gregoryv/asserter v0.2.3-0.20200604204219-cc98dbaa395f/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
 github.com/gregoryv/draw v0.9.0/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
 github.com/gregoryv/ex v0.3.0/go.mod h1:m5suTcbRkA2j4NZogj/DYTFmh4Ff9U29tpRzeiYlx+0=
 github.com/gregoryv/find v0.0.0-20180328085109-1bbc2d70c482/go.mod h1:/xxQlO62bzxhyabf2iKJzGJa+VAJy25spLI/6ICTrxU=
