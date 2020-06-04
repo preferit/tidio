@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [untagged]
+## [0.2.0] 2020-06-04
 
-- /api/timesheets/ require header Authorization with an apikey
-- Added /api/timesheets/{account}/yyyymm.timesheet
+- Protecting apis with apikey in Authorization header
+- /api/timesheets/{account}/yyyymm.timesheet
 
 ## [0.1.0] 2020-06-02
