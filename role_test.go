@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"strings"
 	"testing"
+
+	"github.com/gregoryv/asserter"
 )
 
 func Test_role(t *testing.T) {
@@ -16,18 +18,8 @@ func Test_role(t *testing.T) {
 	}
 
 	t.Run("CreateTimesheet", func(t *testing.T) {
-		ok := func(err error) {
-			t.Helper()
-			if err != nil {
-				t.Error(err)
-			}
-		}
-		bad := func(err error) {
-			t.Helper()
-			if err == nil {
-				t.Error("was ok")
-			}
-		}
+		assert := asserter.New(t)
+		ok, bad := assert().Errors()
 
 		bad(asAdmin.CreateTimesheet(&Timesheet{
 			Filename: "xx.txt",
