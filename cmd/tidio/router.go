@@ -34,7 +34,12 @@ func writeTimesheets() http.HandlerFunc {
 		vars := mux.Vars(r)
 		filename := vars["filename"]
 		user := vars["user"]
-		if err := role.CreateTimesheet(filename, user, r.Body); err != nil {
+		s := &tidio.Timesheet{
+			Filename: filename,
+			Owner:    user,
+			Content:  r.Body,
+		}
+		if err := role.CreateTimesheet(s); err != nil {
 			w.WriteHeader(statusOf(err))
 			return
 		}

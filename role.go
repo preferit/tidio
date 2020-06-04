@@ -10,15 +10,21 @@ type Role struct {
 	store   *Store
 }
 
-func (r *Role) CreateTimesheet(filename, user string, content io.ReadCloser) error {
-	if err := checkTimesheetFilename(filename); err != nil {
+type Timesheet struct {
+	Filename string
+	Owner    string
+	Content  io.ReadCloser
+}
+
+func (r *Role) CreateTimesheet(s *Timesheet) error {
+	if err := checkTimesheetFilename(s.Filename); err != nil {
 		return err
 	}
-	if user != r.account.Username {
+	if s.Owner != r.account.Username {
 		return ErrForbidden
 	}
-	filename = path.Join(user, filename)
-	return r.store.WriteFile(r.account.Username, filename, content)
+	out := path.Join(s.Owner, s.Filename)
+	return r.store.WriteFile(r.account.Username, out, s.Content)
 }
 
 func (r *Role) ReadTimesheet(w io.Writer, filename, user string) error {

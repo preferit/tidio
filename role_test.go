@@ -10,32 +10,57 @@ import (
 func Test_role(t *testing.T) {
 	store, cleanup := newTempStore(t)
 	defer cleanup()
-	role := &Role{
+	asAdmin := &Role{
 		account: NewAccount("john", "admin"),
 		store:   store,
 	}
 
 	t.Run("CreateTimesheet", func(t *testing.T) {
-		format := "xx.txt"
-		if err := role.CreateTimesheet(format, "john", aFile("x")); err == nil {
-			t.Errorf("CreateTimesheet ok with fileformat %q", format)
+		ok := func(err error) {
+			t.Helper()
+			if err != nil {
+				t.Error(err)
+			}
 		}
-		if err := role.CreateTimesheet("202001.timesheet", "john", aFile(".")); err != nil {
-			t.Error("failed to create timesheet", err)
+		bad := func(err error) {
+			t.Helper()
+			if err == nil {
+				t.Error("was ok")
+			}
 		}
-		if err := role.CreateTimesheet("202001.timesheet", "not-user", aFile(".")); err == nil {
-			t.Error("created timesheet for not-user", err)
-		}
+
+		bad(asAdmin.CreateTimesheet(&Timesheet{
+			Filename: "xx.txt",
+			Owner:    "john",
+			Content:  aFile("x"),
+		}))
+
+		ok(asAdmin.CreateTimesheet(&Timesheet{
+			Filename: "202001.timesheet",
+			Owner:    "john",
+			Content:  aFile("."),
+		}))
+
+		bad(asAdmin.CreateTimesheet(&Timesheet{
+			Filename: "202001.timesheet",
+			Owner:    "not-user",
+			Content:  aFile("."),
+		}))
 	})
 
 	t.Run("ReadTimesheet", func(t *testing.T) {
 		filename := "199902.timesheet"
-		role.CreateTimesheet(filename, "john", aFile("..."))
-		err := role.ReadTimesheet(ioutil.Discard, filename, "john")
+		s := &Timesheet{
+			Filename: filename,
+			Owner:    "john",
+			Content:  aFile("..."),
+		}
+		asAdmin.CreateTimesheet(s)
+		err := asAdmin.ReadTimesheet(ioutil.Discard, filename, "john")
 		if err != nil {
 			t.Error(err)
 		}
-		err = role.ReadTimesheet(ioutil.Discard, filename, "unknown")
+		err = asAdmin.ReadTimesheet(ioutil.Discard, filename, "unknown")
 		if err == nil {
 			t.Error("read non existing file")
 		}
@@ -43,7 +68,7 @@ func Test_role(t *testing.T) {
 
 	t.Run("ListTimesheet", func(t *testing.T) {
 		// depends on above tests creating some
-		sheets := role.ListTimesheet("john")
+		sheets := asAdmin.ListTimesheet("john")
 		if len(sheets) == 0 {
 			t.Error("did not found any timesheets")
 		}
