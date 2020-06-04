@@ -15,9 +15,9 @@ import (
 func NewStore(dir string) *Store {
 	ch := make(chan string)
 	store := &Store{
-		Logger:  fox.NewSyncLog(ioutil.Discard),
-		writeOp: ch, // synchronize all write operations
-		dir:     dir,
+		Logger:   fox.NewSyncLog(ioutil.Discard),
+		writeOps: ch, // synchronize all write operations
+		dir:      dir,
 	}
 	go func() {
 		for {
@@ -29,8 +29,8 @@ func NewStore(dir string) *Store {
 
 type Store struct {
 	fox.Logger
-	writeOp chan string
-	dir     string
+	writeOps chan string
+	dir      string
 }
 
 func (s *Store) Commit(msg string) error {
@@ -50,17 +50,24 @@ func (s *Store) Init() error {
 	return exec.Command("git", "-C", s.dir, "init").Run()
 }
 
-func (s *Store) WriteFile(file string, data io.ReadCloser) error {
-	filename := path.Join(s.dir, file)
+func (s *Store) Do(op WriteOp) error {
+	filename := path.Join(s.dir, op.file)
 	os.MkdirAll(path.Dir(filename), 0755)
 	fh, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
 	defer fh.Close()
-	_, err = io.Copy(fh, data)
-	s.writeOp <- fmt.Sprintf("write %s", file)
+	_, err = io.Copy(fh, op.data)
+	s.writeOps <- fmt.Sprintf("%s write %s", op.account, op.file)
+	op.data.Close()
 	return err
+}
+
+type WriteOp struct {
+	account string
+	file    string
+	data    io.ReadCloser
 }
 
 func (s *Store) ReadFile(w io.Writer, file string) error {
