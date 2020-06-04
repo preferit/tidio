@@ -13,6 +13,8 @@ import (
 )
 
 func NewStore(dir string) *Store {
+	// DO NOT buffer this channel or multiple write operations will be
+	// commited together.
 	ch := make(chan string)
 	store := &Store{
 		Logger:   fox.NewSyncLog(ioutil.Discard),
