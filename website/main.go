@@ -65,9 +65,9 @@ Authorization: {key}`),
 ---------
 23  1 Mon 8
     2 Tue 8
-    3 Wed 8
+    3 Wed 8 (3 meeting)
     4 Thu 8
-    5 Fri 6 (-2 flex) Ended work 2 hours early, felt sick.
+    5 Fri 6 Ended work 2 hours early, felt sick.
     6 Sat
     7 Sun
 24  8 Mon 8
@@ -79,7 +79,7 @@ Authorization: {key}`),
    14 Sun
 25 15 Mon 8
    16 Tue 8
-   17 Wed 8:30 (0:30 flex)
+   17 Wed 8:30
    18 Thu 8
    19 Fri 8
    20 Sat
