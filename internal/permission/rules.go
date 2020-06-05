@@ -2,10 +2,10 @@ package permission
 
 import "errors"
 
-func ToRead(uid, gid int, e Resource) error {
+func ToRead(e Resource, a Account) error {
 	switch {
-	case e.UID() == uid && (e.Mode()&UserR == UserR):
-	case e.GID() == gid && (e.Mode()&GroupR == GroupR):
+	case e.UID() == a.UID() && (e.Mode()&UserR == UserR):
+	case a.Member(e.GID()) == nil && (e.Mode()&GroupR == GroupR):
 	case e.Mode()&OtherR == OtherR:
 	default:
 		return ErrDenied
