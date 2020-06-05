@@ -43,4 +43,15 @@ func Test_rules(t *testing.T) {
 		&thing{0, 0, UserRWX},
 		newAccount(0, 0),
 	))
+
+	ok(ToDelete(
+		&thing{0, 0, UserW},
+		&thing{0, 0, UserW},
+		newAccount(0, 0),
+	))
+	bad(ToDelete(
+		&thing{0, 0, UserW},
+		&thing{0, 0, UserR},
+		newAccount(0, 0),
+	))
 }

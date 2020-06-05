@@ -13,6 +13,13 @@ func (c *Rules) ToCreate(parent, e Resource, a Account) error {
 	return nil
 }
 
+func (c *Rules) ToDelete(parent, e Resource, a Account) error {
+	if c.ToWrite(parent, a) != nil || c.ToWrite(e, a) != nil {
+		return ErrDenied
+	}
+	return nil
+}
+
 func (Rules) ToRead(e Resource, a Account) error {
 	switch {
 	case owner(e, a) && (e.Mode()&UserR == UserR):
@@ -48,6 +55,10 @@ func (Rules) ToExec(e Resource, a Account) error {
 
 func ToCreate(parent, e Resource, a Account) error {
 	return DefaultRules.ToCreate(parent, e, a)
+}
+
+func ToDelete(parent, e Resource, a Account) error {
+	return DefaultRules.ToDelete(parent, e, a)
 }
 
 func ToRead(e Resource, a Account) error {
