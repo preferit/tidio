@@ -6,6 +6,12 @@ var DefaultRules = &Rules{}
 
 type Rules struct{}
 
+type Resource interface {
+	UID() int
+	GID() int
+	Mode() PermMode
+}
+
 func (c *Rules) ToCreate(parent, e Resource, a Account) error {
 	if c.ToWrite(parent, a) != nil || !owner(e, a) {
 		return ErrDenied
