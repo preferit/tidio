@@ -2,7 +2,23 @@ package permission
 
 import "errors"
 
+var DefaultRules = &Rules{}
+
 func ToRead(e Resource, a Account) error {
+	return DefaultRules.ToRead(e, a)
+}
+
+func ToWrite(e Resource, a Account) error {
+	return DefaultRules.ToWrite(e, a)
+}
+
+func ToExec(e Resource, a Account) error {
+	return DefaultRules.ToExec(e, a)
+}
+
+type Rules struct{}
+
+func (*Rules) ToRead(e Resource, a Account) error {
 	switch {
 	case e.UID() == a.UID() && (e.Mode()&UserR == UserR):
 	case a.Member(e.GID()) == nil && (e.Mode()&GroupR == GroupR):
@@ -13,7 +29,7 @@ func ToRead(e Resource, a Account) error {
 	return nil
 }
 
-func ToWrite(e Resource, a Account) error {
+func (*Rules) ToWrite(e Resource, a Account) error {
 	switch {
 	case e.UID() == a.UID() && (e.Mode()&UserW == UserW):
 	case a.Member(e.GID()) == nil && (e.Mode()&GroupW == GroupW):
@@ -24,7 +40,7 @@ func ToWrite(e Resource, a Account) error {
 	return nil
 }
 
-func ToExec(e Resource, a Account) error {
+func (*Rules) ToExec(e Resource, a Account) error {
 	switch {
 	case e.UID() == a.UID() && (e.Mode()&UserX == UserX):
 	case a.Member(e.GID()) == nil && (e.Mode()&GroupX == GroupX):
