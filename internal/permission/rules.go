@@ -13,4 +13,15 @@ func ToRead(uid, gid int, e Resource) error {
 	return nil
 }
 
+func ToWrite(uid, gid int, e Resource) error {
+	switch {
+	case e.UID() == uid && (e.Mode()&UserW == UserW):
+	case e.GID() == gid && (e.Mode()&GroupW == GroupW):
+	case e.Mode()&OtherW == OtherW:
+	default:
+		return ErrDenied
+	}
+	return nil
+}
+
 var ErrDenied = errors.New("permission denied")
