@@ -18,6 +18,13 @@ func Test_account(t *testing.T) {
 	bad(account.Member(9))
 }
 
+func newAccount(uid int, groups ...int) *mockAccount {
+	return &mockAccount{
+		uid:    uid,
+		groups: groups,
+	}
+}
+
 type mockAccount struct {
 	uid    int
 	groups []int
