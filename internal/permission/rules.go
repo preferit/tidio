@@ -24,10 +24,10 @@ func ToWrite(e Resource, a Account) error {
 	return nil
 }
 
-func ToExec(uid, gid int, e Resource) error {
+func ToExec(e Resource, a Account) error {
 	switch {
-	case e.UID() == uid && (e.Mode()&UserX == UserX):
-	case e.GID() == gid && (e.Mode()&GroupX == GroupX):
+	case e.UID() == a.UID() && (e.Mode()&UserX == UserX):
+	case a.Member(e.GID()) == nil && (e.Mode()&GroupX == GroupX):
 	case e.Mode()&OtherX == OtherX:
 	default:
 		return ErrDenied

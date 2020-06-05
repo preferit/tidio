@@ -22,9 +22,9 @@ func Test_rules(t *testing.T) {
 	bad(ToWrite(&thing{0, 0, NoMode}, &mockAccount{0, []int{0}}))
 	bad(ToWrite(&thing{0, 0, UserRWX}, &mockAccount{1, []int{0}}))
 
-	ok(ToExec(0, 0, &thing{0, 0, UserX}))
-	ok(ToExec(0, 0, &thing{0, 0, GroupX}))
-	ok(ToExec(1, 1, &thing{0, 0, OtherX}))
-	bad(ToExec(0, 0, &thing{0, 0, NoMode}))
-	bad(ToExec(1, 0, &thing{0, 0, UserRWX}))
+	ok(ToExec(&thing{0, 0, UserX}, &mockAccount{0, []int{0}}))
+	ok(ToExec(&thing{0, 0, GroupX}, &mockAccount{0, []int{0}}))
+	ok(ToExec(&thing{0, 0, OtherX}, &mockAccount{1, []int{1}}))
+	bad(ToExec(&thing{0, 0, NoMode}, &mockAccount{0, []int{0}}))
+	bad(ToExec(&thing{0, 0, UserRWX}, &mockAccount{1, []int{0}}))
 }
