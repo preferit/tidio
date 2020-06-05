@@ -13,10 +13,10 @@ func ToRead(e Resource, a Account) error {
 	return nil
 }
 
-func ToWrite(uid, gid int, e Resource) error {
+func ToWrite(e Resource, a Account) error {
 	switch {
-	case e.UID() == uid && (e.Mode()&UserW == UserW):
-	case e.GID() == gid && (e.Mode()&GroupW == GroupW):
+	case e.UID() == a.UID() && (e.Mode()&UserW == UserW):
+	case a.Member(e.GID()) == nil && (e.Mode()&GroupW == GroupW):
 	case e.Mode()&OtherW == OtherW:
 	default:
 		return ErrDenied

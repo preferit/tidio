@@ -16,11 +16,11 @@ func Test_rules(t *testing.T) {
 	bad(ToRead(&thing{0, 0, NoMode}, &mockAccount{0, []int{0}}))
 	bad(ToRead(&thing{0, 0, UserRWX}, &mockAccount{1, []int{0}}))
 
-	ok(ToWrite(0, 0, &thing{0, 0, UserW}))
-	ok(ToWrite(0, 0, &thing{0, 0, GroupW}))
-	ok(ToWrite(1, 1, &thing{0, 0, OtherW}))
-	bad(ToWrite(0, 0, &thing{0, 0, NoMode}))
-	bad(ToWrite(1, 0, &thing{0, 0, UserRWX}))
+	ok(ToWrite(&thing{0, 0, UserW}, &mockAccount{0, []int{0}}))
+	ok(ToWrite(&thing{0, 0, GroupW}, &mockAccount{0, []int{0}}))
+	ok(ToWrite(&thing{0, 0, OtherW}, &mockAccount{1, []int{1}}))
+	bad(ToWrite(&thing{0, 0, NoMode}, &mockAccount{0, []int{0}}))
+	bad(ToWrite(&thing{0, 0, UserRWX}, &mockAccount{1, []int{0}}))
 
 	ok(ToExec(0, 0, &thing{0, 0, UserX}))
 	ok(ToExec(0, 0, &thing{0, 0, GroupX}))
