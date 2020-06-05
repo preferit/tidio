@@ -1,4 +1,4 @@
-package perm
+package permission
 
 type Resource interface {
 	UID() int

@@ -1,4 +1,4 @@
-package perm
+package permission
 
 type Operation uint8
 

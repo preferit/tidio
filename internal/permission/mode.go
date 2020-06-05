@@ -1,7 +1,7 @@
 // Package perm provides permission control mechanism similar to
 // unix filesystem.
 
-package perm
+package permission
 
 import "strings"
 
