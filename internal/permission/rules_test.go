@@ -54,4 +54,15 @@ func Test_rules(t *testing.T) {
 		&thing{0, 0, UserR},
 		newAccount(0, 0),
 	))
+
+	ok(ToUpdate(
+		&thing{0, 0, UserX},
+		&thing{0, 0, UserW},
+		newAccount(0, 0),
+	))
+	bad(ToUpdate(
+		&thing{0, 0, UserR},
+		&thing{0, 0, UserW},
+		newAccount(0, 0),
+	))
 }

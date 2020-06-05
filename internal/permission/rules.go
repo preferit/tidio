@@ -13,6 +13,13 @@ func (c *Rules) ToCreate(parent, e Resource, a Account) error {
 	return nil
 }
 
+func (c *Rules) ToUpdate(parent, e Resource, a Account) error {
+	if c.ToExec(parent, a) != nil || c.ToWrite(e, a) != nil {
+		return ErrDenied
+	}
+	return nil
+}
+
 func (c *Rules) ToDelete(parent, e Resource, a Account) error {
 	if c.ToWrite(parent, a) != nil || c.ToWrite(e, a) != nil {
 		return ErrDenied
@@ -59,6 +66,10 @@ func ToCreate(parent, e Resource, a Account) error {
 
 func ToDelete(parent, e Resource, a Account) error {
 	return DefaultRules.ToDelete(parent, e, a)
+}
+
+func ToUpdate(parent, e Resource, a Account) error {
+	return DefaultRules.ToUpdate(parent, e, a)
 }
 
 func ToRead(e Resource, a Account) error {
