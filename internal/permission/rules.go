@@ -6,28 +6,28 @@ var DefaultRules = &Rules{}
 
 type Rules struct{}
 
-func (c *Rules) ToCreate(parent, e Resource, a Account) error {
+func (c *Rules) ToCreate(parent, e Secured, a Account) error {
 	if c.ToWrite(parent, a) != nil || !owner(e, a) {
 		return ErrDenied
 	}
 	return nil
 }
 
-func (c *Rules) ToUpdate(parent, e Resource, a Account) error {
+func (c *Rules) ToUpdate(parent, e Secured, a Account) error {
 	if c.ToExec(parent, a) != nil || c.ToWrite(e, a) != nil {
 		return ErrDenied
 	}
 	return nil
 }
 
-func (c *Rules) ToDelete(parent, e Resource, a Account) error {
+func (c *Rules) ToDelete(parent, e Secured, a Account) error {
 	if c.ToWrite(parent, a) != nil || c.ToWrite(e, a) != nil {
 		return ErrDenied
 	}
 	return nil
 }
 
-func (Rules) ToRead(e Resource, a Account) error {
+func (Rules) ToRead(e Secured, a Account) error {
 	o := e.SecInfo()
 	switch {
 	case owner(e, a) && (o.mode&UserR == UserR):
@@ -39,7 +39,7 @@ func (Rules) ToRead(e Resource, a Account) error {
 	return nil
 }
 
-func (Rules) ToWrite(e Resource, a Account) error {
+func (Rules) ToWrite(e Secured, a Account) error {
 	o := e.SecInfo()
 	switch {
 	case owner(e, a) && (o.mode&UserW == UserW):
@@ -51,7 +51,7 @@ func (Rules) ToWrite(e Resource, a Account) error {
 	return nil
 }
 
-func (Rules) ToExec(e Resource, a Account) error {
+func (Rules) ToExec(e Secured, a Account) error {
 	o := e.SecInfo()
 	switch {
 	case owner(e, a) && (o.mode&UserX == UserX):
@@ -63,31 +63,31 @@ func (Rules) ToExec(e Resource, a Account) error {
 	return nil
 }
 
-func ToCreate(parent, e Resource, a Account) error {
+func ToCreate(parent, e Secured, a Account) error {
 	return DefaultRules.ToCreate(parent, e, a)
 }
 
-func ToDelete(parent, e Resource, a Account) error {
+func ToDelete(parent, e Secured, a Account) error {
 	return DefaultRules.ToDelete(parent, e, a)
 }
 
-func ToUpdate(parent, e Resource, a Account) error {
+func ToUpdate(parent, e Secured, a Account) error {
 	return DefaultRules.ToUpdate(parent, e, a)
 }
 
-func ToRead(e Resource, a Account) error {
+func ToRead(e Secured, a Account) error {
 	return DefaultRules.ToRead(e, a)
 }
 
-func ToWrite(e Resource, a Account) error {
+func ToWrite(e Secured, a Account) error {
 	return DefaultRules.ToWrite(e, a)
 }
 
-func ToExec(e Resource, a Account) error {
+func ToExec(e Secured, a Account) error {
 	return DefaultRules.ToExec(e, a)
 }
 
-func owner(e Resource, a Account) bool {
+func owner(e Secured, a Account) bool {
 	return a.UID() == e.SecInfo().uid
 }
 

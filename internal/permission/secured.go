@@ -1,5 +1,5 @@
 package permission
 
-type Resource interface {
+type Secured interface {
 	SecInfo() SecInfo
 }
