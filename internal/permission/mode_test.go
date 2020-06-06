@@ -2,7 +2,7 @@ package permission
 
 import "fmt"
 
-func Example() {
+func Example_modes() {
 	fmt.Println(NoMode)
 	fmt.Println(OtherX)
 	fmt.Println(UserR | UserW | GroupR | OtherR)
