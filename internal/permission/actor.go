@@ -2,9 +2,9 @@ package permission
 
 import "errors"
 
-func NewActor(uid uint, groups ...uint) *Actor {
+func NewActor(UID uint, groups ...uint) *Actor {
 	return &Actor{
-		UID:    uid,
+		UID:    UID,
 		Groups: groups,
 	}
 }

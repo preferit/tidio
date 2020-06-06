@@ -28,11 +28,11 @@ func (c *Rules) ToDelete(parent, e Secured, a *Actor) error {
 }
 
 func (Rules) ToRead(e Secured, a *Actor) error {
-	o := e.SecInfo()
+	o := e.PermSet()
 	switch {
-	case owner(e, a) && (o.mode&UserR == UserR):
-	case member(e, a) && (o.mode&GroupR == GroupR):
-	case o.mode&OtherR == OtherR:
+	case owner(e, a) && (o.Mode&UserR == UserR):
+	case member(e, a) && (o.Mode&GroupR == GroupR):
+	case o.Mode&OtherR == OtherR:
 	default:
 		return ErrDenied
 	}
@@ -40,11 +40,11 @@ func (Rules) ToRead(e Secured, a *Actor) error {
 }
 
 func (Rules) ToWrite(e Secured, a *Actor) error {
-	o := e.SecInfo()
+	o := e.PermSet()
 	switch {
-	case owner(e, a) && (o.mode&UserW == UserW):
-	case member(e, a) && (o.mode&GroupW == GroupW):
-	case o.mode&OtherW == OtherW:
+	case owner(e, a) && (o.Mode&UserW == UserW):
+	case member(e, a) && (o.Mode&GroupW == GroupW):
+	case o.Mode&OtherW == OtherW:
 	default:
 		return ErrDenied
 	}
@@ -52,11 +52,11 @@ func (Rules) ToWrite(e Secured, a *Actor) error {
 }
 
 func (Rules) ToExec(e Secured, a *Actor) error {
-	o := e.SecInfo()
+	o := e.PermSet()
 	switch {
-	case owner(e, a) && (o.mode&UserX == UserX):
-	case member(e, a) && (o.mode&GroupX == GroupX):
-	case o.mode&OtherX == OtherX:
+	case owner(e, a) && (o.Mode&UserX == UserX):
+	case member(e, a) && (o.Mode&GroupX == GroupX):
+	case o.Mode&OtherX == OtherX:
 	default:
 		return ErrDenied
 	}
@@ -88,12 +88,12 @@ func ToExec(e Secured, a *Actor) error {
 }
 
 func owner(e Secured, a *Actor) bool {
-	return a.UID == e.SecInfo().uid
+	return a.UID == e.PermSet().UID
 }
 
 func member(e Secured, a *Actor) bool {
-	for _, gid := range a.Groups {
-		if gid == e.SecInfo().gid {
+	for _, GID := range a.Groups {
+		if GID == e.PermSet().GID {
 			return true
 		}
 	}

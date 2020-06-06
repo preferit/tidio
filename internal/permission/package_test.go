@@ -14,10 +14,10 @@ type Entry struct {
 
 func Example_control_access() {
 	blog := &Blog{
-		Secured: &permission.SecInfo{},
+		Secured: &permission.Set{},
 	}
 	entry := &Entry{
-		Secured: &permission.SecInfo{},
+		Secured: &permission.Set{},
 	}
 
 	actor := permission.NewActor(0, 0)

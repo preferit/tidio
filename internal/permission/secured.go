@@ -1,5 +1,5 @@
 package permission
 
 type Secured interface {
-	SecInfo() SecInfo
+	PermSet() Set
 }

@@ -1,9 +1,9 @@
 package permission
 
-type SecInfo struct {
-	uid, gid uint
-	mode     PermMode
+type Set struct {
+	UID, GID uint
+	Mode     PermMode
 }
 
 // SecInfo returns itself
-func (g *SecInfo) SecInfo() SecInfo { return *g }
+func (g *Set) PermSet() Set { return *g }
