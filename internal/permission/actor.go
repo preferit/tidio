@@ -2,7 +2,7 @@ package permission
 
 import "errors"
 
-func NewActor(uid int, groups ...int) *Actor {
+func NewActor(uid uint, groups ...uint) *Actor {
 	return &Actor{
 		UID:    uid,
 		Groups: groups,
@@ -10,8 +10,8 @@ func NewActor(uid int, groups ...int) *Actor {
 }
 
 type Actor struct {
-	UID    int
-	Groups []int
+	UID    uint
+	Groups []uint
 }
 
 var ErrMembership = errors.New("missing membership")

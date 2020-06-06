@@ -1,7 +1,7 @@
 package permission
 
 type SecInfo struct {
-	uid, gid int
+	uid, gid uint
 	mode     PermMode
 }
 
