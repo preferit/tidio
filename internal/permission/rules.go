@@ -6,12 +6,6 @@ var DefaultRules = &Rules{}
 
 type Rules struct{}
 
-type Resource interface {
-	UID() int
-	GID() int
-	Mode() PermMode
-}
-
 func (c *Rules) ToCreate(parent, e Resource, a Account) error {
 	if c.ToWrite(parent, a) != nil || !owner(e, a) {
 		return ErrDenied
@@ -34,10 +28,11 @@ func (c *Rules) ToDelete(parent, e Resource, a Account) error {
 }
 
 func (Rules) ToRead(e Resource, a Account) error {
+	o := e.SecInfo()
 	switch {
-	case owner(e, a) && (e.Mode()&UserR == UserR):
-	case a.Member(e.GID()) == nil && (e.Mode()&GroupR == GroupR):
-	case e.Mode()&OtherR == OtherR:
+	case owner(e, a) && (o.mode&UserR == UserR):
+	case a.Member(o.gid) == nil && (o.mode&GroupR == GroupR):
+	case o.mode&OtherR == OtherR:
 	default:
 		return ErrDenied
 	}
@@ -45,10 +40,11 @@ func (Rules) ToRead(e Resource, a Account) error {
 }
 
 func (Rules) ToWrite(e Resource, a Account) error {
+	o := e.SecInfo()
 	switch {
-	case owner(e, a) && (e.Mode()&UserW == UserW):
-	case a.Member(e.GID()) == nil && (e.Mode()&GroupW == GroupW):
-	case e.Mode()&OtherW == OtherW:
+	case owner(e, a) && (o.mode&UserW == UserW):
+	case a.Member(o.gid) == nil && (o.mode&GroupW == GroupW):
+	case o.mode&OtherW == OtherW:
 	default:
 		return ErrDenied
 	}
@@ -56,10 +52,11 @@ func (Rules) ToWrite(e Resource, a Account) error {
 }
 
 func (Rules) ToExec(e Resource, a Account) error {
+	o := e.SecInfo()
 	switch {
-	case owner(e, a) && (e.Mode()&UserX == UserX):
-	case a.Member(e.GID()) == nil && (e.Mode()&GroupX == GroupX):
-	case e.Mode()&OtherX == OtherX:
+	case owner(e, a) && (o.mode&UserX == UserX):
+	case a.Member(o.gid) == nil && (o.mode&GroupX == GroupX):
+	case o.mode&OtherX == OtherX:
 	default:
 		return ErrDenied
 	}
@@ -91,7 +88,7 @@ func ToExec(e Resource, a Account) error {
 }
 
 func owner(e Resource, a Account) bool {
-	return a.UID() == e.UID()
+	return a.UID() == e.SecInfo().uid
 }
 
 var ErrDenied = errors.New("permission denied")
