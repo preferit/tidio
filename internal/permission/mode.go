@@ -6,7 +6,7 @@ package permission
 import "strings"
 
 // PermMode represents a bit in a rwxrwxrwx permission
-type PermMode int
+type PermMode uint16
 
 // User: rwx Group: rwx Other: rwx
 const (
