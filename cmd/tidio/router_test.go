@@ -15,9 +15,7 @@ func Test_router(t *testing.T) {
 		"KEY": tidio.NewAccount("john", "admin"),
 	}
 	headers := http.Header{}
-	store, cleanup := newTempStore(t)
-	defer cleanup()
-	service := tidio.NewService(store, apikeys)
+	service := tidio.NewService(apikeys)
 	router := NewRouter(service)
 
 	exp := assert().ResponseFrom(router)

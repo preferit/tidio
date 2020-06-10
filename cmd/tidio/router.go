@@ -29,7 +29,6 @@ func NewRouter(service *tidio.Service) *mux.Router {
 
 func writeTimesheets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		role, _ := r.Context().Value("role").(*tidio.Role)
 		vars := mux.Vars(r)
 		filename := vars["filename"]
 		user := vars["user"]
@@ -38,6 +37,7 @@ func writeTimesheets() http.HandlerFunc {
 			Owner:      user,
 			ReadCloser: r.Body,
 		}
+		role, _ := r.Context().Value("role").(*tidio.Role)
 		if err := role.CreateTimesheet(s); err != nil {
 			w.WriteHeader(statusOf(err))
 			return

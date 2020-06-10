@@ -1,13 +1,15 @@
 package tidio
 
 import (
+	"fmt"
 	"io"
-	"path"
+	"io/ioutil"
+	"strings"
 )
 
 type Role struct {
 	account *Account
-	store   *Store
+	data    *Data
 }
 
 type Timesheet struct {
@@ -17,25 +19,37 @@ type Timesheet struct {
 	Content string
 }
 
-func (s *Timesheet) SetStream(stream io.ReadCloser) {
-	s.ReadCloser = stream
+func (s *Timesheet) Equal(b *Timesheet) bool {
+	return s.Filename == b.Filename
 }
 
 func (r *Role) CreateTimesheet(sheet *Timesheet) error {
 	if err := checkTimesheetFilename(sheet.Filename); err != nil {
 		return err
 	}
-	r.store.Add(sheet)
-	out := path.Join(sheet.Owner, sheet.Filename)
-	return r.store.WriteFile(r.account.Username, out, sheet)
+	var sb strings.Builder
+	io.Copy(&sb, sheet)
+	sheet.Content = sb.String()
+	return r.data.Add(sheet)
 }
 
 func (r *Role) OpenTimesheet(sheet *Timesheet) error {
-
-	filename := path.Join(sheet.Owner, sheet.Filename)
-	return r.store.OpenFile(sheet, filename)
+	for _, s := range r.data.Timesheets {
+		if s.Equal(sheet) {
+			*sheet = *s
+			sheet.ReadCloser = ioutil.NopCloser(strings.NewReader(sheet.Content))
+			return nil
+		}
+	}
+	return fmt.Errorf("not found")
 }
 
 func (r *Role) ListTimesheet(user string) []string {
-	return r.store.Glob(user, "*.timesheet")
+	res := make([]string, 0)
+	for _, s := range r.data.Timesheets {
+		if s.Owner == user {
+			res = append(res, s.Filename)
+		}
+	}
+	return res
 }

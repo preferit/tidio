@@ -68,11 +68,11 @@ func Test_cli(t *testing.T) {
 	})
 }
 
-func newTempStore(t *testing.T) (*tidio.Store, func()) {
+func newTempDir(t *testing.T) (string, func()) {
 	t.Helper()
 	dir, err := ioutil.TempDir("", "tidiocmd")
 	if err != nil {
 		t.Fatal(err)
 	}
-	return tidio.NewStore(dir), func() { os.RemoveAll(dir) }
+	return dir, func() { os.RemoveAll(dir) }
 }

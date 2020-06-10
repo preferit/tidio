@@ -1,15 +1,19 @@
 package tidio
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/gregoryv/box"
+)
 
 // NewService returns a service with preconfigured options.
 // Options may be *Store or APIKeys
 func NewService(options ...interface{}) *Service {
-	service := &Service{}
+	service := &Service{
+		data: &Data{},
+	}
 	for _, opt := range options {
 		switch opt := opt.(type) {
-		case *Store:
-			service.store = opt
 		case APIKeys:
 			service.apikeys = opt
 		default:
@@ -20,8 +24,19 @@ func NewService(options ...interface{}) *Service {
 }
 
 type Service struct {
-	store   *Store
+	datafile string // where data is saved
+	data     *Data
+
 	apikeys APIKeys
+}
+
+func (s *Service) LoadData(filename string) error {
+	s.datafile = filename
+	return s.data.Load(&box.Store{}, filename)
+}
+
+func (s *Service) SaveData() error {
+	return s.data.Save(&box.Store{}, s.datafile)
 }
 
 type APIKeys map[string]*Account
@@ -36,6 +51,6 @@ func (s *Service) IsAuthenticated(key string) (*Role, bool) {
 	}
 	return &Role{
 		account: account,
-		store:   s.store,
+		data:    s.data,
 	}, true
 }

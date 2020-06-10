@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path"
 
 	"github.com/gregoryv/stamp"
 	"github.com/preferit/tidio"
@@ -51,13 +52,10 @@ func (c *cli) run() error {
 		return err
 	}
 	fh.Close()
-	// use store
+
 	os.MkdirAll(c.storeDir, 0755)
-	store := tidio.NewStore(c.storeDir)
-	if !store.IsInitiated() {
-		store.Init()
-	}
-	service := tidio.NewService(store, apikeys)
+	service := tidio.NewService(apikeys)
+	service.LoadData(path.Join(c.storeDir, "data.gob"))
 	router := NewRouter(service)
 	return c.starter(c.bind, router)
 }

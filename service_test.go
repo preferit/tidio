@@ -1,15 +1,26 @@
 package tidio
 
 import (
+	"io/ioutil"
+	"os"
+	"path"
 	"testing"
+
+	"github.com/gregoryv/asserter"
 )
 
 func Test_service(t *testing.T) {
-	service, cleanup := newTestService(t)
+	var (
+		assert       = asserter.New(t)
+		ok, bad      = assert().Errors()
+		service      = newTestService(t)
+		dir, cleanup = newTempDir(t)
+	)
 	defer cleanup()
-	if service == nil {
-		t.Fail()
-	}
+
+	bad(service.LoadData(path.Join(dir, "data.gob")))
+	ok(service.SaveData())
+
 	if _, ok := service.IsAuthenticated("KEY"); !ok {
 		t.Error("KEY is in apikeys")
 	}
@@ -21,19 +32,21 @@ func Test_service(t *testing.T) {
 	}
 }
 
-func newTestService(t *testing.T) (*Service, func()) {
-	store, rmstore := newTempStore(t)
-	if err := store.Init(); err != nil {
-		t.Fatal(err)
-	}
+func newTestService(t *testing.T) *Service {
 	apikeys := APIKeys{
 		"KEY": NewAccount("john", "admin"),
 	}
-	service := NewService(apikeys, store)
-	cleanup := func() {
-		rmstore()
+	service := NewService(apikeys)
+	return service
+}
+
+func newTempDir(t *testing.T) (string, func()) {
+	t.Helper()
+	dir, err := ioutil.TempDir("", "tidioservice")
+	if err != nil {
+		t.Fatal(err)
 	}
-	return service, cleanup
+	return dir, func() { os.RemoveAll(dir) }
 }
 
 func Test_service_options(t *testing.T) {
