@@ -37,7 +37,7 @@ func Test_router(t *testing.T) {
 	exp.StatusCode(404, "GET", "/api/timesheets/", headers)
 	exp.StatusCode(204, "POST", "/api/timesheets/john/202001.timesheet",
 		strings.NewReader("some content"), headers)
-	exp.StatusCode(403, "POST", "/api/timesheets/eva/199601.timesheet",
+	exp.StatusCode(204, "POST", "/api/timesheets/eva/199601.timesheet",
 		strings.NewReader("body"), headers)
 	exp.StatusCode(400, "POST", "/api/timesheets/john/202001xtimesheet",
 		strings.NewReader("body"), headers)

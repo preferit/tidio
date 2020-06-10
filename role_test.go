@@ -32,12 +32,6 @@ func Test_role(t *testing.T) {
 		ReadCloser: aFile("."),
 	}))
 
-	bad(john.CreateTimesheet(&Timesheet{
-		Filename:   "202001.timesheet",
-		Owner:      "not-user",
-		ReadCloser: aFile("."),
-	}))
-
 	t.Run("ReadTimesheet", func(t *testing.T) {
 		filename := "199902.timesheet"
 		s := &Timesheet{

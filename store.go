@@ -31,8 +31,9 @@ func NewStore(dir string) *Store {
 
 type Store struct {
 	fox.Logger
-	writeOps chan string
-	dir      string
+	writeOps   chan string
+	dir        string
+	Timesheets []*Timesheet
 }
 
 func (s *Store) Commit(msg string) error {
@@ -50,6 +51,14 @@ func (s *Store) IsInitiated() bool {
 
 func (s *Store) Init() error {
 	return exec.Command("git", "-C", s.dir, "init").Run()
+}
+
+func (s *Store) Add(e interface{}) error {
+	switch e := e.(type) {
+	case *Timesheet:
+		s.Timesheets = append(s.Timesheets, e)
+	}
+	return nil
 }
 
 func (s *Store) WriteFile(account, file string, data io.ReadCloser) error {

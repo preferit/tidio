@@ -14,6 +14,7 @@ type Timesheet struct {
 	Filename string
 	Owner    string
 	io.ReadCloser
+	Content string
 }
 
 func (s *Timesheet) SetStream(stream io.ReadCloser) {
@@ -24,17 +25,13 @@ func (r *Role) CreateTimesheet(sheet *Timesheet) error {
 	if err := checkTimesheetFilename(sheet.Filename); err != nil {
 		return err
 	}
-	if sheet.Owner != r.account.Username {
-		return ErrForbidden
-	}
+	r.store.Add(sheet)
 	out := path.Join(sheet.Owner, sheet.Filename)
 	return r.store.WriteFile(r.account.Username, out, sheet)
 }
 
 func (r *Role) OpenTimesheet(sheet *Timesheet) error {
-	if sheet.Owner != r.account.Username {
-		return ErrForbidden
-	}
+
 	filename := path.Join(sheet.Owner, sheet.Filename)
 	return r.store.OpenFile(sheet, filename)
 }
