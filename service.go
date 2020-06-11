@@ -10,7 +10,7 @@ import (
 // Options may be *Store or APIKeys
 func NewService(options ...interface{}) *Service {
 	service := &Service{
-		data: &Data{},
+		data: NewData(),
 	}
 	for _, opt := range options {
 		switch opt := opt.(type) {

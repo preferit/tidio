@@ -2,8 +2,16 @@ package tidio
 
 import "github.com/gregoryv/box"
 
+func NewData() *Data {
+	return &Data{
+		Timesheets: make([]*Timesheet, 0),
+		Accounts:   make([]*Account, 0),
+	}
+}
+
 type Data struct {
 	Timesheets []*Timesheet
+	Accounts   []*Account
 }
 
 func (d *Data) Add(entity interface{}) error {
