@@ -18,8 +18,8 @@ func Test_service(t *testing.T) {
 	)
 	defer cleanup()
 
-	bad(service.LoadData(path.Join(dir, "data.gob")))
-	ok(service.SaveData())
+	bad(service.LoadState(path.Join(dir, "data.gob")))
+	ok(service.SaveState())
 
 	if _, ok := service.IsAuthenticated("KEY"); !ok {
 		t.Error("KEY is in apikeys")

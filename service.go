@@ -30,12 +30,12 @@ type Service struct {
 	apikeys APIKeys
 }
 
-func (s *Service) LoadData(filename string) error {
+func (s *Service) LoadState(filename string) error {
 	s.datafile = filename
 	return s.data.Load(&box.Store{}, filename)
 }
 
-func (s *Service) SaveData() error {
+func (s *Service) SaveState() error {
 	return s.data.Save(&box.Store{}, s.datafile)
 }
 
