@@ -56,6 +56,7 @@ func (c *cli) run() error {
 	os.MkdirAll(c.storeDir, 0755)
 	service := tidio.NewService(apikeys)
 	service.LoadState(path.Join(c.storeDir, "data.gob"))
+	service.SaveState() // update
 	router := NewRouter(service)
 	return c.starter(c.bind, router)
 }
