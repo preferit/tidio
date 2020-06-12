@@ -12,7 +12,7 @@ import (
 func Test_role(t *testing.T) {
 	john := &Role{
 		account: NewAccount("john", "admin"),
-		state:   &State{},
+		sheets:  &MemSheets{},
 	}
 
 	assert := asserter.New(t)
@@ -41,8 +41,8 @@ func Test_role(t *testing.T) {
 	}))
 	t.Run("ListTimesheet", func(t *testing.T) {
 		// depends on above tests creating some
-		sheets := john.ListTimesheet("john")
-		if len(sheets) == 0 {
+		Sheets := john.ListTimesheet("john")
+		if len(Sheets) == 0 {
 			t.Error("did not found any timesheets")
 		}
 	})

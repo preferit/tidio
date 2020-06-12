@@ -9,18 +9,7 @@ import (
 
 type Role struct {
 	account *Account
-	state   *State
-}
-
-type Timesheet struct {
-	Filename string
-	Owner    string
-	io.ReadCloser
-	Content string
-}
-
-func (s *Timesheet) Equal(b *Timesheet) bool {
-	return s.Filename == b.Filename
+	sheets  *MemSheets
 }
 
 func (r *Role) CreateTimesheet(sheet *Timesheet) error {
@@ -30,11 +19,11 @@ func (r *Role) CreateTimesheet(sheet *Timesheet) error {
 	var sb strings.Builder
 	io.Copy(&sb, sheet)
 	sheet.Content = sb.String()
-	return r.state.Add(sheet)
+	return r.sheets.AddTimesheet(sheet)
 }
 
 func (r *Role) OpenTimesheet(sheet *Timesheet) error {
-	for _, s := range r.state.Timesheets {
+	for _, s := range r.sheets.Sheets {
 		if s.Equal(sheet) {
 			*sheet = *s
 			sheet.ReadCloser = ioutil.NopCloser(strings.NewReader(sheet.Content))
@@ -46,7 +35,7 @@ func (r *Role) OpenTimesheet(sheet *Timesheet) error {
 
 func (r *Role) ListTimesheet(user string) []string {
 	res := make([]string, 0)
-	for _, s := range r.state.Timesheets {
+	for _, s := range r.sheets.Sheets {
 		if s.Owner == user {
 			res = append(res, s.Filename)
 		}

@@ -1,32 +1,44 @@
 package tidio
 
-import "github.com/gregoryv/box"
+import (
+	"io"
 
-func NewState() *State {
-	return &State{
-		Timesheets: make([]*Timesheet, 0),
-		Accounts:   make([]*Account, 0),
-	}
+	"github.com/gregoryv/box"
+)
+
+type Timesheet struct {
+	Filename string
+	Owner    string
+	io.ReadCloser
+	Content string
 }
 
-type State struct {
-	Timesheets []*Timesheet
-	Accounts   []*Account
+func (s *Timesheet) Equal(b *Timesheet) bool {
+	return s.Filename == b.Filename
 }
 
-func (d *State) Add(entity interface{}) error {
-	switch entity := entity.(type) {
-	case *Timesheet:
-		d.Timesheets = append(d.Timesheets, entity)
-	}
+// ----------------------------------------
+
+type MemSheets struct {
+	Sheets []*Timesheet
+}
+
+func (m MemSheets) New() *MemSheets {
+	e := &m
+	e.Sheets = make([]*Timesheet, 0)
+	return e
+}
+
+func (m *MemSheets) AddTimesheet(s *Timesheet) error {
+	m.Sheets = append(m.Sheets, s)
 	return nil
 }
 
 // here so we can synchronize all read/write operations
-func (d *State) Save(store *box.Store, filename string) error {
-	return store.SaveAs(d, filename)
+func (m *MemSheets) Save(store *box.Store, filename string) error {
+	return store.SaveAs(m, filename)
 }
 
-func (d *State) Load(store *box.Store, filename string) error {
-	return store.Load(d, filename)
+func (m *MemSheets) Load(store *box.Store, filename string) error {
+	return store.Load(m, filename)
 }

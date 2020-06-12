@@ -6,24 +6,24 @@ import (
 
 type Service struct {
 	datafile string // where data is saved
-	state    *State
+	sheets   *MemSheets
 
 	Accounts
 }
 
 func (s Service) New() *Service {
 	e := &s
-	e.state = NewState()
+	e.sheets = MemSheets{}.New()
 	return e
 }
 
 func (s *Service) LoadState(filename string) error {
 	s.datafile = filename
-	return s.state.Load(&box.Store{}, filename)
+	return s.sheets.Load(&box.Store{}, filename)
 }
 
 func (s *Service) SaveState() error {
-	return s.state.Save(&box.Store{}, s.datafile)
+	return s.sheets.Save(&box.Store{}, s.datafile)
 }
 
 func (s *Service) RoleByKey(key string) (*Role, bool) {
@@ -36,6 +36,6 @@ func (s *Service) RoleByKey(key string) (*Role, bool) {
 	}
 	return &Role{
 		account: &account,
-		state:   s.state,
+		sheets:  s.sheets,
 	}, true
 }
