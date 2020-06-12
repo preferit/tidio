@@ -26,9 +26,8 @@ func (s *Timesheet) Equal(b *Timesheet) bool {
 // ----------------------------------------
 
 type Timesheets interface {
+	Stateful
 	AddTimesheet(*Timesheet) error
-	WriteState(io.WriteCloser, error) error
-	ReadState(io.ReadCloser, error) error
 	FindTimesheet(*Timesheet) error
 	Map(SheetMapfunc) error
 }

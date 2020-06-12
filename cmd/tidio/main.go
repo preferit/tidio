@@ -42,11 +42,7 @@ func (c *cli) run() error {
 		return fmt.Errorf("empty bind")
 	}
 	accounts := tidio.AccountsMap{}.New()
-	fh, err := os.Open(c.keysfile)
-	if err != nil {
-		return err
-	}
-	if err := accounts.LoadAccounts(fh); err != nil {
+	if err := accounts.ReadState(os.Open(c.keysfile)); err != nil {
 		return err
 	}
 

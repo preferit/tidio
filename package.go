@@ -6,6 +6,7 @@ package tidio
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 
@@ -22,4 +23,9 @@ func checkTimesheetFilename(name string) error {
 		return fmt.Errorf("bad filename: expected format %s", format)
 	}
 	return nil
+}
+
+type Stateful interface {
+	WriteState(io.WriteCloser, error) error
+	ReadState(io.ReadCloser, error) error
 }

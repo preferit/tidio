@@ -15,13 +15,14 @@ func Test_accounts(t *testing.T) {
 		ok, bad                   = assert().Errors()
 		accounts         Accounts = AccountsMap{}.New()
 		FindAccountByKey          = accounts.FindAccountByKey
-		LoadAccounts              = accounts.LoadAccounts
+		ReadState                 = accounts.ReadState
 		WriteState                = accounts.WriteState
 		acc              Account
 		empty            = "{}"
 	)
 	bad(FindAccountByKey(&acc, "x"))
-	ok(LoadAccounts(ioutil.NopCloser(strings.NewReader(empty))))
+	ok(ReadState(nopRead(empty), nil))
+	bad(ReadState(nil, io.EOF))
 	ok(WriteState(&nopWriteCloser{}, nil))
 	bad(WriteState(nil, io.EOF))
 }
