@@ -21,13 +21,13 @@ func Test_service(t *testing.T) {
 	bad(service.LoadState(path.Join(dir, "data.gob")))
 	ok(service.SaveState())
 
-	if _, ok := service.IsAuthenticated("KEY"); !ok {
+	if _, ok := service.RoleByKey("KEY"); !ok {
 		t.Error("KEY is in apikeys")
 	}
-	if _, ok := service.IsAuthenticated(""); ok {
+	if _, ok := service.RoleByKey(""); ok {
 		t.Error("empty key ok")
 	}
-	if _, ok := service.IsAuthenticated("not there"); ok {
+	if _, ok := service.RoleByKey("not there"); ok {
 		t.Error("wrong key ok")
 	}
 }

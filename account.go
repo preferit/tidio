@@ -9,3 +9,13 @@ func NewAccount(username, role string) *Account {
 type Account struct {
 	Username string
 }
+
+// ----------------------------------------
+
+type Accounts interface {
+	LoadAccountByKey(*Account, string) error
+}
+
+// ----------------------------------------
+
+type APIKeys map[string]*Account

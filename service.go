@@ -39,9 +39,7 @@ func (s *Service) SaveState() error {
 	return s.data.Save(&box.Store{}, s.datafile)
 }
 
-type APIKeys map[string]*Account
-
-func (s *Service) IsAuthenticated(key string) (*Role, bool) {
+func (s *Service) RoleByKey(key string) (*Role, bool) {
 	if key == "" {
 		return nil, false
 	}
