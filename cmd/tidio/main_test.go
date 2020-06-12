@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -41,7 +42,10 @@ func Test_cli(t *testing.T) {
 	accounts.AddAccount("KEY", tidio.NewAccount("john", "admin"))
 
 	fh, err := ioutil.TempFile("", "apikeys")
-	if err := accounts.WriteState(fh, err); err != nil {
+	open := func() (io.WriteCloser, error) {
+		return fh, err
+	}
+	if err := accounts.WriteState(open); err != nil {
 		t.Fatal(err)
 	}
 	defer os.RemoveAll(fh.Name())

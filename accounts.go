@@ -3,7 +3,6 @@ package tidio
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 )
 
 func NewAccount(username, role string) *Account {
@@ -59,10 +58,11 @@ func (s *AccountsMap) ReadState(open ReadOpener) error {
 	return json.NewDecoder(r).Decode(&s.accounts)
 }
 
-func (s *AccountsMap) WriteState(fh io.WriteCloser, err error) error {
+func (s *AccountsMap) WriteState(open WriteOpener) error {
+	w, err := open()
 	if err != nil {
 		return err
 	}
-	defer fh.Close()
-	return json.NewEncoder(fh).Encode(s.accounts)
+	defer w.Close()
+	return json.NewEncoder(w).Encode(s.accounts)
 }

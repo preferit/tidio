@@ -23,8 +23,14 @@ func Test_accounts(t *testing.T) {
 	bad(FindAccountByKey(&acc, "x"))
 	ok(ReadState(ropen(empty, nil)))
 	bad(ReadState(ropen("", io.EOF)))
-	ok(WriteState(&nopWriteCloser{}, nil))
-	bad(WriteState(nil, io.EOF))
+	ok(WriteState(wopen(nil)))
+	bad(WriteState(wopen(io.EOF)))
+}
+
+func wopen(err error) WriteOpener {
+	return func() (io.WriteCloser, error) {
+		return &nopWriteCloser{}, err
+	}
 }
 
 type nopWriteCloser strings.Builder

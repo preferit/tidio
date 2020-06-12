@@ -20,8 +20,8 @@ func Test_timesheets(t *testing.T) {
 		Map                   = sheets.Map
 		empty                 = "{}"
 	)
-	ok(WriteState(&nopWriteCloser{}, nil))
-	bad(WriteState(nil, io.EOF))
+	ok(WriteState(wopen(nil)))
+	bad(WriteState(wopen(io.EOF)))
 	ok(ReadState(ropen(empty, nil)))
 	ok(Map(func(next *bool, s *Timesheet) error { return nil }))
 

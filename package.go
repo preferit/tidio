@@ -26,8 +26,9 @@ func checkTimesheetFilename(name string) error {
 }
 
 type Stateful interface {
-	WriteState(io.WriteCloser, error) error
+	WriteState(WriteOpener) error
 	ReadState(ReadOpener) error
 }
 
+type WriteOpener func() (io.WriteCloser, error)
 type ReadOpener func() (io.ReadCloser, error)

@@ -25,7 +25,10 @@ func (s *Service) LoadState(filename string) error {
 }
 
 func (s *Service) SaveState() error {
-	return s.Timesheets.WriteState(os.Create(s.datafile))
+	open := func() (io.WriteCloser, error) {
+		return os.Create(s.datafile)
+	}
+	return s.Timesheets.WriteState(open)
 }
 
 func (s *Service) RoleByKey(key string) (*Role, bool) {

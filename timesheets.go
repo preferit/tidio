@@ -50,7 +50,8 @@ func (m *MemSheets) AddTimesheet(s *Timesheet) error {
 }
 
 // here so we can synchronize all read/write operations
-func (m *MemSheets) WriteState(w io.WriteCloser, err error) error {
+func (m *MemSheets) WriteState(open WriteOpener) error {
+	w, err := open()
 	if err != nil {
 		return err
 	}
