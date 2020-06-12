@@ -11,8 +11,8 @@ import (
 
 func Test_role(t *testing.T) {
 	john := &Role{
-		account: NewAccount("john", "admin"),
-		sheets:  &MemSheets{},
+		account:    NewAccount("john", "admin"),
+		Timesheets: &MemSheets{},
 	}
 
 	assert := asserter.New(t)

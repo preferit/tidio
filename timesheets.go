@@ -2,7 +2,10 @@ package tidio
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
+	"io/ioutil"
+	"strings"
 )
 
 type Timesheet struct {
@@ -12,6 +15,10 @@ type Timesheet struct {
 	Content string
 }
 
+func (t Timesheet) New() *Timesheet {
+	return &t
+}
+
 func (s *Timesheet) Equal(b *Timesheet) bool {
 	return s.Filename == b.Filename
 }
@@ -19,8 +26,11 @@ func (s *Timesheet) Equal(b *Timesheet) bool {
 // ----------------------------------------
 
 type Timesheets interface {
+	AddTimesheet(*Timesheet) error
 	WriteState(io.WriteCloser, error) error
 	ReadState(io.ReadCloser, error) error
+	FindTimesheet(*Timesheet) error
+	Map(SheetMapfunc) error
 }
 
 // ----------------------------------------
@@ -56,3 +66,28 @@ func (m *MemSheets) ReadState(r io.ReadCloser, err error) error {
 	defer r.Close()
 	return json.NewDecoder(r).Decode(m)
 }
+
+func (m *MemSheets) FindTimesheet(sheet *Timesheet) error {
+	for _, s := range m.Sheets {
+		if s.Equal(sheet) {
+			*sheet = *s
+			sheet.ReadCloser = ioutil.NopCloser(strings.NewReader(sheet.Content))
+			return nil
+		}
+	}
+	return fmt.Errorf("timesheet not found")
+}
+
+func (m *MemSheets) Map(fn SheetMapfunc) error {
+	var next bool
+	for _, s := range m.Sheets {
+		next = true // by default we continue
+		err := fn(&next, s)
+		if !next || err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+type SheetMapfunc func(*bool, *Timesheet) error
