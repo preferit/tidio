@@ -1,7 +1,7 @@
 package tidio
 
 import (
-	"encoding/gob"
+	"encoding/json"
 	"io"
 )
 
@@ -14,6 +14,13 @@ type Timesheet struct {
 
 func (s *Timesheet) Equal(b *Timesheet) bool {
 	return s.Filename == b.Filename
+}
+
+// ----------------------------------------
+
+type Timesheets interface {
+	WriteState(io.WriteCloser, error) error
+	ReadState(io.ReadCloser, error) error
 }
 
 // ----------------------------------------
@@ -39,7 +46,7 @@ func (m *MemSheets) WriteState(w io.WriteCloser, err error) error {
 		return err
 	}
 	defer w.Close()
-	return gob.NewEncoder(w).Encode(m)
+	return json.NewEncoder(w).Encode(m)
 }
 
 func (m *MemSheets) ReadState(r io.ReadCloser, err error) error {
@@ -47,5 +54,5 @@ func (m *MemSheets) ReadState(r io.ReadCloser, err error) error {
 		return err
 	}
 	defer r.Close()
-	return gob.NewDecoder(r).Decode(m)
+	return json.NewDecoder(r).Decode(m)
 }
