@@ -19,7 +19,7 @@ type Account struct {
 // ----------------------------------------
 
 type Accounts interface {
-	SaveAccounts(io.WriteCloser) error
+	WriteState(io.WriteCloser, error) error
 	LoadAccounts(io.ReadCloser) error
 	AddAccount(string, *Account) error
 	FindAccountByKey(*Account, string) error
@@ -56,7 +56,10 @@ func (s *AccountsMap) LoadAccounts(fh io.ReadCloser) error {
 	return json.NewDecoder(fh).Decode(&s.accounts)
 }
 
-func (s *AccountsMap) SaveAccounts(fh io.WriteCloser) error {
+func (s *AccountsMap) WriteState(fh io.WriteCloser, err error) error {
+	if err != nil {
+		return err
+	}
 	defer fh.Close()
 	return json.NewEncoder(fh).Encode(s.accounts)
 }

@@ -1,6 +1,7 @@
 package tidio
 
 import (
+	"io"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -15,13 +16,14 @@ func Test_accounts(t *testing.T) {
 		accounts         Accounts = AccountsMap{}.New()
 		FindAccountByKey          = accounts.FindAccountByKey
 		LoadAccounts              = accounts.LoadAccounts
-		SaveAccounts              = accounts.SaveAccounts
+		WriteState                = accounts.WriteState
 		acc              Account
 		empty            = "{}"
 	)
 	bad(FindAccountByKey(&acc, "x"))
 	ok(LoadAccounts(ioutil.NopCloser(strings.NewReader(empty))))
-	ok(SaveAccounts(&nopWriteCloser{}))
+	ok(WriteState(&nopWriteCloser{}, nil))
+	bad(WriteState(nil, io.EOF))
 }
 
 type nopWriteCloser strings.Builder

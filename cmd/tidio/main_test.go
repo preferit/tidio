@@ -36,13 +36,14 @@ func Test_cli(t *testing.T) {
 	})
 
 	// create correct key file
-	fh, err := ioutil.TempFile("", "apikeys")
-	if err != nil {
-		t.Fatal(err)
-	}
+
 	accounts := tidio.AccountsMap{}.New()
 	accounts.AddAccount("KEY", tidio.NewAccount("john", "admin"))
-	accounts.SaveAccounts(fh)
+
+	fh, err := ioutil.TempFile("", "apikeys")
+	if err := accounts.WriteState(fh, err); err != nil {
+		t.Fatal(err)
+	}
 	defer os.RemoveAll(fh.Name())
 
 	// setup store

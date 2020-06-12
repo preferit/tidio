@@ -2,9 +2,9 @@ README
 package
 service\.
 role\.
-account\.
-sheets\.
-.sh
+accounts\.
+timesheets\.
+install.sh
 .ini
 etc
 cmd
