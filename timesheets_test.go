@@ -22,13 +22,15 @@ func Test_timesheets(t *testing.T) {
 	)
 	ok(WriteState(&nopWriteCloser{}, nil))
 	bad(WriteState(nil, io.EOF))
-	ok(ReadState(nopRead(empty), nil))
+	ok(ReadState(ropen(empty, nil)))
 	ok(Map(func(next *bool, s *Timesheet) error { return nil }))
 
 	ok(sheets.AddTimesheet(Timesheet{}.New()))
 	bad(Map(func(next *bool, s *Timesheet) error { return io.EOF }))
 }
 
-func nopRead(s string) io.ReadCloser {
-	return ioutil.NopCloser(strings.NewReader(s))
+func ropen(s string, err error) ReadOpener {
+	return func() (io.ReadCloser, error) {
+		return ioutil.NopCloser(strings.NewReader(s)), err
+	}
 }

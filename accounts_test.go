@@ -21,8 +21,8 @@ func Test_accounts(t *testing.T) {
 		empty            = "{}"
 	)
 	bad(FindAccountByKey(&acc, "x"))
-	ok(ReadState(nopRead(empty), nil))
-	bad(ReadState(nil, io.EOF))
+	ok(ReadState(ropen(empty, nil)))
+	bad(ReadState(ropen("", io.EOF)))
 	ok(WriteState(&nopWriteCloser{}, nil))
 	bad(WriteState(nil, io.EOF))
 }

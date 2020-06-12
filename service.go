@@ -1,6 +1,7 @@
 package tidio
 
 import (
+	"io"
 	"os"
 )
 
@@ -18,7 +19,9 @@ func (s Service) New() *Service {
 
 func (s *Service) LoadState(filename string) error {
 	s.datafile = filename
-	return s.Timesheets.ReadState(os.Open(filename))
+	return s.Timesheets.ReadState(func() (io.ReadCloser, error) {
+		return os.Open(filename)
+	})
 }
 
 func (s *Service) SaveState() error {

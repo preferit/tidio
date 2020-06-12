@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path"
@@ -42,7 +43,9 @@ func (c *cli) run() error {
 		return fmt.Errorf("empty bind")
 	}
 	accounts := tidio.AccountsMap{}.New()
-	if err := accounts.ReadState(os.Open(c.keysfile)); err != nil {
+	if err := accounts.ReadState(func() (io.ReadCloser, error) {
+		return os.Open(c.keysfile)
+	}); err != nil {
 		return err
 	}
 

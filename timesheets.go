@@ -58,7 +58,8 @@ func (m *MemSheets) WriteState(w io.WriteCloser, err error) error {
 	return json.NewEncoder(w).Encode(m)
 }
 
-func (m *MemSheets) ReadState(r io.ReadCloser, err error) error {
+func (m *MemSheets) ReadState(open ReadOpener) error {
+	r, err := open()
 	if err != nil {
 		return err
 	}

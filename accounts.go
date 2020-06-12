@@ -50,12 +50,13 @@ func (s *AccountsMap) FindAccountByKey(a *Account, key string) error {
 	return nil
 }
 
-func (s *AccountsMap) ReadState(fh io.ReadCloser, err error) error {
+func (s *AccountsMap) ReadState(open ReadOpener) error {
+	r, err := open()
 	if err != nil {
 		return err
 	}
-	defer fh.Close()
-	return json.NewDecoder(fh).Decode(&s.accounts)
+	defer r.Close()
+	return json.NewDecoder(r).Decode(&s.accounts)
 }
 
 func (s *AccountsMap) WriteState(fh io.WriteCloser, err error) error {
