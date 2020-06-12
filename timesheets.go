@@ -1,9 +1,8 @@
 package tidio
 
 import (
+	"encoding/gob"
 	"io"
-
-	"github.com/gregoryv/box"
 )
 
 type Timesheet struct {
@@ -35,10 +34,18 @@ func (m *MemSheets) AddTimesheet(s *Timesheet) error {
 }
 
 // here so we can synchronize all read/write operations
-func (m *MemSheets) Save(store *box.Store, filename string) error {
-	return store.SaveAs(m, filename)
+func (m *MemSheets) WriteState(w io.WriteCloser, err error) error {
+	if err != nil {
+		return err
+	}
+	defer w.Close()
+	return gob.NewEncoder(w).Encode(m)
 }
 
-func (m *MemSheets) Load(store *box.Store, filename string) error {
-	return store.Load(m, filename)
+func (m *MemSheets) ReadState(r io.ReadCloser, err error) error {
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+	return gob.NewDecoder(r).Decode(m)
 }

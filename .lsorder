@@ -1,10 +1,9 @@
 README
 package
 service\.
-state\.
 role\.
 account\.
-store.go
+sheets\.
 .sh
 .ini
 etc
