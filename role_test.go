@@ -12,7 +12,7 @@ import (
 func Test_role(t *testing.T) {
 	john := &Role{
 		account: NewAccount("john", "admin"),
-		data:    &Data{},
+		state:   &State{},
 	}
 
 	assert := asserter.New(t)

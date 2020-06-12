@@ -2,19 +2,19 @@ package tidio
 
 import "github.com/gregoryv/box"
 
-func NewData() *Data {
-	return &Data{
+func NewState() *State {
+	return &State{
 		Timesheets: make([]*Timesheet, 0),
 		Accounts:   make([]*Account, 0),
 	}
 }
 
-type Data struct {
+type State struct {
 	Timesheets []*Timesheet
 	Accounts   []*Account
 }
 
-func (d *Data) Add(entity interface{}) error {
+func (d *State) Add(entity interface{}) error {
 	switch entity := entity.(type) {
 	case *Timesheet:
 		d.Timesheets = append(d.Timesheets, entity)
@@ -23,10 +23,10 @@ func (d *Data) Add(entity interface{}) error {
 }
 
 // here so we can synchronize all read/write operations
-func (d *Data) Save(store *box.Store, filename string) error {
+func (d *State) Save(store *box.Store, filename string) error {
 	return store.SaveAs(d, filename)
 }
 
-func (d *Data) Load(store *box.Store, filename string) error {
+func (d *State) Load(store *box.Store, filename string) error {
 	return store.Load(d, filename)
 }

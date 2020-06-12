@@ -10,7 +10,7 @@ import (
 // Options may be *Store or APIKeys
 func NewService(options ...interface{}) *Service {
 	service := &Service{
-		data: NewData(),
+		state: NewState(),
 	}
 	for _, opt := range options {
 		switch opt := opt.(type) {
@@ -25,18 +25,18 @@ func NewService(options ...interface{}) *Service {
 
 type Service struct {
 	datafile string // where data is saved
-	data     *Data
+	state    *State
 
 	apikeys APIKeys
 }
 
 func (s *Service) LoadState(filename string) error {
 	s.datafile = filename
-	return s.data.Load(&box.Store{}, filename)
+	return s.state.Load(&box.Store{}, filename)
 }
 
 func (s *Service) SaveState() error {
-	return s.data.Save(&box.Store{}, s.datafile)
+	return s.state.Save(&box.Store{}, s.datafile)
 }
 
 func (s *Service) RoleByKey(key string) (*Role, bool) {
@@ -49,6 +49,6 @@ func (s *Service) RoleByKey(key string) (*Role, bool) {
 	}
 	return &Role{
 		account: account,
-		data:    s.data,
+		state:   s.state,
 	}, true
 }
