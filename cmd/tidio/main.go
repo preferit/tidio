@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
@@ -42,19 +41,18 @@ func (c *cli) run() error {
 	if c.bind == "" {
 		return fmt.Errorf("empty bind")
 	}
-	// load apikeys
+	accounts := tidio.AccountsMap{}.New()
 	fh, err := os.Open(c.keysfile)
 	if err != nil {
 		return err
 	}
-	accounts := tidio.AccountsMap{}
-	if err := json.NewDecoder(fh).Decode(&accounts); err != nil {
+	if err := accounts.LoadAccounts(fh); err != nil {
 		return err
 	}
-	fh.Close()
 
 	os.MkdirAll(c.storeDir, 0755)
-	service := tidio.NewService(accounts)
+	service := tidio.Service{}.New()
+	service.Accounts = accounts
 	service.LoadState(path.Join(c.storeDir, "data.gob"))
 	service.SaveState() // update
 	router := NewRouter(service)

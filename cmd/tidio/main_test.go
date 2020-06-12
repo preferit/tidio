@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -41,11 +40,9 @@ func Test_cli(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	accounts := map[string]*tidio.Account{
-		"KEY": tidio.NewAccount("john", "admin"),
-	}
-	json.NewEncoder(fh).Encode(accounts)
-	fh.Close()
+	accounts := tidio.AccountsMap{}.New()
+	accounts.AddAccount("KEY", tidio.NewAccount("john", "admin"))
+	accounts.SaveAccounts(fh)
 	defer os.RemoveAll(fh.Name())
 
 	// setup store

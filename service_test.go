@@ -33,10 +33,9 @@ func Test_service(t *testing.T) {
 }
 
 func newTestService(t *testing.T) *Service {
-	accounts := AccountsMap{
-		"KEY": NewAccount("john", "admin"),
-	}
-	service := NewService(accounts)
+	service := Service{}.New()
+	service.Accounts = AccountsMap{}.New()
+	service.AddAccount("KEY", NewAccount("john", "admin"))
 	return service
 }
 
@@ -47,11 +46,6 @@ func newTempDir(t *testing.T) (string, func()) {
 		t.Fatal(err)
 	}
 	return dir, func() { os.RemoveAll(dir) }
-}
-
-func Test_service_options(t *testing.T) {
-	defer catchPanic(t)
-	NewService(1)
 }
 
 func catchPanic(t *testing.T) {

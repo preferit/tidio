@@ -1,33 +1,20 @@
 package tidio
 
 import (
-	"fmt"
-
 	"github.com/gregoryv/box"
 )
-
-// NewService returns a service with preconfigured options.
-// Options may be *Store or APIKeys
-func NewService(options ...interface{}) *Service {
-	service := &Service{
-		state: NewState(),
-	}
-	for _, opt := range options {
-		switch opt := opt.(type) {
-		case Accounts:
-			service.Accounts = opt
-		default:
-			panic(fmt.Sprintf("%T not recognized", opt))
-		}
-	}
-	return service
-}
 
 type Service struct {
 	datafile string // where data is saved
 	state    *State
 
 	Accounts
+}
+
+func (s Service) New() *Service {
+	e := &s
+	e.state = NewState()
+	return e
 }
 
 func (s *Service) LoadState(filename string) error {
