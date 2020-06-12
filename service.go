@@ -14,8 +14,8 @@ func NewService(options ...interface{}) *Service {
 	}
 	for _, opt := range options {
 		switch opt := opt.(type) {
-		case APIKeys:
-			service.apikeys = opt
+		case Accounts:
+			service.Accounts = opt
 		default:
 			panic(fmt.Sprintf("%T not recognized", opt))
 		}
@@ -27,7 +27,7 @@ type Service struct {
 	datafile string // where data is saved
 	state    *State
 
-	apikeys APIKeys
+	Accounts
 }
 
 func (s *Service) LoadState(filename string) error {
@@ -43,12 +43,12 @@ func (s *Service) RoleByKey(key string) (*Role, bool) {
 	if key == "" {
 		return nil, false
 	}
-	account, found := s.apikeys[key]
-	if !found {
+	var account Account
+	if err := s.FindAccountByKey(&account, key); err != nil {
 		return nil, false
 	}
 	return &Role{
-		account: account,
+		account: &account,
 		state:   s.state,
 	}, true
 }

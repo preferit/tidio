@@ -47,14 +47,14 @@ func (c *cli) run() error {
 	if err != nil {
 		return err
 	}
-	apikeys := tidio.APIKeys{}
-	if err := json.NewDecoder(fh).Decode(&apikeys); err != nil {
+	accounts := tidio.AccountsMap{}
+	if err := json.NewDecoder(fh).Decode(&accounts); err != nil {
 		return err
 	}
 	fh.Close()
 
 	os.MkdirAll(c.storeDir, 0755)
-	service := tidio.NewService(apikeys)
+	service := tidio.NewService(accounts)
 	service.LoadState(path.Join(c.storeDir, "data.gob"))
 	service.SaveState() // update
 	router := NewRouter(service)

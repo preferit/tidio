@@ -14,6 +14,6 @@ func Test_aquiring_role(t *testing.T) {
 		auth    = d.AddInterface((*Accounts)(nil))
 	)
 	d.Link(router, service, "RoleByKey()")
-	d.Link(service, auth, "LoadAccountByKey()")
+	d.Link(service, auth, "FindAccountByKey()")
 	d.SaveAs("/tmp/aquiring_role.svg")
 }

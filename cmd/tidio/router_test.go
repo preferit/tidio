@@ -11,11 +11,11 @@ import (
 
 func Test_router(t *testing.T) {
 	assert := asserter.New(t)
-	apikeys := tidio.APIKeys{
+	accounts := tidio.AccountsMap{
 		"KEY": tidio.NewAccount("john", "admin"),
 	}
 	headers := http.Header{}
-	service := tidio.NewService(apikeys)
+	service := tidio.NewService(accounts)
 	router := NewRouter(service)
 
 	exp := assert().ResponseFrom(router)

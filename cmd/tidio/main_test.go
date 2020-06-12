@@ -41,10 +41,10 @@ func Test_cli(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	apikeys := map[string]*tidio.Account{
+	accounts := map[string]*tidio.Account{
 		"KEY": tidio.NewAccount("john", "admin"),
 	}
-	json.NewEncoder(fh).Encode(apikeys)
+	json.NewEncoder(fh).Encode(accounts)
 	fh.Close()
 	defer os.RemoveAll(fh.Name())
 

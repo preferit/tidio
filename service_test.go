@@ -33,10 +33,10 @@ func Test_service(t *testing.T) {
 }
 
 func newTestService(t *testing.T) *Service {
-	apikeys := APIKeys{
+	accounts := AccountsMap{
 		"KEY": NewAccount("john", "admin"),
 	}
-	service := NewService(apikeys)
+	service := NewService(accounts)
 	return service
 }
 
