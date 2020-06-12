@@ -1,10 +1,5 @@
 package tidio
 
-import (
-	"io"
-	"os"
-)
-
 type Service struct {
 	datafile string // where data is saved
 	Timesheets
@@ -19,16 +14,11 @@ func (s Service) New() *Service {
 
 func (s *Service) LoadState(filename string) error {
 	s.datafile = filename
-	return s.Timesheets.ReadState(func() (io.ReadCloser, error) {
-		return os.Open(filename)
-	})
+	return s.Timesheets.ReadState(fromFile(filename))
 }
 
 func (s *Service) SaveState() error {
-	open := func() (io.WriteCloser, error) {
-		return os.Create(s.datafile)
-	}
-	return s.Timesheets.WriteState(open)
+	return s.Timesheets.WriteState(toFile(s.datafile))
 }
 
 func (s *Service) RoleByKey(key string) (*Role, bool) {
