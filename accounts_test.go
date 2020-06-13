@@ -1,9 +1,6 @@
 package tidio
 
 import (
-	"io"
-	"io/ioutil"
-	"strings"
 	"testing"
 
 	"github.com/gregoryv/asserter"
@@ -11,34 +8,22 @@ import (
 
 func Test_accounts(t *testing.T) {
 	var (
-		assert                    = asserter.New(t)
-		ok, bad                   = assert().Errors()
-		accounts         Accounts = AccountsMap{}.New()
-		FindAccountByKey          = accounts.FindAccountByKey
-		ReadState                 = accounts.ReadState
-		WriteState                = accounts.WriteState
-		acc              Account
-		empty            = "{}"
+		assert   = asserter.New(t)
+		ok, bad  = assert().Errors()
+		empty    = "{}"
+		accounts = AccountsMap{}.New()
+		acc      Account
 	)
-	bad(FindAccountByKey(&acc, "x"))
-	ok(ReadState(ropen(empty, nil)))
-	bad(ReadState(ropen("", io.EOF)))
-	ok(WriteState(wopen(nil)))
-	bad(WriteState(wopen(io.EOF)))
-}
+	accounts.Source = StringSource(empty)
+	accounts.Destination = NopDestination()
 
-func wopen(err error) WriteOpener {
-	return func() (io.WriteCloser, error) {
-		return &nopWriteCloser{}, err
-	}
-}
+	ok(accounts.Load())
+	ok(accounts.Save())
 
-type nopWriteCloser strings.Builder
+	accounts.Source = BrokenSource{}
+	accounts.Destination = BrokenDestination{}
 
-func (nopWriteCloser) Write(b []byte) (int, error) {
-	return ioutil.Discard.Write(b)
-}
-
-func (nopWriteCloser) Close() error {
-	return nil
+	bad(accounts.FindAccountByKey(&acc, "x"))
+	bad(accounts.Load())
+	bad(accounts.Save())
 }

@@ -19,6 +19,7 @@ type Account struct {
 
 type Accounts interface {
 	Stateful
+	FilePersistent
 	AddAccount(string, *Account) error
 	FindAccountByKey(*Account, string) error
 }
@@ -26,13 +27,22 @@ type Accounts interface {
 // ----------------------------------------
 
 type AccountsMap struct {
+	Source
+	Destination
 	accounts map[string]*Account
 }
 
 func (s AccountsMap) New() *AccountsMap {
 	accounts := &s
 	accounts.accounts = make(map[string]*Account)
+	accounts.Source = None("AccountsMap")
+	accounts.Destination = None("AccountsMap")
 	return accounts
+}
+
+func (me *AccountsMap) PersistToFile(filename string) {
+	me.Source = FileSource(filename)
+	me.Destination = FileDestination(filename)
 }
 
 func (s *AccountsMap) AddAccount(key string, a *Account) error {
@@ -49,8 +59,8 @@ func (s *AccountsMap) FindAccountByKey(a *Account, key string) error {
 	return nil
 }
 
-func (s *AccountsMap) ReadState(open ReadOpener) error {
-	r, err := open()
+func (s *AccountsMap) Load() error {
+	r, err := s.Source.Open()
 	if err != nil {
 		return err
 	}
@@ -58,8 +68,8 @@ func (s *AccountsMap) ReadState(open ReadOpener) error {
 	return json.NewDecoder(r).Decode(&s.accounts)
 }
 
-func (s *AccountsMap) WriteState(open WriteOpener) error {
-	w, err := open()
+func (s *AccountsMap) Save() error {
+	w, err := s.Destination.Create()
 	if err != nil {
 		return err
 	}

@@ -1,26 +1,37 @@
 package tidio
 
 import (
+	"fmt"
 	"io"
-	"os"
 )
 
 type Stateful interface {
-	WriteState(WriteOpener) error
-	ReadState(ReadOpener) error
+	Loader
+	Saver
 }
 
-type WriteOpener func() (io.WriteCloser, error)
-type ReadOpener func() (io.ReadCloser, error)
-
-func toFile(filename string) WriteOpener {
-	return func() (io.WriteCloser, error) {
-		return os.Create(filename)
-	}
+type Loader interface {
+	Load() error
 }
 
-func fromFile(filename string) ReadOpener {
-	return func() (io.ReadCloser, error) {
-		return os.Open(filename)
-	}
+type Saver interface {
+	Save() error
+}
+
+type None string
+
+func (me None) Open() (io.ReadCloser, error) {
+	return nil, fmt.Errorf("%s.Source not set", me)
+}
+func (me None) Create() (io.WriteCloser, error) {
+	return nil, fmt.Errorf("%s.Destination not set", me)
+}
+
+type WriteCloser interface {
+	io.Closer
+	Write([]byte) (int, error)
+}
+
+type FilePersistent interface {
+	PersistToFile(string)
 }

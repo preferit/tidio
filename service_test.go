@@ -3,7 +3,6 @@ package tidio
 import (
 	"io/ioutil"
 	"os"
-	"path"
 	"testing"
 
 	"github.com/gregoryv/asserter"
@@ -13,13 +12,15 @@ func Test_service(t *testing.T) {
 	var (
 		assert       = asserter.New(t)
 		ok, bad      = assert().Errors()
-		service      = newTestService(t)
+		service      = Service{}.New()
 		dir, cleanup = newTempDir(t)
 	)
+	service.SetDataDir(dir)
+	service.AddAccount("KEY", NewAccount("john", "admin"))
 	defer cleanup()
 
-	bad(service.LoadState(path.Join(dir, "data.gob")))
-	ok(service.SaveState())
+	bad(service.Load())
+	ok(service.Save())
 
 	if _, ok := service.RoleByKey("KEY"); !ok {
 		t.Error("KEY is in apikeys")
@@ -30,13 +31,6 @@ func Test_service(t *testing.T) {
 	if _, ok := service.RoleByKey("not there"); ok {
 		t.Error("wrong key ok")
 	}
-}
-
-func newTestService(t *testing.T) *Service {
-	service := Service{}.New()
-	service.Accounts = AccountsMap{}.New()
-	service.AddAccount("KEY", NewAccount("john", "admin"))
-	return service
 }
 
 func newTempDir(t *testing.T) (string, func()) {

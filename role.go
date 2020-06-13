@@ -11,7 +11,7 @@ type Role struct {
 }
 
 func (r *Role) CreateTimesheet(sheet *Timesheet) error {
-	if err := checkTimesheetFilename(sheet.Filename); err != nil {
+	if err := checkTimesheetFilename(sheet.FileSource); err != nil {
 		return err
 	}
 	var sb strings.Builder
@@ -28,7 +28,7 @@ func (r *Role) ListTimesheet(user string) []string {
 	res := make([]string, 0)
 	r.Timesheets.Map(func(next *bool, s *Timesheet) error {
 		if s.Owner == user {
-			res = append(res, s.Filename)
+			res = append(res, s.FileSource)
 		}
 		return nil
 	})

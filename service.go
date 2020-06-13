@@ -1,7 +1,10 @@
 package tidio
 
+import "path"
+
 type Service struct {
-	datafile string // where data is saved
+	Stateful
+
 	Timesheets
 	Accounts
 }
@@ -9,16 +12,21 @@ type Service struct {
 func (s Service) New() *Service {
 	e := &s
 	e.Timesheets = MemSheets{}.New()
+	e.Accounts = AccountsMap{}.New()
 	return e
 }
 
-func (s *Service) LoadState(filename string) error {
-	s.datafile = filename
-	return s.Timesheets.ReadState(fromFile(filename))
+func (s *Service) SetDataDir(dir string) {
+	s.Timesheets.PersistToFile(path.Join(dir, "timesheets.json"))
+	s.Accounts.PersistToFile(path.Join(dir, "accounts.json"))
 }
 
-func (s *Service) SaveState() error {
-	return s.Timesheets.WriteState(toFile(s.datafile))
+func (s *Service) Load() error {
+	return s.Timesheets.Load()
+}
+
+func (s *Service) Save() error {
+	return s.Timesheets.Save()
 }
 
 func (s *Service) RoleByKey(key string) (*Role, bool) {

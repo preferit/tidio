@@ -19,25 +19,25 @@ func Test_role(t *testing.T) {
 	ok, bad := assert().Errors()
 
 	bad(john.CreateTimesheet(&Timesheet{
-		Filename:   "xx.txt",
+		FileSource: "xx.txt",
 		Owner:      "john",
 		ReadCloser: aFile("x")},
 	))
 
 	ok(john.CreateTimesheet(&Timesheet{
-		Filename:   "202001.timesheet",
+		FileSource: "202001.timesheet",
 		Owner:      "john",
 		ReadCloser: aFile("."),
 	}))
 
 	ok(john.OpenTimesheet(&Timesheet{
-		Filename: "202001.timesheet",
-		Owner:    "john",
+		FileSource: "202001.timesheet",
+		Owner:      "john",
 	}))
 
 	bad(john.OpenTimesheet(&Timesheet{
-		Filename: "209901.timesheet",
-		Owner:    "john",
+		FileSource: "209901.timesheet",
+		Owner:      "john",
 	}))
 	t.Run("ListTimesheet", func(t *testing.T) {
 		// depends on above tests creating some

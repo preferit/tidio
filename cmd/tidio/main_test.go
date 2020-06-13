@@ -1,80 +1,23 @@
 package main
 
 import (
-	"fmt"
-	"io"
-	"io/ioutil"
 	"net/http"
-	"os"
 	"testing"
 
-	"github.com/preferit/tidio"
+	"github.com/gregoryv/asserter"
 )
 
 func Test_cli(t *testing.T) {
-	badFile, err := ioutil.TempFile("", "apikeys")
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Fprint(badFile, "{...") // bad json
-	badFile.Close()
-	defer os.RemoveAll(badFile.Name())
+	var (
+		assert  = asserter.New(t)
+		ok, bad = assert().Errors()
+	)
+	bad(run(&cli{}))
 
-	bad := func(msg string, c *cli) {
-		t.Helper()
-		if err := c.run(); err == nil {
-			t.Error(msg)
-		}
-	}
-	bad("bind not set", &cli{})
-	bad("keysfile not found", &cli{
-		bind:     "1",
-		keysfile: "NO SUCH FILE",
-	})
-	bad("bad formata keysfile", &cli{
-		bind:     "1",
-		keysfile: badFile.Name(),
-	})
-
-	// create correct key file
-
-	accounts := tidio.AccountsMap{}.New()
-	accounts.AddAccount("KEY", tidio.NewAccount("john", "admin"))
-
-	fh, err := ioutil.TempFile("", "apikeys")
-	open := func() (io.WriteCloser, error) {
-		return fh, err
-	}
-	if err := accounts.WriteState(open); err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(fh.Name())
-
-	// setup store
-	storeDir, err := ioutil.TempDir("", "tidio")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(storeDir)
-	ok := func(c *cli) {
-		t.Helper()
-		if err := c.run(); err != nil {
-			t.Error(err)
-		}
-	}
-	ok(&cli{
-		storeDir: storeDir,
-		bind:     ":80",
-		keysfile: fh.Name(),
-		starter:  func(string, http.Handler) error { return nil },
-	})
-}
-
-func newTempDir(t *testing.T) (string, func()) {
-	t.Helper()
-	dir, err := ioutil.TempDir("", "tidiocmd")
-	if err != nil {
-		t.Fatal(err)
-	}
-	return dir, func() { os.RemoveAll(dir) }
+	ok(run(&cli{
+		bind: ":8080",
+		ListenAndServe: func(string, http.Handler) error {
+			return nil
+		},
+	}))
 }
