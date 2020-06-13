@@ -10,13 +10,14 @@ import (
 )
 
 func Test_role(t *testing.T) {
-	john := &Role{
-		account:    NewAccount("john", "admin"),
-		Timesheets: &MemSheets{},
-	}
-
-	assert := asserter.New(t)
-	ok, bad := assert().Errors()
+	var (
+		assert  = asserter.New(t)
+		ok, bad = assert().Errors()
+		john    = &Role{
+			account:    NewAccount("john", "admin"),
+			Timesheets: &MemSheets{},
+		}
+	)
 
 	bad(john.CreateTimesheet(&Timesheet{
 		FileSource: "xx.txt",
@@ -29,7 +30,6 @@ func Test_role(t *testing.T) {
 		Owner:      "john",
 		ReadCloser: aFile("."),
 	}))
-
 	ok(john.OpenTimesheet(&Timesheet{
 		FileSource: "202001.timesheet",
 		Owner:      "john",
