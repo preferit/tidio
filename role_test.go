@@ -20,24 +20,24 @@ func Test_role(t *testing.T) {
 	)
 
 	bad(john.CreateTimesheet(&Timesheet{
-		FileSource: "xx.txt",
+		Path:       "xx.txt",
 		Owner:      "john",
 		ReadCloser: aFile("x")},
 	))
 
 	ok(john.CreateTimesheet(&Timesheet{
-		FileSource: "202001.timesheet",
+		Path:       "202001.timesheet",
 		Owner:      "john",
 		ReadCloser: aFile("."),
 	}))
 	ok(john.OpenTimesheet(&Timesheet{
-		FileSource: "202001.timesheet",
-		Owner:      "john",
+		Path:  "202001.timesheet",
+		Owner: "john",
 	}))
 
 	bad(john.OpenTimesheet(&Timesheet{
-		FileSource: "209901.timesheet",
-		Owner:      "john",
+		Path:  "209901.timesheet",
+		Owner: "john",
 	}))
 	t.Run("ListTimesheet", func(t *testing.T) {
 

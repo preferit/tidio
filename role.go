@@ -11,7 +11,7 @@ type Role struct {
 }
 
 func (r *Role) CreateTimesheet(sheet *Timesheet) error {
-	if err := checkTimesheetFilename(sheet.FileSource); err != nil {
+	if err := checkTimesheetFilename(sheet.Path); err != nil {
 		return err
 	}
 	var sb strings.Builder
@@ -28,7 +28,7 @@ func (r *Role) ListTimesheet() []string {
 	res := make([]string, 0)
 	r.Timesheets.Map(func(next *bool, s *Timesheet) error {
 		// todo use account as filter
-		res = append(res, s.FileSource)
+		res = append(res, s.Path)
 		return nil
 	})
 	return res

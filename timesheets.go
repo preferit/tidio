@@ -9,8 +9,8 @@ import (
 )
 
 type Timesheet struct {
-	FileSource string
-	Owner      string
+	Path  string
+	Owner string
 	io.ReadCloser
 	Content string
 }
@@ -20,7 +20,7 @@ func (t Timesheet) New() *Timesheet {
 }
 
 func (s *Timesheet) Equal(b *Timesheet) bool {
-	return s.FileSource == b.FileSource
+	return s.Path == b.Path
 }
 
 // ----------------------------------------
