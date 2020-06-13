@@ -9,8 +9,7 @@ import (
 )
 
 type Timesheet struct {
-	Path  string
-	Owner string
+	Path string
 	io.ReadCloser
 	Content string
 }

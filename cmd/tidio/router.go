@@ -49,8 +49,7 @@ func readTimesheets() http.HandlerFunc {
 		role, _ := r.Context().Value("role").(*tidio.Role)
 		vars := mux.Vars(r)
 		sheet := tidio.Timesheet{
-			Path:  vars["filename"],
-			Owner: vars["user"],
+			Path: vars["filename"],
 		}
 		if err := role.OpenTimesheet(&sheet); err != nil {
 			w.WriteHeader(statusOf(err))

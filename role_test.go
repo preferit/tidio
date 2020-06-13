@@ -21,26 +21,21 @@ func Test_role(t *testing.T) {
 
 	bad(john.CreateTimesheet(&Timesheet{
 		Path:       "xx.txt",
-		Owner:      "john",
 		ReadCloser: aFile("x")},
 	))
 
 	ok(john.CreateTimesheet(&Timesheet{
 		Path:       "202001.timesheet",
-		Owner:      "john",
 		ReadCloser: aFile("."),
 	}))
 	ok(john.OpenTimesheet(&Timesheet{
-		Path:  "202001.timesheet",
-		Owner: "john",
+		Path: "202001.timesheet",
 	}))
 
 	bad(john.OpenTimesheet(&Timesheet{
-		Path:  "209901.timesheet",
-		Owner: "john",
+		Path: "209901.timesheet",
 	}))
 	t.Run("ListTimesheet", func(t *testing.T) {
-
 		Sheets := john.ListTimesheet()
 		if len(Sheets) == 0 {
 			t.Error("did not found any timesheets")
