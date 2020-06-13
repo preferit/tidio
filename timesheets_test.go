@@ -13,7 +13,7 @@ func Test_timesheets(t *testing.T) {
 		ok, bad = assert().Errors()
 
 		sheets = MemSheets{}.New()
-		empty  = "{}"
+		empty  = "[]"
 	)
 	sheets.Source = StringSource(empty)
 	ok(sheets.Load())

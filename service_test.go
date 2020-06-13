@@ -17,10 +17,12 @@ func Test_service(t *testing.T) {
 	)
 	service.SetDataDir(dir)
 	service.AddAccount("KEY", NewAccount("john", "admin"))
+	t.Log(dir)
 	defer cleanup()
 
 	bad(service.Load())
 	ok(service.Save())
+	ok(service.Load())
 
 	if _, ok := service.RoleByKey("KEY"); !ok {
 		t.Error("KEY is in apikeys")

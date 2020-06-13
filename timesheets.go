@@ -65,7 +65,7 @@ func (m *MemSheets) Load() error {
 		return err
 	}
 	defer r.Close()
-	return json.NewDecoder(r).Decode(m)
+	return json.NewDecoder(r).Decode(&m.Sheets)
 }
 
 // here so we can synchronize all read/write operations
@@ -75,7 +75,7 @@ func (m *MemSheets) Save() error {
 		return err
 	}
 	defer w.Close()
-	return json.NewEncoder(w).Encode(m)
+	return json.NewEncoder(w).Encode(&m.Sheets)
 }
 
 func (m *MemSheets) FindTimesheet(sheet *Timesheet) error {

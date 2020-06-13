@@ -22,11 +22,19 @@ func (s *Service) SetDataDir(dir string) {
 }
 
 func (s *Service) Load() error {
-	return s.Timesheets.Load()
+	err := errors{
+		s.Timesheets.Load(),
+		s.Accounts.Load(),
+	}
+	return err.First()
 }
 
 func (s *Service) Save() error {
-	return s.Timesheets.Save()
+	err := errors{
+		s.Timesheets.Save(),
+		s.Accounts.Save(),
+	}
+	return err.First()
 }
 
 func (s *Service) RoleByKey(key string) (*Role, bool) {
@@ -41,4 +49,15 @@ func (s *Service) RoleByKey(key string) (*Role, bool) {
 		account:    &account,
 		Timesheets: s.Timesheets,
 	}, true
+}
+
+type errors []error
+
+func (me errors) First() error {
+	for _, err := range me {
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
