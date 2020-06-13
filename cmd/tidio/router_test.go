@@ -47,7 +47,6 @@ func Test_router(t *testing.T) {
 	exp.BodyIs(timesheet197604, "GET", "/api/timesheets/john/197604.timesheet", headers)
 	exp.Contains("197604.timesheet", "GET", "/api/timesheets/john/", headers)
 	exp.StatusCode(200, "GET", "/api/timesheets/nosuch-user/", headers)
-
 }
 
 func Test_convert_error(t *testing.T) {

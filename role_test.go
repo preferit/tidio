@@ -40,8 +40,8 @@ func Test_role(t *testing.T) {
 		Owner:      "john",
 	}))
 	t.Run("ListTimesheet", func(t *testing.T) {
-		// depends on above tests creating some
-		Sheets := john.ListTimesheet("john")
+
+		Sheets := john.ListTimesheet()
 		if len(Sheets) == 0 {
 			t.Error("did not found any timesheets")
 		}

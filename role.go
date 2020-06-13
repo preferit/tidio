@@ -24,12 +24,11 @@ func (r *Role) OpenTimesheet(sheet *Timesheet) error {
 	return r.FindTimesheet(sheet)
 }
 
-func (r *Role) ListTimesheet(user string) []string {
+func (r *Role) ListTimesheet() []string {
 	res := make([]string, 0)
 	r.Timesheets.Map(func(next *bool, s *Timesheet) error {
-		if s.Owner == user {
-			res = append(res, s.FileSource)
-		}
+		// todo use account as filter
+		res = append(res, s.FileSource)
 		return nil
 	})
 	return res
