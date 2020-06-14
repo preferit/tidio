@@ -13,7 +13,7 @@ func NewRouter(service *Service) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/api", serveAPIRoot())
 
-	auth := (&authMid{service: service}).Middleware
+	auth := service.FindAccount
 	r.Handle(
 		"/api/timesheets/{user}/{filename}", auth(writeTimesheets()),
 	).Methods("POST")

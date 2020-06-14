@@ -1,6 +1,8 @@
 package tidio
 
 import (
+	"context"
+	"net/http"
 	"path"
 )
 
@@ -49,4 +51,17 @@ func (s *Service) AccountByKey(key string) (*Account, bool) {
 	}
 	account.Timesheets = s.Timesheets
 	return &account, true
+}
+
+func (me *Service) FindAccount(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		key := r.Header.Get("Authorization")
+		account, ok := me.AccountByKey(key)
+		if !ok {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		r = r.WithContext(context.WithValue(r.Context(), "account", account))
+		next.ServeHTTP(w, r)
+	})
 }
