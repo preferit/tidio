@@ -8,14 +8,14 @@ import (
 	"strings"
 )
 
+func NewTimesheet() *Timesheet {
+	return &Timesheet{}
+}
+
 type Timesheet struct {
 	Path string
 	io.ReadCloser
 	Content string
-}
-
-func (t Timesheet) New() *Timesheet {
-	return &t
 }
 
 func (s *Timesheet) Equal(b *Timesheet) bool {
@@ -34,28 +34,18 @@ type Timesheets interface {
 
 // ----------------------------------------
 
+func NewMemSheets() *MemSheets {
+	return &MemSheets{
+		Sheets:      make([]*Timesheet, 0),
+		Source:      None("MemSheets"),
+		Destination: None("MemSheets"),
+	}
+}
+
 type MemSheets struct {
 	Source
 	Destination
 	Sheets []*Timesheet
-}
-
-func (m MemSheets) New() *MemSheets {
-	e := &m
-	e.Sheets = make([]*Timesheet, 0)
-	e.Source = None("MemSheets")
-	e.Destination = None("MemSheets")
-	return e
-}
-
-func (me *MemSheets) PersistToFile(filename string) {
-	me.Source = FileSource(filename)
-	me.Destination = FileDestination(filename)
-}
-
-func (m *MemSheets) AddTimesheet(s *Timesheet) error {
-	m.Sheets = append(m.Sheets, s)
-	return nil
 }
 
 func (m *MemSheets) Load() error {
@@ -67,7 +57,6 @@ func (m *MemSheets) Load() error {
 	return json.NewDecoder(r).Decode(&m.Sheets)
 }
 
-// here so we can synchronize all read/write operations
 func (m *MemSheets) Save() error {
 	w, err := m.Destination.Create()
 	if err != nil {
@@ -75,6 +64,16 @@ func (m *MemSheets) Save() error {
 	}
 	defer w.Close()
 	return json.NewEncoder(w).Encode(&m.Sheets)
+}
+
+func (me *MemSheets) PersistToFile(filename string) {
+	me.Source = FileSource(filename)
+	me.Destination = FileDestination(filename)
+}
+
+func (m *MemSheets) AddTimesheet(s *Timesheet) error {
+	m.Sheets = append(m.Sheets, s)
+	return nil
 }
 
 func (m *MemSheets) FindTimesheet(sheet *Timesheet) error {

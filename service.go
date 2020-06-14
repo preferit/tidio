@@ -1,24 +1,20 @@
 package tidio
 
-import "path"
+import (
+	"path"
+)
+
+func NewService() *Service {
+	return &Service{
+		Timesheets: NewMemSheets(),
+		Accounts:   NewMemAccounts(),
+	}
+}
 
 type Service struct {
 	Stateful
-
 	Timesheets
 	Accounts
-}
-
-func (s Service) New() *Service {
-	e := &s
-	e.Timesheets = MemSheets{}.New()
-	e.Accounts = AccountsMap{}.New()
-	return e
-}
-
-func (s *Service) SetDataDir(dir string) {
-	s.Timesheets.PersistToFile(path.Join(dir, "timesheets.json"))
-	s.Accounts.PersistToFile(path.Join(dir, "accounts.json"))
 }
 
 func (s *Service) Load() error {
@@ -37,6 +33,12 @@ func (s *Service) Save() error {
 	return err.First()
 }
 
+// SetDataDir sets directory where state is persisted
+func (s *Service) SetDataDir(dir string) {
+	s.Timesheets.PersistToFile(path.Join(dir, "timesheets.json"))
+	s.Accounts.PersistToFile(path.Join(dir, "accounts.json"))
+}
+
 func (s *Service) RoleByKey(key string) (*Role, bool) {
 	if key == "" {
 		return nil, false
@@ -49,15 +51,4 @@ func (s *Service) RoleByKey(key string) (*Role, bool) {
 		account:    &account,
 		Timesheets: s.Timesheets,
 	}, true
-}
-
-type errors []error
-
-func (me errors) First() error {
-	for _, err := range me {
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }

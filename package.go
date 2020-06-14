@@ -23,3 +23,14 @@ func checkTimesheetFilename(name string) error {
 	}
 	return nil
 }
+
+type errors []error
+
+func (me errors) First() error {
+	for _, err := range me {
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

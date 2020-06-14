@@ -12,7 +12,7 @@ func Test_service(t *testing.T) {
 	var (
 		assert       = asserter.New(t)
 		ok, bad      = assert().Errors()
-		service      = Service{}.New()
+		service      = NewService()
 		dir, cleanup = newTempDir(t)
 	)
 	service.SetDataDir(dir)

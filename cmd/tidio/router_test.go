@@ -12,8 +12,7 @@ import (
 func Test_router(t *testing.T) {
 	assert := asserter.New(t)
 	headers := http.Header{}
-	service := tidio.Service{}.New()
-	service.Accounts = tidio.AccountsMap{}.New()
+	service := tidio.NewService()
 	service.AddAccount("KEY", tidio.NewAccount("john", "admin"))
 	router := NewRouter(service)
 

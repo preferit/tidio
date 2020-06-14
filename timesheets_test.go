@@ -12,13 +12,13 @@ func Test_timesheets(t *testing.T) {
 		assert  = asserter.New(t)
 		ok, bad = assert().Errors()
 
-		sheets = MemSheets{}.New()
+		sheets = NewMemSheets()
 		empty  = "[]"
 	)
 	sheets.Source = StringSource(empty)
 	ok(sheets.Load())
 	ok(sheets.Map(func(next *bool, s *Timesheet) error { return nil }))
-	ok(sheets.AddTimesheet(Timesheet{}.New()))
+	ok(sheets.AddTimesheet(NewTimesheet()))
 
 	sheets.Destination = BrokenDestination{}
 	bad(sheets.Save())

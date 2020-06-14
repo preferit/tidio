@@ -39,7 +39,7 @@ func run(c *cli) error {
 		return fmt.Errorf("empty bind")
 	}
 	os.MkdirAll(c.storeDir, 0755)
-	service := tidio.Service{}.New()
+	service := tidio.NewService()
 	service.SetDataDir(c.storeDir)
 	service.Load()
 	service.Save() // update

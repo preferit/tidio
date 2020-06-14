@@ -11,7 +11,7 @@ func Test_accounts(t *testing.T) {
 		assert   = asserter.New(t)
 		ok, bad  = assert().Errors()
 		empty    = "{}"
-		accounts = AccountsMap{}.New()
+		accounts = NewMemAccounts()
 		acc      Account
 	)
 	accounts.Source = StringSource(empty)

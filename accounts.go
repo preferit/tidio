@@ -26,31 +26,31 @@ type Accounts interface {
 
 // ----------------------------------------
 
-type AccountsMap struct {
+func NewMemAccounts() *MemAccounts {
+	my := &MemAccounts{}
+	my.accounts = make(map[string]*Account)
+	my.Source = None("AccountsMap")
+	my.Destination = None("AccountsMap")
+	return my
+}
+
+type MemAccounts struct {
 	Source
 	Destination
 	accounts map[string]*Account
 }
 
-func (s AccountsMap) New() *AccountsMap {
-	accounts := &s
-	accounts.accounts = make(map[string]*Account)
-	accounts.Source = None("AccountsMap")
-	accounts.Destination = None("AccountsMap")
-	return accounts
-}
-
-func (me *AccountsMap) PersistToFile(filename string) {
+func (me *MemAccounts) PersistToFile(filename string) {
 	me.Source = FileSource(filename)
 	me.Destination = FileDestination(filename)
 }
 
-func (s *AccountsMap) AddAccount(key string, a *Account) error {
+func (s *MemAccounts) AddAccount(key string, a *Account) error {
 	s.accounts[key] = a
 	return nil
 }
 
-func (s *AccountsMap) FindAccountByKey(a *Account, key string) error {
+func (s *MemAccounts) FindAccountByKey(a *Account, key string) error {
 	account, found := s.accounts[key]
 	if !found {
 		return fmt.Errorf("account not found")
@@ -59,7 +59,7 @@ func (s *AccountsMap) FindAccountByKey(a *Account, key string) error {
 	return nil
 }
 
-func (s *AccountsMap) Load() error {
+func (s *MemAccounts) Load() error {
 	r, err := s.Source.Open()
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func (s *AccountsMap) Load() error {
 	return json.NewDecoder(r).Decode(&s.accounts)
 }
 
-func (s *AccountsMap) Save() error {
+func (s *MemAccounts) Save() error {
 	w, err := s.Destination.Create()
 	if err != nil {
 		return err
