@@ -1,12 +1,8 @@
 README
-package
+package\.
 service\.
-role\.
 accounts\.
 timesheets\.
-stateful\.
-source\.
-destination\.
 install.sh
 .ini
 etc

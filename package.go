@@ -6,11 +6,44 @@ package tidio
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 
 	"github.com/gregoryv/fox"
 )
+
+type Stateful interface {
+	Loader
+	Saver
+}
+type Loader interface{ Load() error }
+type Saver interface{ Save() error }
+
+type Source interface{ Open() (io.ReadCloser, error) }
+type Destination interface {
+	Create() (io.WriteCloser, error)
+}
+
+type FilePersistent interface {
+	PersistToFile(string)
+}
+
+// ----------------------------------------
+
+type FileSource string
+
+func (me FileSource) Open() (io.ReadCloser, error) {
+	return os.Open(string(me))
+}
+
+type FileDestination string
+
+func (me FileDestination) Create() (io.WriteCloser, error) {
+	return os.Create(string(me))
+}
+
+// ----------------------------------------
 
 var warn = fox.NewSyncLog(os.Stdout).FilterEmpty().Log
 

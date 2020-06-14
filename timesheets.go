@@ -6,6 +6,8 @@ import (
 	"io"
 	"io/ioutil"
 	"strings"
+
+	"github.com/preferit/tidio/internal"
 )
 
 func NewTimesheet() *Timesheet {
@@ -37,8 +39,8 @@ type Timesheets interface {
 func NewMemSheets() *MemSheets {
 	return &MemSheets{
 		Sheets:      make([]*Timesheet, 0),
-		Source:      None("MemSheets"),
-		Destination: None("MemSheets"),
+		Source:      internal.None("MemSheets"),
+		Destination: internal.None("MemSheets"),
 	}
 }
 

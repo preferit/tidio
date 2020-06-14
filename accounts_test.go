@@ -18,7 +18,7 @@ func Test_accounts(t *testing.T) {
 		acc      Account
 	)
 	accounts.Source = StringSource(empty)
-	accounts.Destination = NopDestination()
+	accounts.Destination = Nowhere()
 
 	ok(accounts.Load())
 	ok(accounts.Save())

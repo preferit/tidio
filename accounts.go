@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/preferit/tidio/internal"
 )
 
 func NewAccount(username, role string) *Account {
@@ -58,8 +60,8 @@ type Accounts interface {
 func NewMemAccounts() *MemAccounts {
 	return &MemAccounts{
 		accounts:    make(map[string]*Account),
-		Source:      None("AccountsMap"),
-		Destination: None("AccountsMap"),
+		Source:      internal.None("AccountsMap"),
+		Destination: internal.None("AccountsMap"),
 	}
 }
 
