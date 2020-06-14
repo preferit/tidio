@@ -24,13 +24,13 @@ func Test_service(t *testing.T) {
 	ok(service.Save())
 	ok(service.Load())
 
-	if _, ok := service.RoleByKey("KEY"); !ok {
+	if _, ok := service.AccountByKey("KEY"); !ok {
 		t.Error("KEY is in apikeys")
 	}
-	if _, ok := service.RoleByKey(""); ok {
+	if _, ok := service.AccountByKey(""); ok {
 		t.Error("empty key ok")
 	}
-	if _, ok := service.RoleByKey("not there"); ok {
+	if _, ok := service.AccountByKey("not there"); ok {
 		t.Error("wrong key ok")
 	}
 }

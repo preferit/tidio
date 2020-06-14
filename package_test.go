@@ -24,7 +24,7 @@ func Test_stateful(t *testing.T) {
 	bad(err)
 }
 
-func Test_aquiring_role(t *testing.T) {
+func Test_routing_request(t *testing.T) {
 	var (
 		d       = design.NewSequenceDiagram()
 		router  = d.Add("Router")
