@@ -1,4 +1,4 @@
-package main
+package tidio
 
 import (
 	"encoding/json"
@@ -7,10 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gregoryv/stamp"
-	"github.com/preferit/tidio"
 )
 
-func NewRouter(service *tidio.Service) *mux.Router {
+func NewRouter(service *Service) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/api", serveAPIRoot())
 
@@ -31,11 +30,11 @@ func writeTimesheets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		filename := vars["filename"]
-		s := &tidio.Timesheet{
+		s := &Timesheet{
 			Path:       filename,
 			ReadCloser: r.Body,
 		}
-		role, _ := r.Context().Value("role").(*tidio.Account)
+		role, _ := r.Context().Value("role").(*Account)
 		if err := role.CreateTimesheet(s); err != nil {
 			w.WriteHeader(statusOf(err))
 			return
@@ -46,9 +45,9 @@ func writeTimesheets() http.HandlerFunc {
 
 func readTimesheets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		role, _ := r.Context().Value("role").(*tidio.Account)
+		role, _ := r.Context().Value("role").(*Account)
 		vars := mux.Vars(r)
-		sheet := tidio.Timesheet{
+		sheet := Timesheet{
 			Path: vars["filename"],
 		}
 		if err := role.OpenTimesheet(&sheet); err != nil {
@@ -62,7 +61,7 @@ func readTimesheets() http.HandlerFunc {
 
 func listTimesheets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		role, _ := r.Context().Value("role").(*tidio.Account)
+		role, _ := r.Context().Value("role").(*Account)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"timesheets": role.ListTimesheet(),
@@ -87,7 +86,7 @@ func statusOf(err error) int {
 	switch {
 	case err == nil:
 		return http.StatusOK
-	case err == tidio.ErrForbidden:
+	case err == ErrForbidden:
 		return http.StatusForbidden
 	default:
 		return http.StatusBadRequest

@@ -1,14 +1,12 @@
-package main
+package tidio
 
 import (
 	"context"
 	"net/http"
-
-	"github.com/preferit/tidio"
 )
 
 type authMid struct {
-	service *tidio.Service
+	service *Service
 }
 
 func (m *authMid) Middleware(next http.Handler) http.Handler {

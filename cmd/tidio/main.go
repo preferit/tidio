@@ -43,6 +43,6 @@ func run(c *cli) error {
 	service.SetDataDir(c.storeDir)
 	service.Load()
 	service.Save() // update
-	router := NewRouter(service)
+	router := tidio.NewRouter(service)
 	return c.ListenAndServe(c.bind, router)
 }

@@ -1,4 +1,4 @@
-package main
+package tidio
 
 import (
 	"net/http"
@@ -6,14 +6,13 @@ import (
 	"testing"
 
 	"github.com/gregoryv/asserter"
-	"github.com/preferit/tidio"
 )
 
 func Test_router(t *testing.T) {
 	assert := asserter.New(t)
 	headers := http.Header{}
-	service := tidio.NewService()
-	service.AddAccount("KEY", tidio.NewAccount("john", "admin"))
+	service := NewService()
+	service.AddAccount("KEY", NewAccount("john", "admin"))
 	router := NewRouter(service)
 
 	exp := assert().ResponseFrom(router)
@@ -57,7 +56,7 @@ func Test_convert_error(t *testing.T) {
 		}
 	}
 	ok(nil, http.StatusOK)
-	ok(tidio.ErrForbidden, http.StatusForbidden)
+	ok(ErrForbidden, http.StatusForbidden)
 }
 
 const timesheet197604 = `1976 April
