@@ -9,7 +9,7 @@ import (
 	"github.com/preferit/tidio/internal"
 )
 
-func NewAccount(username, role string) *Account {
+func NewAccount(username, account string) *Account {
 	return &Account{
 		Username:   username,
 		Timesheets: NewMemSheets(),

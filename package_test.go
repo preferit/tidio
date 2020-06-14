@@ -33,7 +33,7 @@ func Test_routing_request(t *testing.T) {
 	)
 	d.Link(router, service, "RoleByKey()")
 	d.Link(service, auth, "FindAccountByKey()")
-	d.SaveAs("/tmp/aquiring_role.svg")
+	d.SaveAs("/tmp/aquiring_account.svg")
 }
 
 type BrokenDestination struct{}
