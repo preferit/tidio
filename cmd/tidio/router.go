@@ -35,7 +35,7 @@ func writeTimesheets() http.HandlerFunc {
 			Path:       filename,
 			ReadCloser: r.Body,
 		}
-		role, _ := r.Context().Value("role").(*tidio.Role)
+		role, _ := r.Context().Value("role").(*tidio.Account)
 		if err := role.CreateTimesheet(s); err != nil {
 			w.WriteHeader(statusOf(err))
 			return
@@ -46,7 +46,7 @@ func writeTimesheets() http.HandlerFunc {
 
 func readTimesheets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		role, _ := r.Context().Value("role").(*tidio.Role)
+		role, _ := r.Context().Value("role").(*tidio.Account)
 		vars := mux.Vars(r)
 		sheet := tidio.Timesheet{
 			Path: vars["filename"],
@@ -62,7 +62,7 @@ func readTimesheets() http.HandlerFunc {
 
 func listTimesheets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		role, _ := r.Context().Value("role").(*tidio.Role)
+		role, _ := r.Context().Value("role").(*tidio.Account)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"timesheets": role.ListTimesheet(),

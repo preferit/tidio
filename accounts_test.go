@@ -1,6 +1,9 @@
 package tidio
 
 import (
+	"io"
+	"io/ioutil"
+	"strings"
 	"testing"
 
 	"github.com/gregoryv/asserter"
@@ -26,4 +29,40 @@ func Test_accounts(t *testing.T) {
 	bad(accounts.FindAccountByKey(&acc, "x"))
 	bad(accounts.Load())
 	bad(accounts.Save())
+}
+
+func Test_account(t *testing.T) {
+	var (
+		assert  = asserter.New(t)
+		ok, bad = assert().Errors()
+		john    = NewAccount("john", "admin")
+	)
+	john.Timesheets = NewMemSheets()
+
+	bad(john.CreateTimesheet(&Timesheet{
+		Path:       "xx.txt",
+		ReadCloser: aFile("x")},
+	))
+
+	ok(john.CreateTimesheet(&Timesheet{
+		Path:       "202001.timesheet",
+		ReadCloser: aFile("."),
+	}))
+	ok(john.OpenTimesheet(&Timesheet{
+		Path: "202001.timesheet",
+	}))
+
+	bad(john.OpenTimesheet(&Timesheet{
+		Path: "209901.timesheet",
+	}))
+	t.Run("ListTimesheet", func(t *testing.T) {
+		Sheets := john.ListTimesheet()
+		if len(Sheets) == 0 {
+			t.Error("did not found any timesheets")
+		}
+	})
+}
+
+func aFile(content string) io.ReadCloser {
+	return ioutil.NopCloser(strings.NewReader(content))
 }

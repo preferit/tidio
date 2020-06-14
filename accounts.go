@@ -3,16 +3,45 @@ package tidio
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"strings"
 )
 
 func NewAccount(username, role string) *Account {
 	return &Account{
-		Username: username,
+		Username:   username,
+		Timesheets: NewMemSheets(),
 	}
 }
 
 type Account struct {
 	Username string
+
+	Timesheets `json:"-"`
+}
+
+func (me *Account) CreateTimesheet(sheet *Timesheet) error {
+	if err := checkTimesheetFilename(sheet.Path); err != nil {
+		return err
+	}
+	var sb strings.Builder
+	io.Copy(&sb, sheet)
+	sheet.Content = sb.String()
+	return me.AddTimesheet(sheet)
+}
+
+func (me *Account) OpenTimesheet(sheet *Timesheet) error {
+	return me.FindTimesheet(sheet)
+}
+
+func (me *Account) ListTimesheet() []string {
+	res := make([]string, 0)
+	me.Timesheets.Map(func(next *bool, s *Timesheet) error {
+		// todo use account as filter
+		res = append(res, s.Path)
+		return nil
+	})
+	return res
 }
 
 // ----------------------------------------
@@ -27,11 +56,11 @@ type Accounts interface {
 // ----------------------------------------
 
 func NewMemAccounts() *MemAccounts {
-	my := &MemAccounts{}
-	my.accounts = make(map[string]*Account)
-	my.Source = None("AccountsMap")
-	my.Destination = None("AccountsMap")
-	return my
+	return &MemAccounts{
+		accounts:    make(map[string]*Account),
+		Source:      None("AccountsMap"),
+		Destination: None("AccountsMap"),
+	}
 }
 
 type MemAccounts struct {

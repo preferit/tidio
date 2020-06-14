@@ -39,7 +39,7 @@ func (s *Service) SetDataDir(dir string) {
 	s.Accounts.PersistToFile(path.Join(dir, "accounts.json"))
 }
 
-func (s *Service) RoleByKey(key string) (*Role, bool) {
+func (s *Service) RoleByKey(key string) (*Account, bool) {
 	if key == "" {
 		return nil, false
 	}
@@ -47,8 +47,6 @@ func (s *Service) RoleByKey(key string) (*Role, bool) {
 	if err := s.FindAccountByKey(&account, key); err != nil {
 		return nil, false
 	}
-	return &Role{
-		account:    &account,
-		Timesheets: s.Timesheets,
-	}, true
+	account.Timesheets = s.Timesheets
+	return &account, true
 }
