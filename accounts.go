@@ -42,6 +42,17 @@ func (me *Account) WriteResource(resource *Resource) error {
 	return me.AddTimesheet(&sheet)
 }
 
+func (me *Account) ReadResource(resource *Resource) error {
+	sheet := Timesheet{
+		Path: resource.Path,
+	}
+	if err := me.FindTimesheet(&sheet); err != nil {
+		return err
+	}
+	resource.ReadCloser = sheet.ReadCloser
+	return nil
+}
+
 func isTimesheet(filename string) error {
 	if path.Ext(filename) != ".timesheet" {
 		return fmt.Errorf("isTimesheet: %s", filename)

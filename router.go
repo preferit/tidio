@@ -14,10 +14,10 @@ func NewRouter(service *Service) *mux.Router {
 
 	auth := service.FindAccount
 	r.Handle(
-		"/api/timesheets/{user}/{filename}", auth(writeTimesheets()),
+		"/api/timesheets/{user}/{filename}", auth(writeResource()),
 	).Methods("POST")
 	r.Handle(
-		"/api/timesheets/{user}/{filename}", auth(readTimesheets()),
+		"/api/timesheets/{user}/{filename}", auth(readResources()),
 	).Methods("GET")
 	r.Handle(
 		"/api/timesheets/{user}/", auth(listTimesheets()),
@@ -25,7 +25,7 @@ func NewRouter(service *Service) *mux.Router {
 	return r
 }
 
-func writeTimesheets() http.HandlerFunc {
+func writeResource() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		resource := Resource{
@@ -41,19 +41,19 @@ func writeTimesheets() http.HandlerFunc {
 	}
 }
 
-func readTimesheets() http.HandlerFunc {
+func readResources() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		account, _ := r.Context().Value("account").(*Account)
 		vars := mux.Vars(r)
-		sheet := Timesheet{
+		resource := Resource{
 			Path: vars["filename"],
 		}
-		if err := account.OpenTimesheet(&sheet); err != nil {
+		if err := account.ReadResource(&resource); err != nil {
 			w.WriteHeader(statusOf(err))
 			return
 		}
-		io.Copy(w, sheet)
-		sheet.Close()
+		io.Copy(w, resource)
+		resource.Close()
 	}
 }
 
