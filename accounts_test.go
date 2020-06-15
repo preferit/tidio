@@ -35,7 +35,7 @@ func Test_account(t *testing.T) {
 	var (
 		assert  = asserter.New(t)
 		ok, bad = assert().Errors()
-		john    = NewAccount("john", "admin")
+		john    = NewAccount("john")
 	)
 	john.Timesheets = NewMemSheets()
 

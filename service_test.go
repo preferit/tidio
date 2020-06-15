@@ -16,7 +16,7 @@ func Test_service(t *testing.T) {
 		dir, cleanup = newTempDir(t)
 	)
 	service.SetDataDir(dir)
-	service.AddAccount("KEY", NewAccount("john", "admin"))
+	service.AddAccount("KEY", NewAccount("john"))
 	t.Log(dir)
 	defer cleanup()
 

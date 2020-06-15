@@ -12,7 +12,7 @@ func Test_router(t *testing.T) {
 	assert := asserter.New(t)
 	headers := http.Header{}
 	service := NewService()
-	service.AddAccount("KEY", NewAccount("john", "admin"))
+	service.AddAccount("KEY", NewAccount("john"))
 	router := NewRouter(service)
 
 	exp := assert().ResponseFrom(router)

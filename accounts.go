@@ -6,10 +6,11 @@ import (
 	"io"
 	"strings"
 
+	"github.com/gregoryv/nugo"
 	"github.com/preferit/tidio/internal"
 )
 
-func NewAccount(username, account string) *Account {
+func NewAccount(username string) *Account {
 	return &Account{
 		Username:   username,
 		Timesheets: NewMemSheets(),
@@ -17,6 +18,7 @@ func NewAccount(username, account string) *Account {
 }
 
 type Account struct {
+	nugo.Ring
 	Username string
 
 	Timesheets `json:"-"`
