@@ -3,6 +3,7 @@ package tidio
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -88,9 +89,9 @@ func (me *Service) FindResource(resource *Resource) error {
 	switch {
 	case resource.Path == "":
 		NewStats(resource)
-		return nil
+	default:
+		return fmt.Errorf("FindResource: %s not found", resource.Path)
 	}
-	warn("FindResource:", resource.Path, "not found")
 	return nil
 }
 

@@ -30,6 +30,8 @@ func Test_service(t *testing.T) {
 	ok(service.AccountByKey(&account, key))
 	bad(service.AccountByKey(&account, ""))
 	bad(service.AccountByKey(&account, "not there"))
+
+	bad(service.FindResource(&Resource{Path: "not there"}))
 }
 
 func newTempDir(t *testing.T) (string, func()) {
