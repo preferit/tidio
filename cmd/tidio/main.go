@@ -17,7 +17,6 @@ func main() {
 		ListenAndServe: http.ListenAndServe,
 	}
 	stamp.InitFlags()
-	flag.StringVar(&c.storeDir, "store-dir", "./store", "file storage repository")
 	flag.StringVar(&c.bind, "bind", ":13001", "[host]:port to bind to")
 	flag.Parse()
 	stamp.AsFlagged()
@@ -30,7 +29,6 @@ func main() {
 
 type cli struct {
 	ListenAndServe func(string, http.Handler) error
-	storeDir       string
 	bind           string
 }
 
@@ -38,11 +36,6 @@ func run(c *cli) error {
 	if c.bind == "" {
 		return fmt.Errorf("empty bind")
 	}
-	os.MkdirAll(c.storeDir, 0755)
 	service := tidio.NewService()
-	service.SetDataDir(c.storeDir)
-	service.Load()
-	service.Save() // update
-	router := tidio.NewRouter(service)
-	return c.ListenAndServe(c.bind, router)
+	return c.ListenAndServe(c.bind, service)
 }
