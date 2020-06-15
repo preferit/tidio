@@ -39,10 +39,7 @@ func Test_account(t *testing.T) {
 	)
 	john.Resources = NewMemResources()
 
-	ok(john.WriteResource(&Resource{
-		Path:       "202001.timesheet",
-		ReadCloser: aFile("."),
-	}))
+	ok(john.WriteResource("202001.timesheet", aFile(".")))
 	ok(john.OpenTimesheet(&Resource{
 		Path: "202001.timesheet",
 	}))

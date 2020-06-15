@@ -3,7 +3,7 @@ package\.
 service\.
 router\.
 accounts\.
-timesheets\.
+resource\.
 install.sh
 .ini
 etc

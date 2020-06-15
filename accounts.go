@@ -26,20 +26,20 @@ type Account struct {
 	Resources `json:"-"`
 }
 
-func (me *Account) WriteResource(resource *Resource) error {
-	if err := isTimesheet(resource.Path); err != nil {
+func (me *Account) WriteResource(filename string, r io.Reader) error {
+	if err := isTimesheet(filename); err != nil {
 		return err
 	}
-	if err := checkTimesheetFilename(resource.Path); err != nil {
+	if err := checkTimesheetFilename(filename); err != nil {
 		return err
 	}
 	var sb strings.Builder
-	io.Copy(&sb, resource)
-	sheet := Resource{
-		Path:    resource.Path,
+	io.Copy(&sb, r)
+	resource := Resource{
+		Path:    filename,
 		Content: sb.String(),
 	}
-	return me.AddTimesheet(&sheet)
+	return me.AddResource(&resource)
 }
 
 func (me *Account) ReadResource(resource *Resource) error {

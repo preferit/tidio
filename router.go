@@ -28,12 +28,8 @@ func NewRouter(service *Service) *mux.Router {
 func writeResource() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		resource := Resource{
-			Path:       vars["filename"],
-			ReadCloser: r.Body,
-		}
 		account, _ := r.Context().Value("account").(*Account)
-		if err := account.WriteResource(&resource); err != nil {
+		if err := account.WriteResource(vars["filename"], r.Body); err != nil {
 			w.WriteHeader(statusOf(err))
 			return
 		}

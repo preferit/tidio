@@ -31,7 +31,7 @@ func (s *Resource) Equal(b *Resource) bool {
 type Resources interface {
 	Stateful
 	FilePersistent
-	AddTimesheet(*Resource) error
+	AddResource(*Resource) error
 	FindTimesheet(*Resource) error
 	Map(SheetMapfunc) error
 }
@@ -75,7 +75,7 @@ func (me *MemResources) PersistToFile(filename string) {
 	me.Destination = FileDestination(filename)
 }
 
-func (m *MemResources) AddTimesheet(s *Resource) error {
+func (m *MemResources) AddResource(s *Resource) error {
 	m.Sheets = append(m.Sheets, s)
 	return nil
 }

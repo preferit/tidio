@@ -18,7 +18,7 @@ func Test_timesheets(t *testing.T) {
 	sheets.Source = StringSource(empty)
 	ok(sheets.Load())
 	ok(sheets.Map(func(next *bool, s *Resource) error { return nil }))
-	ok(sheets.AddTimesheet(NewResource()))
+	ok(sheets.AddResource(NewResource()))
 
 	sheets.Destination = BrokenDestination{}
 	bad(sheets.Save())
