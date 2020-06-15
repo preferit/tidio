@@ -8,6 +8,18 @@ import (
 	"github.com/gregoryv/ex"
 )
 
+func TestService(t *testing.T) {
+	var (
+		assert  = asserter.New(t)
+		ok, bad = assert().Errors()
+		service = NewService()
+		john    = Account{Username: "john"}
+	)
+	ok(service.AddUser(&john))
+	ok(service.Mkdir("/home/john/tmp", &john))
+	bad(service.Mkdir("/haha", &john))
+}
+
 func TestService_AddUser(t *testing.T) {
 	var (
 		service = NewService()

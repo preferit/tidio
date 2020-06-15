@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"path"
 	"sync"
 
 	"github.com/gregoryv/fox"
@@ -33,19 +34,56 @@ type Service struct {
 	nextGID uint
 }
 
-func (me *Service) AddUser(a *Account) error {
-	if a.Username == "" {
+func (me *Service) AddUser(account *Account) error {
+	if account.Username == "" {
 		return fmt.Errorf("AddUser: empty username")
 	}
-	a.Ring = nugo.NewRing(me.nextIDs())
-	filename := fmt.Sprintf("%s.account", a.Username)
-	r := a.NewResource(filename, a)
-	me.AddResource(r)
+	account.Ring = nugo.NewRing(me.nextIDs())
+	filename := fmt.Sprintf("%s.account", account.Username)
+	me.AddResource(&Resource{
+		Seal:   account.Seal(),
+		Path:   filename,
+		Entity: account,
+	})
+	// home dir
+	me.AddResource(&Resource{
+		Seal: account.Seal(),
+		Path: "/home/" + account.Username,
+	})
 	return nil
 }
 
+func (me *Service) Mkdir(dir string, a *Account) error {
+	var parent Resource
+	if err := me.Find(&parent, path.Dir(dir)); err != nil {
+		return err
+	}
+	perm := nugo.Permission{}
+
+	r := Resource{
+		Seal: a.Seal(),
+		Path: dir,
+	}
+	if err := perm.ToCreate(&parent, &r, a); err != nil {
+		return err
+	}
+	me.AddResource(&r)
+	return nil
+}
+
+// AddResource adds a resource with no premission control
 func (me *Service) AddResource(r *Resource) {
 	me.store = append(me.store, r)
+}
+
+func (me *Service) Find(resource *Resource, filename string) error {
+	for _, r := range me.store {
+		if r.Path == filename {
+			*resource = *r
+			return nil
+		}
+	}
+	return fmt.Errorf("Find: %s not found", filename)
 }
 
 func (me *Service) WriteTo(w io.Writer) error {
