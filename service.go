@@ -1,7 +1,9 @@
 package tidio
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"path"
@@ -49,6 +51,12 @@ func (me *Service) Add(as *Account, path string, entity interface{}) {
 		Seal:   as.Seal(),
 		path:   path,
 		entity: entity,
+	})
+}
+
+func (me *Service) WriteTo(w io.Writer) error {
+	return json.NewEncoder(w).Encode(map[string]interface{}{
+		"resources": me.store,
 	})
 }
 
