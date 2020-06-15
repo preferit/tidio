@@ -7,9 +7,17 @@ import (
 type Resource struct {
 	nugo.Seal
 	path   string
-	entity interface{}
+	Entity interface{}
 }
 
 type Account struct {
 	nugo.Ring
+}
+
+func (me *Account) NewResource(path string, entity interface{}) *Resource {
+	return &Resource{
+		Seal:   me.Seal(),
+		path:   path,
+		Entity: entity,
+	}
 }

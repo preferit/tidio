@@ -42,16 +42,13 @@ func (me *Service) NewAccount(a *Account, username string) error {
 		return fmt.Errorf("NewAccount: empty username")
 	}
 	a.Ring = nugo.NewRing(me.nextIDs())
-	me.Add(a, path.Join("accounts", username), a)
+	r := a.NewResource(path.Join("accounts", username), a)
+	me.AddResource(r)
 	return nil
 }
 
-func (me *Service) Add(as *Account, path string, entity interface{}) {
-	me.store = append(me.store, &Resource{
-		Seal:   as.Seal(),
-		path:   path,
-		entity: entity,
-	})
+func (me *Service) AddResource(r *Resource) {
+	me.store = append(me.store, r)
 }
 
 func (me *Service) WriteTo(w io.Writer) error {
