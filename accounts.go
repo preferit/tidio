@@ -54,7 +54,7 @@ func (me *Account) ListTimesheet() []string {
 type Accounts interface {
 	Stateful
 	FilePersistent
-	AddAccount(string, *Account) error
+	AddAccount(*Account) error
 	FindAccountByKey(*Account, string) error
 }
 
@@ -79,18 +79,20 @@ func (me *MemAccounts) PersistToFile(filename string) {
 	me.Destination = FileDestination(filename)
 }
 
-func (s *MemAccounts) AddAccount(key string, a *Account) error {
-	s.accounts[key] = a
+func (s *MemAccounts) AddAccount(a *Account) error {
+	// todo key should not be required
+	s.accounts[a.Key] = a
 	return nil
 }
 
 func (s *MemAccounts) FindAccountByKey(a *Account, key string) error {
-	account, found := s.accounts[key]
-	if !found {
-		return fmt.Errorf("account not found")
+	for _, account := range s.accounts {
+		if account.Key == key {
+			*a = *account
+			return nil
+		}
 	}
-	*a = *account
-	return nil
+	return fmt.Errorf("account not found")
 }
 
 func (s *MemAccounts) Load() error {

@@ -9,11 +9,15 @@ import (
 )
 
 func Test_router(t *testing.T) {
-	assert := asserter.New(t)
-	headers := http.Header{}
-	service := NewService()
-	service.AddAccount("KEY", NewAccount("john"))
-	router := NewRouter(service)
+	var (
+		assert  = asserter.New(t)
+		headers = http.Header{}
+		service = NewService()
+		router  = NewRouter(service)
+		john    = NewAccount("john")
+	)
+	john.Key = "KEY"
+	service.AddAccount(john)
 
 	exp := assert().ResponseFrom(router)
 	exp.StatusCode(200, "GET", "/api", nil)

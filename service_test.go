@@ -14,17 +14,19 @@ func Test_service(t *testing.T) {
 		ok, bad      = assert().Errors()
 		service      = NewService()
 		dir, cleanup = newTempDir(t)
+		john         = NewAccount("john")
+		key          = "KEY"
 	)
-	service.SetDataDir(dir)
-	service.AddAccount("KEY", NewAccount("john"))
-	t.Log(dir)
 	defer cleanup()
+	service.SetDataDir(dir)
+	john.Key = key
+	service.AddAccount(john)
 
 	bad(service.Load())
 	ok(service.Save())
 	ok(service.Load())
 
-	if _, ok := service.AccountByKey("KEY"); !ok {
+	if _, ok := service.AccountByKey(key); !ok {
 		t.Error("KEY is in apikeys")
 	}
 	if _, ok := service.AccountByKey(""); ok {
