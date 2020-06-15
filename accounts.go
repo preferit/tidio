@@ -64,7 +64,7 @@ func (me *Account) OpenTimesheet(sheet *Timesheet) error {
 	return me.FindTimesheet(sheet)
 }
 
-func (me *Account) ListTimesheet() []string {
+func (me *Account) FindResources() []string {
 	res := make([]string, 0)
 	me.Timesheets.Map(func(next *bool, s *Timesheet) error {
 		// todo use account as filter

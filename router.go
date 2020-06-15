@@ -17,10 +17,10 @@ func NewRouter(service *Service) *mux.Router {
 		"/api/timesheets/{user}/{filename}", auth(writeResource()),
 	).Methods("POST")
 	r.Handle(
-		"/api/timesheets/{user}/{filename}", auth(readResources()),
+		"/api/timesheets/{user}/{filename}", auth(readResource()),
 	).Methods("GET")
 	r.Handle(
-		"/api/timesheets/{user}/", auth(listTimesheets()),
+		"/api/timesheets/{user}/", auth(readResources()),
 	).Methods("GET")
 	return r
 }
@@ -41,7 +41,7 @@ func writeResource() http.HandlerFunc {
 	}
 }
 
-func readResources() http.HandlerFunc {
+func readResource() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		account, _ := r.Context().Value("account").(*Account)
 		vars := mux.Vars(r)
@@ -57,12 +57,12 @@ func readResources() http.HandlerFunc {
 	}
 }
 
-func listTimesheets() http.HandlerFunc {
+func readResources() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		account, _ := r.Context().Value("account").(*Account)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"timesheets": account.ListTimesheet(),
+			"timesheets": account.FindResources(),
 		})
 	}
 }

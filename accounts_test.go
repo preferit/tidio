@@ -50,8 +50,8 @@ func Test_account(t *testing.T) {
 	bad(john.OpenTimesheet(&Timesheet{
 		Path: "209901.timesheet",
 	}))
-	t.Run("ListTimesheet", func(t *testing.T) {
-		Sheets := john.ListTimesheet()
+	t.Run("FindResources", func(t *testing.T) {
+		Sheets := john.FindResources()
 		if len(Sheets) == 0 {
 			t.Error("did not found any timesheets")
 		}
