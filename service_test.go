@@ -8,15 +8,14 @@ import (
 	"github.com/gregoryv/ex"
 )
 
-func TestService_NewAccount(t *testing.T) {
+func TestService_AddUser(t *testing.T) {
 	var (
 		service = NewService()
 		assert  = asserter.New(t)
 		ok, bad = assert().Errors()
-		account Account
 	)
-	ok(service.NewAccount(&account, "john"))
-	bad(service.NewAccount(&account, ""))
+	ok(service.AddUser(&Account{Username: "something"}))
+	bad(service.AddUser(&Account{}))
 }
 
 func TestService_WriteTo(t *testing.T) {
@@ -28,13 +27,15 @@ func TestService_WriteTo(t *testing.T) {
 	)
 	nice.Out = &buf
 	service.WriteTo(nice)
-
-	assert().Contains(buf.String(), "resources")
-	assert().Contains(buf.String(), "Path")
-	assert().Contains(buf.String(), "Entity")
-	assert().Contains(buf.String(), "Mode")
-	assert().Contains(buf.String(), "UID")
-	assert().Contains(buf.String(), "GID")
+	got := buf.String()
+	assert().Contains(got, "resources")
+	assert().Contains(got, "Path")
+	assert().Contains(got, "Entity")
+	assert().Contains(got, "Mode")
+	assert().Contains(got, "UID")
+	assert().Contains(got, "GID")
+	assert().Contains(got, "Username")
+	assert().Contains(got, `"root"`)
 }
 
 // ----------------------------------------

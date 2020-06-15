@@ -12,6 +12,7 @@ type Resource struct {
 
 type Account struct {
 	nugo.Ring
+	Username string
 }
 
 func (me *Account) NewResource(path string, entity interface{}) *Resource {

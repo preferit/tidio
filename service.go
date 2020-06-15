@@ -19,8 +19,8 @@ func NewService() *Service {
 		nextUID: 100,
 		nextGID: 100,
 	}
-	var root Account
-	s.NewAccount(&root, "root")
+	root := Account{Username: "root"}
+	s.AddUser(&root)
 	return s
 }
 
@@ -33,12 +33,12 @@ type Service struct {
 	nextGID uint
 }
 
-func (me *Service) NewAccount(a *Account, username string) error {
-	if username == "" {
-		return fmt.Errorf("NewAccount: empty username")
+func (me *Service) AddUser(a *Account) error {
+	if a.Username == "" {
+		return fmt.Errorf("AddUser: empty username")
 	}
 	a.Ring = nugo.NewRing(me.nextIDs())
-	filename := fmt.Sprintf("%s.account", username)
+	filename := fmt.Sprintf("%s.account", a.Username)
 	r := a.NewResource(filename, a)
 	me.AddResource(r)
 	return nil
