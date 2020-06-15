@@ -26,18 +26,18 @@ type Service struct {
 	Accounts
 }
 
-func (s *Service) Load() error {
+func (me *Service) Load() error {
 	err := errors{
-		s.Timesheets.Load(),
-		s.Accounts.Load(),
+		me.Timesheets.Load(),
+		me.Accounts.Load(),
 	}
 	return err.First()
 }
 
-func (s *Service) Save() error {
+func (me *Service) Save() error {
 	err := errors{
-		s.Timesheets.Save(),
-		s.Accounts.Save(),
+		me.Timesheets.Save(),
+		me.Accounts.Save(),
 	}
 	return err.First()
 }
@@ -48,27 +48,27 @@ func (s *Service) SetDataDir(dir string) {
 	s.Accounts.PersistToFile(path.Join(dir, "accounts.json"))
 }
 
-func (s *Service) AccountByKey(key string) (*Account, bool) {
-	if key == "" {
-		return nil, false
+func (me *Service) AccountByKey(account *Account, key string) error {
+	if err := me.FindAccountByKey(account, key); err != nil {
+		return err
 	}
-	var account Account
-	if err := s.FindAccountByKey(&account, key); err != nil {
-		return nil, false
-	}
-	account.Timesheets = s.Timesheets
-	return &account, true
+	me.fillAccount(account)
+	return nil
+}
+
+func (me *Service) fillAccount(account *Account) {
+	account.Timesheets = me.Timesheets
 }
 
 func (me *Service) FindAccount(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		key := r.Header.Get("Authorization")
-		account, ok := me.AccountByKey(key)
-		if !ok {
+		var account Account // todo maybe default to noname
+		if err := me.AccountByKey(&account, key); err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		r = r.WithContext(context.WithValue(r.Context(), "account", account))
+		r = r.WithContext(context.WithValue(r.Context(), "account", &account))
 		next.ServeHTTP(w, r)
 	})
 }
@@ -88,14 +88,13 @@ func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	publicResource := true
+	var account Account
 	if !publicResource {
 		key := r.Header.Get("Authorization")
-		account, found := me.AccountByKey(key)
-		if !found {
+		if err := me.AccountByKey(&account, key); err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		_ = account
 	}
 	w.Header().Set("Content-Type", "application/json")
 	io.Copy(w, resource.Content)

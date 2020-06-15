@@ -16,6 +16,7 @@ func Test_service(t *testing.T) {
 		dir, cleanup = newTempDir(t)
 		john         = NewAccount("john")
 		key          = "KEY"
+		account      = Account{}
 	)
 	defer cleanup()
 	service.SetDataDir(dir)
@@ -26,15 +27,9 @@ func Test_service(t *testing.T) {
 	ok(service.Save())
 	ok(service.Load())
 
-	if _, ok := service.AccountByKey(key); !ok {
-		t.Error("KEY is in apikeys")
-	}
-	if _, ok := service.AccountByKey(""); ok {
-		t.Error("empty key ok")
-	}
-	if _, ok := service.AccountByKey("not there"); ok {
-		t.Error("wrong key ok")
-	}
+	ok(service.AccountByKey(&account, key))
+	bad(service.AccountByKey(&account, ""))
+	bad(service.AccountByKey(&account, "not there"))
 }
 
 func newTempDir(t *testing.T) (string, func()) {
