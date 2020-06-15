@@ -6,12 +6,11 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/gregoryv/stamp"
 )
 
 func NewRouter(service *Service) *mux.Router {
 	r := mux.NewRouter()
-	r.HandleFunc("/api", serveAPIRoot())
+	r.HandleFunc("/api", serveAPIRoot(service))
 
 	auth := service.FindAccount
 	r.Handle(
@@ -29,13 +28,12 @@ func NewRouter(service *Service) *mux.Router {
 func writeTimesheets() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		filename := vars["filename"]
-		s := &Timesheet{
-			Path:       filename,
+		resource := Resource{
+			Path:       vars["filename"],
 			ReadCloser: r.Body,
 		}
 		account, _ := r.Context().Value("account").(*Account)
-		if err := account.CreateTimesheet(s); err != nil {
+		if err := account.WriteResource(&resource); err != nil {
 			w.WriteHeader(statusOf(err))
 			return
 		}
@@ -69,16 +67,13 @@ func listTimesheets() http.HandlerFunc {
 	}
 }
 
-func serveAPIRoot() http.HandlerFunc {
+func serveAPIRoot(service *Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"revision": stamp.InUse().Revision,
-			"version":  stamp.InUse().ChangelogVersion,
-			"resources": []string{
-				"/api/timesheets/",
-			},
-		})
+		resource := Resource{Path: ""}
+		service.FindResource(&resource)
+		io.Copy(w, resource)
+		resource.Close()
 	}
 }
 

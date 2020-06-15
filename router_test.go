@@ -34,6 +34,9 @@ func Test_router(t *testing.T) {
 	headers = http.Header{}
 	headers.Set("Authorization", "KEY")
 	exp.StatusCode(404, "GET", "/api/timesheets/", headers)
+	exp.StatusCode(400, "POST", "/api/timesheets/john/001.timesheet",
+		strings.NewReader("some content"), headers)
+
 	exp.StatusCode(204, "POST", "/api/timesheets/john/202001.timesheet",
 		strings.NewReader("some content"), headers)
 	exp.StatusCode(204, "POST", "/api/timesheets/eva/199601.timesheet",

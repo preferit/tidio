@@ -39,12 +39,7 @@ func Test_account(t *testing.T) {
 	)
 	john.Timesheets = NewMemSheets()
 
-	bad(john.CreateTimesheet(&Timesheet{
-		Path:       "xx.txt",
-		ReadCloser: aFile("x")},
-	))
-
-	ok(john.CreateTimesheet(&Timesheet{
+	ok(john.WriteResource(&Resource{
 		Path:       "202001.timesheet",
 		ReadCloser: aFile("."),
 	}))

@@ -3,12 +3,12 @@ package tidio
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"path"
-	"strings"
 
+	"github.com/gregoryv/fox"
 	"github.com/gregoryv/nugo"
 	"github.com/gregoryv/stamp"
 )
@@ -17,6 +17,7 @@ func NewService() *Service {
 	return &Service{
 		Timesheets: NewMemSheets(),
 		Accounts:   NewMemAccounts(),
+		warn:       fox.NewSyncLog(ioutil.Discard).Log,
 	}
 }
 
@@ -24,6 +25,8 @@ type Service struct {
 	Stateful
 	Timesheets
 	Accounts
+
+	warn func(...interface{})
 }
 
 func (me *Service) Load() error {
@@ -73,67 +76,36 @@ func (me *Service) FindAccount(next http.Handler) http.Handler {
 	})
 }
 
-func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// only serve /api requests
-	path := r.URL.Path
-	prefix := "/api"
-	if startsWith(path, prefix) {
-		path = path[len(prefix):]
-	}
-	resource := Resource{
-		Path: path,
-	}
-	if err := me.FindResource(&resource); err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-	publicResource := true
-	var account Account
-	if !publicResource {
-		key := r.Header.Get("Authorization")
-		if err := me.AccountByKey(&account, key); err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-	}
-	w.Header().Set("Content-Type", "application/json")
-	io.Copy(w, resource.Content)
-	resource.Content.Close()
+// ----------------------------------------
 
+type Resource struct {
+	nugo.Seal
+	Path string
+	io.ReadCloser
 }
 
 func (me *Service) FindResource(resource *Resource) error {
 	switch {
 	case resource.Path == "":
-		r, w := io.Pipe()
-		go func() {
-			json.NewEncoder(w).Encode(map[string]interface{}{
-				"revision": stamp.InUse().Revision,
-				"version":  stamp.InUse().ChangelogVersion,
-				"resources": []string{
-					"/api/timesheets/",
-				},
-			})
-			w.Close()
-		}()
-		resource.Content = r
+		NewStats(resource)
 		return nil
 	}
-	return fmt.Errorf("todo")
-}
-
-func startsWith(s, prefix string) bool {
-	return strings.Index(s, prefix) == 0
-}
-
-func (me *Service) WriteResource(r *Resource, user *Account) error {
+	warn("FindResource:", resource.Path, "not found")
 	return nil
 }
 
-// ----------------------------------------
-
-type Resource struct {
-	nugo.Seal
-	Path    string
-	Content io.ReadCloser
+func NewStats(resource *Resource) {
+	r, w := io.Pipe()
+	go func() {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"revision": stamp.InUse().Revision,
+			"version":  stamp.InUse().ChangelogVersion,
+			"resources": []string{
+				"/api/timesheets/",
+			},
+		})
+		w.Close()
+	}()
+	resource.Seal.Mode = 04444
+	resource.ReadCloser = r
 }

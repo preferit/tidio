@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"path"
 	"strings"
 
 	"github.com/gregoryv/nugo"
@@ -25,14 +26,27 @@ type Account struct {
 	Timesheets `json:"-"`
 }
 
-func (me *Account) CreateTimesheet(sheet *Timesheet) error {
-	if err := checkTimesheetFilename(sheet.Path); err != nil {
+func (me *Account) WriteResource(resource *Resource) error {
+	if err := isTimesheet(resource.Path); err != nil {
+		return err
+	}
+	if err := checkTimesheetFilename(resource.Path); err != nil {
 		return err
 	}
 	var sb strings.Builder
-	io.Copy(&sb, sheet)
-	sheet.Content = sb.String()
-	return me.AddTimesheet(sheet)
+	io.Copy(&sb, resource)
+	sheet := Timesheet{
+		Path:    resource.Path,
+		Content: sb.String(),
+	}
+	return me.AddTimesheet(&sheet)
+}
+
+func isTimesheet(filename string) error {
+	if path.Ext(filename) != ".timesheet" {
+		return fmt.Errorf("isTimesheet: %s", filename)
+	}
+	return nil
 }
 
 func (me *Account) OpenTimesheet(sheet *Timesheet) error {
