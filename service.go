@@ -10,21 +10,20 @@ import (
 	"path"
 
 	"github.com/gregoryv/fox"
-	"github.com/gregoryv/nugo"
 	"github.com/gregoryv/stamp"
 )
 
 func NewService() *Service {
 	return &Service{
-		Timesheets: NewMemSheets(),
-		Accounts:   NewMemAccounts(),
-		warn:       fox.NewSyncLog(ioutil.Discard).Log,
+		Resources: NewMemResources(),
+		Accounts:  NewMemAccounts(),
+		warn:      fox.NewSyncLog(ioutil.Discard).Log,
 	}
 }
 
 type Service struct {
 	Stateful
-	Timesheets
+	Resources
 	Accounts
 
 	warn func(...interface{})
@@ -32,7 +31,7 @@ type Service struct {
 
 func (me *Service) Load() error {
 	err := errors{
-		me.Timesheets.Load(),
+		me.Resources.Load(),
 		me.Accounts.Load(),
 	}
 	return err.First()
@@ -40,7 +39,7 @@ func (me *Service) Load() error {
 
 func (me *Service) Save() error {
 	err := errors{
-		me.Timesheets.Save(),
+		me.Resources.Save(),
 		me.Accounts.Save(),
 	}
 	return err.First()
@@ -48,7 +47,7 @@ func (me *Service) Save() error {
 
 // SetDataDir sets directory where state is persisted
 func (s *Service) SetDataDir(dir string) {
-	s.Timesheets.PersistToFile(path.Join(dir, "timesheets.json"))
+	s.Resources.PersistToFile(path.Join(dir, "timesheets.json"))
 	s.Accounts.PersistToFile(path.Join(dir, "accounts.json"))
 }
 
@@ -61,7 +60,7 @@ func (me *Service) AccountByKey(account *Account, key string) error {
 }
 
 func (me *Service) fillAccount(account *Account) {
-	account.Timesheets = me.Timesheets
+	account.Resources = me.Resources
 }
 
 func (me *Service) FindAccount(next http.Handler) http.Handler {
@@ -78,12 +77,6 @@ func (me *Service) FindAccount(next http.Handler) http.Handler {
 }
 
 // ----------------------------------------
-
-type Resource struct {
-	nugo.Seal
-	Path string
-	io.ReadCloser
-}
 
 func (me *Service) FindResource(resource *Resource) error {
 	switch {

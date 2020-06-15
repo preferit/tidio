@@ -37,17 +37,17 @@ func Test_account(t *testing.T) {
 		ok, bad = assert().Errors()
 		john    = NewAccount("john")
 	)
-	john.Timesheets = NewMemSheets()
+	john.Resources = NewMemResources()
 
 	ok(john.WriteResource(&Resource{
 		Path:       "202001.timesheet",
 		ReadCloser: aFile("."),
 	}))
-	ok(john.OpenTimesheet(&Timesheet{
+	ok(john.OpenTimesheet(&Resource{
 		Path: "202001.timesheet",
 	}))
 
-	bad(john.OpenTimesheet(&Timesheet{
+	bad(john.OpenTimesheet(&Resource{
 		Path: "209901.timesheet",
 	}))
 	t.Run("FindResources", func(t *testing.T) {

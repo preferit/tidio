@@ -7,50 +7,52 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"github.com/gregoryv/nugo"
 	"github.com/preferit/tidio/internal"
 )
 
-func NewTimesheet() *Timesheet {
-	return &Timesheet{}
+func NewResource() *Resource {
+	return &Resource{}
 }
 
-type Timesheet struct {
+type Resource struct {
+	nugo.Seal
 	Path string
 	io.ReadCloser
 	Content string
 }
 
-func (s *Timesheet) Equal(b *Timesheet) bool {
+func (s *Resource) Equal(b *Resource) bool {
 	return s.Path == b.Path
 }
 
 // ----------------------------------------
 
-type Timesheets interface {
+type Resources interface {
 	Stateful
 	FilePersistent
-	AddTimesheet(*Timesheet) error
-	FindTimesheet(*Timesheet) error
+	AddTimesheet(*Resource) error
+	FindTimesheet(*Resource) error
 	Map(SheetMapfunc) error
 }
 
 // ----------------------------------------
 
-func NewMemSheets() *MemSheets {
-	return &MemSheets{
-		Sheets:      make([]*Timesheet, 0),
+func NewMemResources() *MemResources {
+	return &MemResources{
+		Sheets:      make([]*Resource, 0),
 		Source:      internal.None("MemSheets"),
 		Destination: internal.None("MemSheets"),
 	}
 }
 
-type MemSheets struct {
+type MemResources struct {
 	Source
 	Destination
-	Sheets []*Timesheet
+	Sheets []*Resource
 }
 
-func (m *MemSheets) Load() error {
+func (m *MemResources) Load() error {
 	r, err := m.Source.Open()
 	if err != nil {
 		return err
@@ -59,7 +61,7 @@ func (m *MemSheets) Load() error {
 	return json.NewDecoder(r).Decode(&m.Sheets)
 }
 
-func (m *MemSheets) Save() error {
+func (m *MemResources) Save() error {
 	w, err := m.Destination.Create()
 	if err != nil {
 		return err
@@ -68,17 +70,17 @@ func (m *MemSheets) Save() error {
 	return json.NewEncoder(w).Encode(&m.Sheets)
 }
 
-func (me *MemSheets) PersistToFile(filename string) {
+func (me *MemResources) PersistToFile(filename string) {
 	me.Source = FileSource(filename)
 	me.Destination = FileDestination(filename)
 }
 
-func (m *MemSheets) AddTimesheet(s *Timesheet) error {
+func (m *MemResources) AddTimesheet(s *Resource) error {
 	m.Sheets = append(m.Sheets, s)
 	return nil
 }
 
-func (m *MemSheets) FindTimesheet(sheet *Timesheet) error {
+func (m *MemResources) FindTimesheet(sheet *Resource) error {
 	for _, s := range m.Sheets {
 		if s.Equal(sheet) {
 			*sheet = *s
@@ -89,7 +91,7 @@ func (m *MemSheets) FindTimesheet(sheet *Timesheet) error {
 	return fmt.Errorf("timesheet not found")
 }
 
-func (m *MemSheets) Map(fn SheetMapfunc) error {
+func (m *MemResources) Map(fn SheetMapfunc) error {
 	var next bool
 	for _, s := range m.Sheets {
 		next = true // by default we continue
@@ -101,4 +103,4 @@ func (m *MemSheets) Map(fn SheetMapfunc) error {
 	return nil
 }
 
-type SheetMapfunc func(*bool, *Timesheet) error
+type SheetMapfunc func(*bool, *Resource) error

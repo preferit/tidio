@@ -13,8 +13,8 @@ import (
 
 func NewAccount(username string) *Account {
 	return &Account{
-		Username:   username,
-		Timesheets: NewMemSheets(),
+		Username:  username,
+		Resources: NewMemResources(),
 	}
 }
 
@@ -23,7 +23,7 @@ type Account struct {
 	Username string
 	Key      string
 
-	Timesheets `json:"-"`
+	Resources `json:"-"`
 }
 
 func (me *Account) WriteResource(resource *Resource) error {
@@ -35,7 +35,7 @@ func (me *Account) WriteResource(resource *Resource) error {
 	}
 	var sb strings.Builder
 	io.Copy(&sb, resource)
-	sheet := Timesheet{
+	sheet := Resource{
 		Path:    resource.Path,
 		Content: sb.String(),
 	}
@@ -43,7 +43,7 @@ func (me *Account) WriteResource(resource *Resource) error {
 }
 
 func (me *Account) ReadResource(resource *Resource) error {
-	sheet := Timesheet{
+	sheet := Resource{
 		Path: resource.Path,
 	}
 	if err := me.FindTimesheet(&sheet); err != nil {
@@ -60,13 +60,13 @@ func isTimesheet(filename string) error {
 	return nil
 }
 
-func (me *Account) OpenTimesheet(sheet *Timesheet) error {
+func (me *Account) OpenTimesheet(sheet *Resource) error {
 	return me.FindTimesheet(sheet)
 }
 
 func (me *Account) FindResources() []string {
 	res := make([]string, 0)
-	me.Timesheets.Map(func(next *bool, s *Timesheet) error {
+	me.Resources.Map(func(next *bool, s *Resource) error {
 		// todo use account as filter
 		res = append(res, s.Path)
 		return nil
