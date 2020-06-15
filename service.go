@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"path"
 	"sync"
 
 	"github.com/gregoryv/fox"
@@ -20,7 +19,8 @@ func NewService() *Service {
 		nextUID: 100,
 		nextGID: 100,
 	}
-	s.NewAccount(&Account{}, "root")
+	var root Account
+	s.NewAccount(&root, "root")
 	return s
 }
 
@@ -33,16 +33,13 @@ type Service struct {
 	nextGID uint
 }
 
-func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
 func (me *Service) NewAccount(a *Account, username string) error {
 	if username == "" {
 		return fmt.Errorf("NewAccount: empty username")
 	}
 	a.Ring = nugo.NewRing(me.nextIDs())
-	r := a.NewResource(path.Join("accounts", username), a)
+	filename := fmt.Sprintf("%s.account", username)
+	r := a.NewResource(filename, a)
 	me.AddResource(r)
 	return nil
 }
@@ -65,4 +62,10 @@ func (me *Service) nextIDs() (uid uint, gid uint) {
 	me.nextGID++
 	me.next.Unlock()
 	return
+}
+
+// ----------------------------------------
+
+func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
 }

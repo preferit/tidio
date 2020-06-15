@@ -66,6 +66,7 @@ github.com/gregoryv/draw v0.11.1-0.20200612064250-61b6ade9fa2d h1:MiJJy/bcKiFQlE
 github.com/gregoryv/draw v0.11.1-0.20200612064250-61b6ade9fa2d/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
 github.com/gregoryv/draw v0.11.1-0.20200612065513-89b0e3735694 h1:TSGAD17B3jZ7WD3Fk6zu4LJj5ufdR9IBDSqP8QUHCI4=
 github.com/gregoryv/draw v0.11.1-0.20200612065513-89b0e3735694/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
+github.com/gregoryv/ex v0.3.0 h1:CesRia5aIgQlEkMrp9zbVrRm9/VkoiXUEd8iQdbhH4A=
 github.com/gregoryv/ex v0.3.0/go.mod h1:m5suTcbRkA2j4NZogj/DYTFmh4Ff9U29tpRzeiYlx+0=
 github.com/gregoryv/find v0.0.0-20180328085109-1bbc2d70c482/go.mod h1:/xxQlO62bzxhyabf2iKJzGJa+VAJy25spLI/6ICTrxU=
 github.com/gregoryv/find v0.1.1 h1:ETW9JKrNN1zRbySlTKELfqC+pJHhIQYj8mZo5F93GpQ=

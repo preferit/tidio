@@ -6,7 +6,7 @@ import (
 
 type Resource struct {
 	nugo.Seal
-	path   string
+	Path   string
 	Entity interface{}
 }
 
@@ -17,7 +17,12 @@ type Account struct {
 func (me *Account) NewResource(path string, entity interface{}) *Resource {
 	return &Resource{
 		Seal:   me.Seal(),
-		path:   path,
+		Path:   path,
 		Entity: entity,
 	}
+}
+
+type Folder struct {
+	nugo.Seal
+	Path string
 }

@@ -5,9 +5,10 @@ import (
 	"testing"
 
 	"github.com/gregoryv/asserter"
+	"github.com/gregoryv/ex"
 )
 
-func TestService(t *testing.T) {
+func TestService_NewAccount(t *testing.T) {
 	var (
 		service = NewService()
 		assert  = asserter.New(t)
@@ -18,22 +19,31 @@ func TestService(t *testing.T) {
 	bad(service.NewAccount(&account, ""))
 }
 
+func TestService_WriteTo(t *testing.T) {
+	var (
+		assert  = asserter.New(t)
+		service = NewService()
+		buf     bytes.Buffer
+		nice    = ex.NewJsonWriter()
+	)
+	nice.Out = &buf
+	service.WriteTo(nice)
+
+	assert().Contains(buf.String(), "resources")
+	assert().Contains(buf.String(), "Path")
+	assert().Contains(buf.String(), "Entity")
+	assert().Contains(buf.String(), "Mode")
+	assert().Contains(buf.String(), "UID")
+	assert().Contains(buf.String(), "GID")
+}
+
+// ----------------------------------------
+
 func TestService_ServeHTTP(t *testing.T) {
 	var (
 		assert  = asserter.New(t)
 		service = NewService()
 		exp     = assert().ResponseFrom(service)
 	)
-
 	exp.StatusCode(200, "GET", "/api")
-}
-
-func TestService_WriteTo(t *testing.T) {
-	var (
-		assert  = asserter.New(t)
-		service = NewService()
-		buf     bytes.Buffer
-	)
-	service.WriteTo(&buf)
-	assert().Contains(buf.String(), "resources")
 }
