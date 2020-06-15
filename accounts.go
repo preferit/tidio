@@ -20,6 +20,7 @@ func NewAccount(username string) *Account {
 type Account struct {
 	nugo.Ring
 	Username string
+	Key      string
 
 	Timesheets `json:"-"`
 }
