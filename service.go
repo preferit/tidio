@@ -3,6 +3,7 @@ package tidio
 import (
 	"io/ioutil"
 	"net/http"
+	"path"
 
 	"github.com/gregoryv/fox"
 	"github.com/gregoryv/go-timesheet"
@@ -12,6 +13,7 @@ import (
 func NewService() *Service {
 	sys := rs.NewSystem()
 	asRoot := rs.Root.Use(sys)
+	asRoot.Exec("/bin/mkdir /etc/basic")
 	asRoot.Exec("/bin/mkdir /api")
 	asRoot.Exec("/bin/mkdir /api/timesheets")
 
@@ -30,6 +32,18 @@ type Service struct {
 	warn func(...interface{})
 
 	sys *rs.System
+}
+
+// AddAccount creates a system account and stores the secret in
+// /etc/basic
+func (me *Service) AddAccount(name, secret string) error {
+	asRoot := rs.Root.Use(me.sys)
+	w := ioutil.Discard
+	if err := asRoot.Fexec(w, "/bin/mkacc", name); err != nil {
+		return err
+	}
+	key := NewKey(secret, path.Join("/etc/accounts", name+".acc"))
+	return asRoot.Save(path.Join("/etc/basic", name+".key"), &key)
 }
 
 // SetLogger

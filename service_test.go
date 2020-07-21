@@ -23,3 +23,11 @@ func TestService_anonymousAccess(t *testing.T) {
 	exp := assert().ResponseFrom(srv)
 	exp.StatusCode(http.StatusUnauthorized, "GET", "/api/timesheets")
 }
+
+func TestService_AddAccount(t *testing.T) {
+	srv := NewService()
+	ok, bad := asserter.NewErrors(t)
+	ok(srv.AddAccount("john", "secret"))
+	bad(srv.AddAccount("john", "secret"))
+	bad(srv.AddAccount("root", "secret"))
+}
