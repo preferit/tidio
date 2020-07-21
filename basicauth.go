@@ -8,10 +8,11 @@ import (
 
 // ParseBasicAuth parses a basic header
 func ParseBasicAuth(h string) (*BasicAuth, error) {
-	if len(h) > 7 && h[:7] != "Basic: " {
+	prefix := "Basic "
+	if len(h) > 7 && h[:len(prefix)] != prefix {
 		return nil, fmt.Errorf("ParseBasicAuth: prefix missmatch")
 	}
-	plain, err := base64.StdEncoding.DecodeString(h[7:])
+	plain, err := base64.StdEncoding.DecodeString(h[len(prefix):])
 	if err != nil {
 		return nil, fmt.Errorf("ParseBasicAuth: %w", err)
 	}
@@ -28,4 +29,14 @@ func ParseBasicAuth(h string) (*BasicAuth, error) {
 type BasicAuth struct {
 	AccountName string
 	Secret      string
+}
+
+// Token returns a base64 encoded AccountName:Secret
+func (me *BasicAuth) Token() string {
+	return base64.StdEncoding.EncodeToString([]byte(me.String()))
+}
+
+// String returns a colon separated AccountName:Secret
+func (me *BasicAuth) String() string {
+	return fmt.Sprintf("%s:%s", me.AccountName, me.Secret)
 }

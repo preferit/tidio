@@ -8,11 +8,15 @@ import (
 )
 
 func TestParseBasicAuth(t *testing.T) {
-	raw := "john:secret"
-	token := base64.StdEncoding.EncodeToString([]byte(raw))
-	ok, bad := asserter.NewMixed(t)
-	ok(ParseBasicAuth("Basic: " + token))
-	bad(ParseBasicAuth("Basic: jibberish"))
-	bad(ParseBasicAuth("Basic: text"))
-	bad(ParseBasicAuth("Bearer: xxx"))
+	raw := []byte("john:secret")
+	token := base64.StdEncoding.EncodeToString(raw)
+	ok, _ := asserter.NewMixed(t)
+	ok(ParseBasicAuth("Basic " + token))
+}
+
+func TestParseBasicAuth_bad(t *testing.T) {
+	_, bad := asserter.NewMixed(t)
+	bad(ParseBasicAuth("Basic jibberish"))
+	bad(ParseBasicAuth("Basic text"))
+	bad(ParseBasicAuth("Bearer xxx"))
 }

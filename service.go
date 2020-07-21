@@ -1,6 +1,7 @@
 package tidio
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"path"
@@ -42,8 +43,11 @@ func (me *Service) AddAccount(name, secret string) error {
 	if err := asRoot.Fexec(w, "/bin/mkacc", name); err != nil {
 		return err
 	}
-	key := NewKey(secret, path.Join("/etc/accounts", name+".acc"))
-	return asRoot.Save(path.Join("/etc/basic", name+".key"), &key)
+	res := path.Join("/etc/accounts", name+".acc")
+	key := NewKey(secret, res)
+	asRoot.Save(path.Join("/etc/basic", name+".key"), &key)
+	// todo chown of directory
+	return asRoot.Fexec(w, "/bin/mkdir", path.Join("/api/timesheets", name))
 }
 
 // SetLogger
@@ -52,11 +56,15 @@ func (me *Service) SetLogger(log fox.Logger) {
 }
 
 func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	acc := me.authorize()
+	acc, err := me.authenticate(r.Header.Get("Authorization"))
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 	asAcc := acc.Use(me.sys)
 
 	// Check resource access permissions
-	_, err := asAcc.Stat(r.URL.Path)
+	_, err = asAcc.Stat(r.URL.Path)
 	if acc == rs.Anonymous && err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -71,8 +79,9 @@ func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// authorize
-func (me *Service) authorize() *rs.Account {
-	acc := rs.Anonymous
-	return acc
+func (me *Service) authenticate(h string) (*rs.Account, error) {
+	if h == "" {
+		return rs.Anonymous, nil
+	}
+	return nil, fmt.Errorf("authenticate: todo")
 }
