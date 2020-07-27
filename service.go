@@ -18,9 +18,9 @@ func NewService() *Service {
 	asRoot.Exec("/bin/mkdir /api/timesheets")
 
 	// default templates
-	res, _ := asRoot.Create("/api/timesheets/202001.timesheet")
-	timesheet.Render(res, 2020, 1, 8)
-	res.Close()
+	w, _ := asRoot.Create("/api/timesheets/202001.timesheet")
+	timesheet.Render(w, 2020, 1, 8)
+	w.Close()
 
 	return &Service{
 		warn: fox.NewSyncLog(ioutil.Discard).Log,
@@ -70,6 +70,7 @@ func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+	// todo if url is a resource return it's content
 
 	// Serve the specific method
 	switch r.Method {
