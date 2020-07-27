@@ -68,6 +68,8 @@ func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	_, err = asAcc.Stat(r.URL.Path)
 	if acc == rs.Anonymous && err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
+		w.Header().Set("Content-Type", "plain/text")
+		w.Write([]byte(err.Error()))
 		return
 	}
 	// todo if url is a resource return it's content

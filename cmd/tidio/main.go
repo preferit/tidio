@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gregoryv/fox"
 	"github.com/gregoryv/stamp"
 	"github.com/preferit/tidio"
 )
@@ -37,5 +38,8 @@ func run(c *cli) error {
 		return fmt.Errorf("empty bind")
 	}
 	service := tidio.NewService()
+	lg := fox.NewSyncLog(os.Stderr).FilterEmpty()
+	service.SetLogger(lg)
+	lg.Log("listen on ", c.bind)
 	return c.ListenAndServe(c.bind, service)
 }
