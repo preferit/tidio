@@ -8,6 +8,25 @@ import (
 	"github.com/gregoryv/rs"
 )
 
+func TestService_ServeHTTP_authenticated(t *testing.T) {
+	srv := NewService()
+	srv.warn = t.Log
+	john := &BasicAuth{AccountName: "john", Secret: "secret"}
+	srv.AddAccount("john", "secret")
+	assert := asserter.New(t)
+	exp := assert().ResponseFrom(srv)
+	exp.StatusCode(200, "GET", "/api/timesheets/john", http.Header{
+		"Authorization": []string{"Basic " + john.Token()},
+	})
+	exp.StatusCode(401, "GET", "/api/timesheets/john", http.Header{
+		"Authorization": []string{"Basic jibberish"},
+	})
+	wrong := &BasicAuth{AccountName: "john", Secret: "wrong"}
+	exp.StatusCode(401, "GET", "/api/timesheets/john", http.Header{
+		"Authorization": []string{"Basic " + wrong.Token()},
+	})
+}
+
 func TestService_AddAccount(t *testing.T) {
 	srv := NewService()
 	ok, bad := asserter.NewErrors(t)
@@ -25,17 +44,6 @@ func TestService_ServeHTTP(t *testing.T) {
 	exp.StatusCode(200, "GET", "/api")
 	exp.StatusCode(405, "X", "/api")
 	exp.BodyIs(`{"resources":[{"name": "timesheets"}]}`, "GET", "/api")
-}
-
-func TestService_ServeHTTP_authenticated(t *testing.T) {
-	srv := NewService()
-	john := &BasicAuth{AccountName: "john", Secret: "secret"}
-	srv.AddAccount("john", "secret")
-	assert := asserter.New(t)
-	exp := assert().ResponseFrom(srv)
-	exp.StatusCode(200, "GET", "/api/timesheets/john", http.Header{
-		"Authorization": []string{"Basic " + john.Token()},
-	})
 }
 
 func TestService_anonymousAccess(t *testing.T) {
