@@ -31,6 +31,7 @@ func (c *cli) run() error {
 }
 
 func indexPage() *Page {
+
 	article := Article(
 		H1("tidio"),
 		A(Href("/api"), "/api"),
@@ -42,18 +43,18 @@ func indexPage() *Page {
 			),
 			H3("Create or update"),
 			Pre(`HTTP/1.1 POST {host}/api/timesheets/{account}/{yyyymm}.timesheet
-Authorization: {key}
+Authorization: {auth}
 
 -- body contains timesheet --`),
 
 			H3("Read specific timesheet"),
 			Pre(`HTTP/1.1 GET {host}/api/timesheets/{account}/{yyyymm}.timesheet
-Authorization: {key}`),
+Authorization: {auth}`),
 			"Responds with timesheet",
 
 			H3("List timesheets of a specific user"),
 			Pre(`HTTP/1.1 GET {host}/api/timesheets/{account}/
-Authorization: {key}`),
+Authorization: {auth}`),
 			`Responds with json {"timesheets": []}`,
 		),
 

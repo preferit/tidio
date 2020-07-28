@@ -15,11 +15,9 @@ esac
 case $dir in
     website)
 	go run ./website -o /tmp/tidiowebsite
-	reloadsurf.sh
 	;;
 esac
 
 go build ./...
 go test -coverprofile /tmp/c.out ./...
-uncover -min 80 /tmp/c.out
-reloadsurf.sh 2> /dev/null
+uncover -min 90 /tmp/c.out
