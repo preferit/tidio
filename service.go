@@ -1,6 +1,8 @@
 package tidio
 
 import (
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"path"
@@ -47,6 +49,9 @@ func (me *Service) AddAccount(name, secret string) error {
 
 	dir := path.Join("/api/timesheets", name)
 	cmd = rs.NewCmd("/bin/mkdir", dir)
+	asRoot.Run(cmd)
+
+	cmd = rs.NewCmd("/bin/chown", name, dir)
 	return asRoot.Run(cmd)
 }
 
@@ -56,7 +61,7 @@ func (me *Service) SetLogger(log fox.Logger) {
 }
 
 func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	acc, err := me.authenticate(r.Header.Get("Authorization"))
+	acc, err := me.authenticate(r)
 	if err != nil {
 		me.warn(err)
 		w.WriteHeader(http.StatusUnauthorized)
@@ -80,29 +85,40 @@ func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		cmd := rs.NewCmd("/bin/ls", "-json", "-json-name", "resources", r.URL.Path)
 		cmd.Out = w
 		asAcc.Run(cmd)
+	case "POST":
+		if r.Body != nil {
+			defer r.Body.Close()
+		}
+		res, err := asAcc.Create(r.URL.Path)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Header().Set("Content-Type", "plain/text")
+			w.Write([]byte(err.Error()))
+			return
+		}
+		io.Copy(res, r.Body)
+		w.WriteHeader(http.StatusCreated)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
 
-func (me *Service) authenticate(h string) (*rs.Account, error) {
+func (me *Service) authenticate(r *http.Request) (*rs.Account, error) {
+	h := r.Header.Get("Authorization")
 	if h == "" {
 		return rs.Anonymous, nil
 	}
-	basic, err := ParseBasicAuth(h)
-	if err != nil {
-		return rs.Anonymous, err
+
+	name, secret, ok := r.BasicAuth()
+	if !ok {
+		return rs.Anonymous, fmt.Errorf("authentication failed")
 	}
-	var (
-		name   = basic.AccountName
-		secret = basic.Secret
-	)
 	asRoot := rs.Root.Use(me.sys)
 	cmd := rs.NewCmd("/bin/secure", "-c", "-a", name, "-s", secret)
 	if err := asRoot.Run(cmd); err != nil {
 		return rs.Anonymous, err
 	}
 	var acc rs.Account
-	err = asRoot.LoadAccount(&acc, name)
+	err := asRoot.LoadAccount(&acc, name)
 	return &acc, err
 }

@@ -1,13 +1,49 @@
 package tidio
 
 import (
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/rs"
 )
+
+func TestService_ServeHTTP_POST_timesheet_asJohn(t *testing.T) {
+	srv := NewService()
+	srv.SetLogger(t)
+	srv.AddAccount("john", "secret")
+
+	w := httptest.NewRecorder()
+	validTimesheet := strings.NewReader("todo")
+	r, _ := http.NewRequest("POST", "/api/timesheets/john/202001.timesheet", validTimesheet)
+	r.SetBasicAuth("john", "secret")
+	srv.ServeHTTP(w, r)
+	got := w.Result()
+
+	if got.StatusCode != 201 {
+		body, _ := ioutil.ReadAll(got.Body)
+		t.Error(got.Status, string(body))
+	}
+}
+
+func TestService_ServeHTTP_POST_timesheets_missing_body_asJohn(t *testing.T) {
+	srv := NewService()
+	srv.SetLogger(t)
+	srv.AddAccount("john", "secret")
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("POST", "/api/timesheets/john", nil)
+	r.SetBasicAuth("john", "secret")
+	srv.ServeHTTP(w, r)
+	got := w.Result()
+
+	if got.StatusCode != 400 {
+		t.Error(got.Status)
+	}
+}
 
 func TestService_ServeHTTP_GET_timesheets_authenticated(t *testing.T) {
 	srv := NewService()
@@ -26,7 +62,7 @@ func TestService_ServeHTTP_GET_timesheets_authenticated(t *testing.T) {
 
 func TestService_ServeHTTP_GET_timesheets_badheader(t *testing.T) {
 	srv := NewService()
-	srv.warn = t.Log
+	srv.SetLogger(t)
 	srv.AddAccount("john", "secret")
 
 	w := httptest.NewRecorder()
@@ -42,7 +78,7 @@ func TestService_ServeHTTP_GET_timesheets_badheader(t *testing.T) {
 
 func TestService_ServeHTTP_GET_timesheets_autherror(t *testing.T) {
 	srv := NewService()
-	srv.warn = t.Log
+	srv.SetLogger(t)
 	srv.AddAccount("john", "secret")
 
 	w := httptest.NewRecorder()
