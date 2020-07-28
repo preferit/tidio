@@ -30,13 +30,3 @@ type BasicAuth struct {
 	AccountName string
 	Secret      string
 }
-
-// Token returns a base64 encoded AccountName:Secret
-func (me *BasicAuth) Token() string {
-	return base64.StdEncoding.EncodeToString([]byte(me.String()))
-}
-
-// String returns a colon separated AccountName:Secret
-func (me *BasicAuth) String() string {
-	return fmt.Sprintf("%s:%s", me.AccountName, me.Secret)
-}

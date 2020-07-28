@@ -72,11 +72,11 @@ func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	// todo if url is a resource return it's content
 
 	// Serve the specific method
 	switch r.Method {
 	case "GET":
+		// todo if url is a resource return it's content
 		cmd := rs.NewCmd("/bin/ls", "-json", "-json-name", "resources", r.URL.Path)
 		cmd.Out = w
 		asAcc.Run(cmd)

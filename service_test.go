@@ -2,29 +2,58 @@ package tidio
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/rs"
 )
 
-func TestService_ServeHTTP_authenticated(t *testing.T) {
+func TestService_ServeHTTP_GET_timesheets_authenticated(t *testing.T) {
+	srv := NewService()
+	srv.AddAccount("john", "secret")
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("GET", "/api/timesheets/john", nil)
+	r.SetBasicAuth("john", "secret")
+	srv.ServeHTTP(w, r)
+	got := w.Result()
+
+	if got.StatusCode != 200 {
+		t.Error(got.Status)
+	}
+}
+
+func TestService_ServeHTTP_GET_timesheets_badheader(t *testing.T) {
 	srv := NewService()
 	srv.warn = t.Log
-	john := &BasicAuth{AccountName: "john", Secret: "secret"}
 	srv.AddAccount("john", "secret")
-	assert := asserter.New(t)
-	exp := assert().ResponseFrom(srv)
-	exp.StatusCode(200, "GET", "/api/timesheets/john", http.Header{
-		"Authorization": []string{"Basic " + john.Token()},
-	})
-	exp.StatusCode(401, "GET", "/api/timesheets/john", http.Header{
-		"Authorization": []string{"Basic jibberish"},
-	})
-	wrong := &BasicAuth{AccountName: "john", Secret: "wrong"}
-	exp.StatusCode(401, "GET", "/api/timesheets/john", http.Header{
-		"Authorization": []string{"Basic " + wrong.Token()},
-	})
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("GET", "/api/timesheets/john", nil)
+	r.Header.Set("Authorization", "Basic jibberish")
+	srv.ServeHTTP(w, r)
+	got := w.Result()
+
+	if got.StatusCode != 401 {
+		t.Error(got.Status)
+	}
+}
+
+func TestService_ServeHTTP_GET_timesheets_autherror(t *testing.T) {
+	srv := NewService()
+	srv.warn = t.Log
+	srv.AddAccount("john", "secret")
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("GET", "/api/timesheets/john", nil)
+	r.SetBasicAuth("john", "wrong")
+	srv.ServeHTTP(w, r)
+	got := w.Result()
+
+	if got.StatusCode != 401 {
+		t.Error(got.Status)
+	}
 }
 
 func TestService_AddAccount(t *testing.T) {
