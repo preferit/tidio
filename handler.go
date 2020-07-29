@@ -28,7 +28,6 @@ func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		if res.IsDir() == nil {
-			// todo if url is a resource return it's content
 			cmd := rs.NewCmd("/bin/ls", "-json", "-json-name", "resources", r.URL.Path)
 			cmd.Out = w
 			asAcc.Run(cmd)
@@ -50,8 +49,8 @@ func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			textErr(w, http.StatusBadRequest, err)
 			return
 		}
-		defer res.Close()
 		io.Copy(res, r.Body)
+		res.Close() // important to flush the data
 		w.WriteHeader(http.StatusCreated)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
