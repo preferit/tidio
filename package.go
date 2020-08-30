@@ -1,5 +1,5 @@
 /*
-Package tidio provides domain logic for the tidio web service.
+Package tidio provides web service for timesheet reports.
 
 */
 package tidio

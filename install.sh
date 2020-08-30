@@ -8,6 +8,3 @@ systemctl start tidio
 # nginx configuration
 cp etc/tidio.preferit.se /etc/nginx/sites-available/
 systemctl reload nginx
-
-# static website
-./website -o /var/www/tidio.preferit.se

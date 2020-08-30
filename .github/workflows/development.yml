@@ -27,16 +27,16 @@ jobs:
           go get github.com/gregoryv/stamp/cmd/stamp
           go generate ./...
           go build -o /tmp/tidio/tidio ./cmd/tidio
-          go build -o /tmp/tidio/website ./website
           cp -r ./etc /tmp/tidio
           cp install.sh /tmp/tidio
+
     - name: test
       env:
         GOPATH: "/tmp"
       run: |
           go get github.com/gregoryv/uncover/cmd/uncover
           go test -coverprofile /tmp/c.out ./...
-          $GOPATH/bin/uncover -min 100 /tmp/c.out
+          $GOPATH/bin/uncover -min 96 /tmp/c.out
 
     - name: deploy
       env:
