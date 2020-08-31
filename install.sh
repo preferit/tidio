@@ -6,5 +6,5 @@ cp tidio ../bin/tidio
 systemctl start tidio
 
 # nginx configuration
-cp etc/tidio.preferit.se /etc/nginx/sites-available/
+cp nginx.conf /etc/nginx/sites-available/tidio.preferit.se
 systemctl reload nginx

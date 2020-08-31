@@ -27,7 +27,7 @@ jobs:
           go get github.com/gregoryv/stamp/cmd/stamp
           go generate ./...
           go build -o /tmp/tidio/tidio ./cmd/tidio
-          cp -r ./etc /tmp/tidio
+          cp -r ./etc nginx.conf /tmp/tidio
           cp install.sh /tmp/tidio
 
     - name: test
