@@ -128,6 +128,7 @@ func Test_defaults(t *testing.T) {
 	srv := NewService()
 	assert := asserter.New(t)
 	exp := assert().ResponseFrom(srv)
+	exp.StatusCode(200, "GET", "/")
 	exp.StatusCode(200, "GET", "/api")
 	exp.StatusCode(405, "X", "/api")
 	exp.StatusCode(http.StatusUnauthorized, "GET", "/api/timesheets")

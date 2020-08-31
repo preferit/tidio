@@ -9,6 +9,12 @@ import (
 )
 
 func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/" {
+		view := NewHelpView()
+		view.Render().WriteTo(w)
+		return
+	}
+
 	acc, err := me.authenticate(r)
 	if err != nil {
 		me.warn(err)
