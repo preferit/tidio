@@ -21,7 +21,7 @@ func main() {
 	}
 	stamp.InitFlags()
 	flag.StringVar(&c.bind, "bind", ":13001", "[host]:port to bind to")
-	flag.StringVar(&c.stateFilename, "state", "", "file to keep state in")
+	flag.StringVar(&c.stateFilename, "state", "system.state", "file to keep state in")
 	flag.Parse()
 	stamp.AsFlagged()
 
@@ -45,10 +45,13 @@ func run(c *cli) error {
 	service := tidio.NewService()
 	service.SetLogger(c.Logger)
 
-	if err := service.RestoreState(c.stateFilename); err != nil {
-		return err
+	if c.stateFilename != "" {
+		if err := service.RestoreState(c.stateFilename); err != nil {
+			service.Log(err)
+		}
+		dest := tidio.NewFileStorage(c.stateFilename)
+		service.AutoPersist(dest)
 	}
-
 	c.Log("listen on ", c.bind)
 	return c.ListenAndServe(c.bind, service)
 }

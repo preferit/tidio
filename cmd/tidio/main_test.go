@@ -16,10 +16,13 @@ func Test_cli(t *testing.T) {
 		Logger: t,
 	}))
 
-	bad(run(&cli{
+	ok(run(&cli{
+		bind: ":8080",
+		ListenAndServe: func(string, http.Handler) error {
+			return nil
+		},
 		Logger:        t,
-		bind:          ":8080",
-		stateFilename: "state-filename",
+		stateFilename: "somefile",
 	}))
 
 	ok(run(&cli{

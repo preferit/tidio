@@ -1,7 +1,12 @@
 package tidio
 
 import (
+	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
 	"testing"
+	"time"
 
 	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/rs"
@@ -17,11 +22,66 @@ func TestService_AddAccount(t *testing.T) {
 	ok(err)
 }
 
-func TestService_RestoreState(t *testing.T) {
+func TestService_RestoreState_missing_file(t *testing.T) {
 	srv := NewService()
-	ok, bad := asserter.NewErrors(t)
-	ok(srv.RestoreState(""))
-
+	_, bad := asserter.NewErrors(t)
 	bad(srv.RestoreState("no-such-file"))
-	bad(srv.RestoreState("service_test.go"))
+}
+
+func TestService_RestoreState_ok_file(t *testing.T) {
+	srv := NewService()
+	tmp, _ := ioutil.TempFile("", "restorestate")
+	srv.sys.Export(tmp)
+	tmp.Close()
+	ok, _ := asserter.NewErrors(t)
+	ok(srv.RestoreState(tmp.Name()))
+	os.RemoveAll(tmp.Name())
+}
+
+func TestService_AutoPersist(t *testing.T) {
+	srv := NewService()
+	tmp, _ := ioutil.TempFile("", "restorestate")
+	tmp.Close()
+	defer os.RemoveAll(tmp.Name())
+	srv.SetLogger(t)
+	dest := NewFileStorage(tmp.Name())
+	srv.AutoPersist(dest)
+
+	// make a change
+	asRoot := rs.Root.Use(srv.sys)
+	asRoot.Exec("/bin/mkdir /tmp/x")
+
+	time.Sleep(50 * time.Millisecond)
+	got, err := ioutil.ReadFile(tmp.Name())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert := asserter.New(t)
+	assert(len(got) != 0).Error("empty state")
+}
+
+func TestService_AutoPersist_create_file_fails(t *testing.T) {
+	srv := NewService()
+	srv.SetLogger(t)
+	dest := &brokenStorage{}
+	srv.AutoPersist(dest)
+
+	// make a change
+	asRoot := rs.Root.Use(srv.sys)
+	asRoot.Exec("/bin/mkdir /tmp/x")
+
+	time.Sleep(2050 * time.Millisecond)
+	assert := asserter.New(t)
+	assert(dest.called).Error("state persisted")
+}
+
+type brokenStorage struct {
+	called bool
+}
+
+// Create
+func (me *brokenStorage) Create() (io.WriteCloser, error) {
+	me.called = true
+	return nil, fmt.Errorf("brokenStorage")
 }
