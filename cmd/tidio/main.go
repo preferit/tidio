@@ -39,8 +39,8 @@ func run(c *cli) error {
 		return fmt.Errorf("empty bind")
 	}
 	service := tidio.NewService()
-	lg := fox.NewSyncLog(os.Stderr).FilterEmpty()
-	service.SetLogger(lg)
-	lg.Log("listen on ", c.bind)
+	sl := fox.NewSyncLog(os.Stderr).FilterEmpty()
+	service.SetLogger(sl)
+	sl.Log("listen on ", c.bind)
 	return c.ListenAndServe(c.bind, service)
 }
