@@ -7,7 +7,7 @@ require (
 	github.com/gregoryv/find v0.1.1 // indirect
 	github.com/gregoryv/fox v0.3.2
 	github.com/gregoryv/go-timesheet v0.1.0
-	github.com/gregoryv/rs v0.2.0
+	github.com/gregoryv/rs v0.2.1-0.20200830083146-e4aaa4df7656
 	github.com/gregoryv/stamp v0.2.0
 	github.com/gregoryv/web v0.9.0
 )

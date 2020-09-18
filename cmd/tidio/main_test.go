@@ -12,7 +12,15 @@ func Test_cli(t *testing.T) {
 		assert  = asserter.New(t)
 		ok, bad = assert().Errors()
 	)
-	bad(run(&cli{Logger: t}))
+	bad(run(&cli{
+		Logger: t,
+	}))
+
+	bad(run(&cli{
+		Logger:        t,
+		bind:          ":8080",
+		stateFilename: "state-filename",
+	}))
 
 	ok(run(&cli{
 		bind: ":8080",

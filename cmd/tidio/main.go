@@ -21,6 +21,7 @@ func main() {
 	}
 	stamp.InitFlags()
 	flag.StringVar(&c.bind, "bind", ":13001", "[host]:port to bind to")
+	flag.StringVar(&c.stateFilename, "state", "", "file to keep state in")
 	flag.Parse()
 	stamp.AsFlagged()
 
@@ -33,6 +34,7 @@ func main() {
 type cli struct {
 	ListenAndServe func(string, http.Handler) error
 	bind           string
+	stateFilename  string
 	fox.Logger
 }
 
@@ -42,6 +44,11 @@ func run(c *cli) error {
 	}
 	service := tidio.NewService()
 	service.SetLogger(c.Logger)
+
+	if err := service.RestoreState(c.stateFilename); err != nil {
+		return err
+	}
+
 	c.Log("listen on ", c.bind)
 	return c.ListenAndServe(c.bind, service)
 }

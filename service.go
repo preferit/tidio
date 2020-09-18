@@ -1,7 +1,9 @@
 package tidio
 
 import (
+	"fmt"
 	"io/ioutil"
+	"os"
 	"path"
 
 	"github.com/gregoryv/fox"
@@ -21,13 +23,15 @@ func NewService() *Service {
 	timesheet.Render(w, 2020, 1, 8)
 	w.Close()
 
-	return &Service{
-		warn: fox.NewSyncLog(ioutil.Discard).Log,
-		sys:  sys,
+	srv := &Service{
+		sys: sys,
 	}
+	srv.SetLogger(fox.NewSyncLog(ioutil.Discard))
+	return srv
 }
 
 type Service struct {
+	fox.Logger
 	warn func(...interface{})
 
 	sys *rs.System
@@ -54,5 +58,21 @@ func (me *Service) AddAccount(name, secret string) error {
 
 // SetLogger
 func (me *Service) SetLogger(log fox.Logger) {
+	me.Logger = log
 	me.warn = fox.NewFilterEmpty(log).Log
+}
+
+// RestoreState restores the resource system from the given filename
+func (me *Service) RestoreState(filename string) error {
+	if filename == "" {
+		return nil
+	}
+	me.Log("restore state")
+	r, err := os.Open(filename)
+	if err != nil {
+		return fmt.Errorf("open state file: %w", err)
+	}
+	defer r.Close()
+	me.sys, err = rs.Import(r)
+	return err
 }

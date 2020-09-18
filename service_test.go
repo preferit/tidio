@@ -16,3 +16,11 @@ func TestService_AddAccount(t *testing.T) {
 	_, err := rs.Root.Use(srv.sys).Stat("/api/timesheets/john")
 	ok(err)
 }
+
+func TestService_RestoreState(t *testing.T) {
+	srv := NewService()
+	ok, bad := asserter.NewErrors(t)
+	bad(srv.RestoreState("no-such-file"))
+	ok(srv.RestoreState(""))
+
+}
