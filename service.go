@@ -62,7 +62,8 @@ func (me *Service) SetLogger(log fox.Logger) {
 	me.warn = fox.NewFilterEmpty(log).Log
 }
 
-// RestoreState restores the resource system from the given filename
+// RestoreState restores the resource system from the given filename.
+// Restoring the state replaces current system.
 func (me *Service) RestoreState(filename string) error {
 	if filename == "" {
 		return nil

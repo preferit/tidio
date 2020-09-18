@@ -20,7 +20,8 @@ func TestService_AddAccount(t *testing.T) {
 func TestService_RestoreState(t *testing.T) {
 	srv := NewService()
 	ok, bad := asserter.NewErrors(t)
-	bad(srv.RestoreState("no-such-file"))
 	ok(srv.RestoreState(""))
 
+	bad(srv.RestoreState("no-such-file"))
+	bad(srv.RestoreState("service_test.go"))
 }
