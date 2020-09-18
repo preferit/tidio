@@ -1,3 +1,4 @@
+// Command tidio is a standalone http server for the tidio.Service
 package main
 
 import (
