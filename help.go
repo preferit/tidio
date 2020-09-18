@@ -118,11 +118,11 @@ func theme() *CSS {
 }
 
 // When the service started so we know the uptime
-var start = time.Now()
+var serviceStarted = time.Now()
 
 func footer() *Element {
 	return Footer(
 		"Uptime: ",
-		time.Since(start).Round(time.Second).String(),
+		time.Since(serviceStarted).Round(time.Second).String(),
 	)
 }

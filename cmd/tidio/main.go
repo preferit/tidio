@@ -17,6 +17,7 @@ import (
 func main() {
 	c := &cli{
 		ListenAndServe: http.ListenAndServe,
+		Logger:         fox.NewSyncLog(os.Stderr).FilterEmpty(),
 	}
 	stamp.InitFlags()
 	flag.StringVar(&c.bind, "bind", ":13001", "[host]:port to bind to")
@@ -24,7 +25,7 @@ func main() {
 	stamp.AsFlagged()
 
 	if err := run(c); err != nil {
-		fmt.Println(err)
+		c.Log(err)
 		os.Exit(1)
 	}
 }
@@ -32,6 +33,7 @@ func main() {
 type cli struct {
 	ListenAndServe func(string, http.Handler) error
 	bind           string
+	fox.Logger
 }
 
 func run(c *cli) error {
@@ -39,8 +41,7 @@ func run(c *cli) error {
 		return fmt.Errorf("empty bind")
 	}
 	service := tidio.NewService()
-	sl := fox.NewSyncLog(os.Stderr).FilterEmpty()
-	service.SetLogger(sl)
-	sl.Log("listen on ", c.bind)
+	service.SetLogger(c.Logger)
+	c.Log("listen on ", c.bind)
 	return c.ListenAndServe(c.bind, service)
 }

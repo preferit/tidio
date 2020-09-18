@@ -12,12 +12,13 @@ func Test_cli(t *testing.T) {
 		assert  = asserter.New(t)
 		ok, bad = assert().Errors()
 	)
-	bad(run(&cli{}))
+	bad(run(&cli{Logger: t}))
 
 	ok(run(&cli{
 		bind: ":8080",
 		ListenAndServe: func(string, http.Handler) error {
 			return nil
 		},
+		Logger: t,
 	}))
 }
