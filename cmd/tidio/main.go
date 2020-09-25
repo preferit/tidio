@@ -50,10 +50,15 @@ func (c *Command) run(args ...string) error {
 		return fmt.Errorf("-state cannot be empty")
 	}
 
-	if err := cli.Error(); err != nil {
+	help := cli.Flag("-h, --help")
+
+	if help {
 		var buf bytes.Buffer
 		cli.WriteUsageTo(&buf)
 		c.Log(buf.String())
+		return nil
+	}
+	if err := cli.Error(); err != nil {
 		return err
 	}
 
