@@ -2,71 +2,84 @@
 package main
 
 import (
-	"flag"
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
 
+	"github.com/gregoryv/cmdline"
 	"github.com/gregoryv/fox"
-	"github.com/gregoryv/stamp"
 	"github.com/preferit/tidio"
 )
 
 //go:generate stamp -clfile ../../changelog.md -go build_stamp.go
 
 func main() {
-	c := &cli{
-		ListenAndServe: http.ListenAndServe,
-		Logger:         fox.NewSyncLog(os.Stderr).FilterEmpty(),
-	}
-	stamp.InitFlags()
-	flag.StringVar(&c.bind, "bind", ":13001", "[host]:port to bind to")
-	flag.StringVar(&c.stateFilename, "state", "system.state", "file to keep state in")
-	flag.Parse()
-	stamp.AsFlagged()
-
-	if err := run(c); err != nil {
+	c := NewCommand()
+	c.Logger = fox.NewSyncLog(os.Stderr).FilterEmpty()
+	if err := c.run(os.Args...); err != nil {
 		c.Log(err)
 		os.Exit(1)
 	}
 }
 
-type cli struct {
+// NewCommand returns a command without logging and default options
+func NewCommand() *Command {
+	return &Command{
+		ListenAndServe: http.ListenAndServe,
+		Logger:         fox.NewSyncLog(ioutil.Discard),
+	}
+}
+
+type Command struct {
 	ListenAndServe func(string, http.Handler) error
-	bind           string
-	stateFilename  string
 	fox.Logger
 }
 
-func run(c *cli) error {
-	if c.bind == "" {
-		return fmt.Errorf("empty bind")
+func (c *Command) run(args ...string) error {
+	cli := cmdline.New(args...)
+
+	// parse arguments
+	bind, opt := cli.Option("-bind").StringOpt(":13001")
+	opt.Doc("[host]:port to bind to")
+
+	stateFilename, opt := cli.Option("-state").StringOpt("system.state")
+	opt.Doc("file to keep state in")
+	if stateFilename == "" {
+		return fmt.Errorf("-state cannot be empty")
 	}
+
+	if err := cli.Error(); err != nil {
+		var buf bytes.Buffer
+		cli.WriteUsageTo(&buf)
+		c.Log(buf.String())
+		return err
+	}
+
 	service := tidio.NewService()
 	service.SetLogger(c.Logger)
 
-	if c.stateFilename != "" {
-		c.initStateRestoration(service)
+	if err := c.initStateRestoration(service, stateFilename); err != nil {
+		return err
 	}
-	c.Log("listen on ", c.bind)
-	return c.ListenAndServe(c.bind, service)
+
+	c.Log("listen on ", bind)
+	return c.ListenAndServe(bind, service)
 }
 
 // initStateRestoration
-func (me *cli) initStateRestoration(service *tidio.Service) {
-	dest := tidio.NewFileStorage(me.stateFilename)
-	if _, err := os.Stat(me.stateFilename); os.IsNotExist(err) {
-		wd, _ := os.Getwd()
-		me.Log("creating ", path.Join(wd, me.stateFilename))
+func (me *Command) initStateRestoration(service *tidio.Service, filename string) error {
+	dest := tidio.NewFileStorage(filename)
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		if err := service.PersistState(dest); err != nil {
-			me.Log(err)
+			return err
 		}
-
 	} else {
-		if err := service.RestoreState(me.stateFilename); err != nil {
-			me.Log(err)
+		if err := service.RestoreState(filename); err != nil {
+			return err
 		}
 	}
 	service.AutoPersist(dest)
+	return nil
 }

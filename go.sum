@@ -35,8 +35,12 @@ github.com/gregoryv/asserter v0.2.3-0.20200604204219-cc98dbaa395f h1:mo8t8e+1eBn
 github.com/gregoryv/asserter v0.2.3-0.20200604204219-cc98dbaa395f/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
 github.com/gregoryv/asserter v0.3.1-0.20200620185907-332cdf62ce04 h1:zK/Yft5oP6Fvd992f7Ct4cH9nqureN2Jz9d2YQ6Aps8=
 github.com/gregoryv/asserter v0.3.1-0.20200620185907-332cdf62ce04/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
+github.com/gregoryv/asserter v0.3.1-0.20200710143923-04ff8e6a2edf/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
 github.com/gregoryv/asserter v0.4.0 h1:UkV6xSFVb/wvEidJ40Gt6WPSto/ODbtGOKWJ+uVTbZI=
 github.com/gregoryv/asserter v0.4.0/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
+github.com/gregoryv/cli v0.0.0-20180329083318-9f0f54cf147f/go.mod h1:zrYlwj1/vKPPQ7V++Jw7nIPSwM61ERFQmJ8YAh6zibA=
+github.com/gregoryv/cmdline v0.0.0-20200822134937-e77bcfd6d968 h1:EncwlkTqRhIw7jZ3uX6dgRIVNbeknBBNB717fzxfk4s=
+github.com/gregoryv/cmdline v0.0.0-20200822134937-e77bcfd6d968/go.mod h1:DfbcpIEh/WREYcrSnx3qeYY0qRxbLlmAgLLP6AeLXI8=
 github.com/gregoryv/draw v0.9.0 h1:+Li4J4ePYzra0M1Ihh+f3kFAv3MF9UcaT37+IVck6TA=
 github.com/gregoryv/draw v0.9.0/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
 github.com/gregoryv/draw v0.13.0/go.mod h1:ZjcU2lJq2eA+jQAdIslryahmUzp8aAvTrBdEZIQ4V6I=
@@ -54,6 +58,7 @@ github.com/gregoryv/go-timesheet v0.1.0 h1:DPFeb0TrkbEx+DFihB7ItB4FtwHItl6rkHTii
 github.com/gregoryv/go-timesheet v0.1.0/go.mod h1:+3KIsZJgy3SxeT6mETSoRZY1/EAOsGrPOebYEECLllg=
 github.com/gregoryv/gocyclo v0.0.0-20180305144948-0be7902fabdc h1:chhF7lRELMFmxWl3AWbZ2UT1xQtN9nqFGyhL3jwGWDs=
 github.com/gregoryv/gocyclo v0.0.0-20180305144948-0be7902fabdc/go.mod h1:x/QA8cT1gfn/XriQ/CVNX7I8IM4Z2YJAAEWFym2clZI=
+github.com/gregoryv/golden v0.3.0/go.mod h1:gwYSBOmvGF+fefo7P1PyBpAqqvYx6S85dmkUaI6QMU4=
 github.com/gregoryv/golden v0.3.1 h1:OdVsKRhiTWQj/euKcBU09KHK1iYfLljijh+lE01GETc=
 github.com/gregoryv/golden v0.3.1/go.mod h1:gwYSBOmvGF+fefo7P1PyBpAqqvYx6S85dmkUaI6QMU4=
 github.com/gregoryv/golden v0.4.1 h1:H6oe2rjiiJfmN11mXGr2w6BIJe8snZsz23yAaa7TMYc=

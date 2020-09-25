@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
@@ -8,30 +10,29 @@ import (
 	"github.com/gregoryv/asserter"
 )
 
-func Test_cli(t *testing.T) {
-	var (
-		assert  = asserter.New(t)
-		ok, bad = assert().Errors()
-	)
-	bad(run(&cli{
-		Logger: t,
-	}))
+func TestCommand_run_default(t *testing.T) {
+	cmd := NewCommand()
+	cmd.ListenAndServe = func(string, http.Handler) error { return nil }
 
-	ok(run(&cli{
-		bind: ":8080",
-		ListenAndServe: func(string, http.Handler) error {
-			return nil
-		},
-		Logger:        t,
-		stateFilename: "somefile",
-	}))
+	ok, bad := asserter.NewErrors(t)
+
+	ok(cmd.run("name"))
+	os.RemoveAll("system.state")
+
+	ok(cmd.run("name", "-state", "somefile"))
+	ok(cmd.run("name", "-state", "somefile")) // should reload
 	os.RemoveAll("somefile")
 
-	ok(run(&cli{
-		bind: ":8080",
-		ListenAndServe: func(string, http.Handler) error {
-			return nil
-		},
-		Logger: t,
-	}))
+	bad(cmd.run("name", "-no-such"))
+	bad(cmd.run("name", "-state", "/no-such"))
+
+	w, err := ioutil.TempFile("", "tidio")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Fprint(w, "jibberish")
+	w.Close()
+	defer os.RemoveAll(w.Name())
+	bad(cmd.run("name", "-state", w.Name()))
+
 }
