@@ -28,8 +28,7 @@ type Router struct {
 
 func (me *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
-		view := NewHelpView()
-		view.Render().WriteTo(w)
+		NewHelpView().WriteTo(w)
 		return
 	}
 

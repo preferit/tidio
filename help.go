@@ -6,13 +6,7 @@ import (
 	. "github.com/gregoryv/web"
 )
 
-func NewHelpView() *HelpView {
-	return &HelpView{}
-}
-
-type HelpView struct{}
-
-func (me *HelpView) Render() *Page {
+func NewHelpView() *Page {
 	content := Div(
 		Section(
 			H2("Timesheets"),
