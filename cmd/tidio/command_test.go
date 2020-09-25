@@ -19,6 +19,8 @@ func TestCommand_run_default(t *testing.T) {
 	ok(cmd.run("name"))
 	os.RemoveAll("system.state")
 
+	ok(cmd.run("name", "-h"))
+
 	ok(cmd.run("name", "-state", "somefile"))
 	ok(cmd.run("name", "-state", "somefile")) // should reload
 	os.RemoveAll("somefile")
