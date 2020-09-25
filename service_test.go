@@ -45,13 +45,13 @@ func TestService_AutoPersist(t *testing.T) {
 	defer os.RemoveAll(tmp.Name())
 	srv.SetLogger(t)
 	dest := NewFileStorage(tmp.Name())
-	srv.AutoPersist(dest)
+	srv.AutoPersist(dest, time.Millisecond)
 
 	// make a change
 	asRoot := rs.Root.Use(srv.sys)
 	asRoot.Exec("/bin/mkdir /tmp/x")
 
-	time.Sleep(50 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	got, err := ioutil.ReadFile(tmp.Name())
 	if err != nil {
 		t.Fatal(err)
@@ -65,13 +65,13 @@ func TestService_AutoPersist_create_file_fails(t *testing.T) {
 	srv := NewService()
 	srv.SetLogger(t)
 	dest := &brokenStorage{}
-	srv.AutoPersist(dest)
+	srv.AutoPersist(dest, time.Millisecond)
 
 	// make a change
 	asRoot := rs.Root.Use(srv.sys)
 	asRoot.Exec("/bin/mkdir /tmp/x")
 
-	time.Sleep(2050 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	assert := asserter.New(t)
 	assert(dest.called).Error("state persisted")
 }

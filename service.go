@@ -81,14 +81,14 @@ func (me *Service) RestoreState(filename string) error {
 }
 
 // AutoPersist enables automatic persistence of system state to given filename.
-func (me *Service) AutoPersist(dest Storage) {
+func (me *Service) AutoPersist(dest Storage, every time.Duration) {
 	last := me.sys.LastModified()
 	go func() {
 		for {
 			// todo decouple and use events
 			modified := me.sys.LastModified()
 			if !modified.After(last) {
-				time.Sleep(time.Second)
+				time.Sleep(every)
 				continue
 			}
 			last = modified

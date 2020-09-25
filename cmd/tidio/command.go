@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gregoryv/cmdline"
 	"github.com/gregoryv/fox"
@@ -73,6 +74,6 @@ func (me *Command) initStateRestoration(service *tidio.Service, filename string)
 			return err
 		}
 	}
-	service.AutoPersist(dest)
+	service.AutoPersist(dest, 3*time.Second)
 	return nil
 }
