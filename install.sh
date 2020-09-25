@@ -2,6 +2,8 @@
 
 # tidio service
 systemctl stop tidio
+cp systemd.service /lib/systemd/system/tidio.service
+systemctl daemon-reload
 cp tidio ../bin/tidio
 systemctl start tidio
 
