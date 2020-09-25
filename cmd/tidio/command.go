@@ -51,15 +51,15 @@ func (c *Command) run(args ...string) error {
 		return err
 	}
 
-	service := tidio.NewService()
-	service.SetLogger(c.Logger)
+	srv := tidio.NewService()
+	srv.SetLogger(c.Logger)
 
-	if err := c.initStateRestoration(service, stateFilename); err != nil {
+	if err := c.initStateRestoration(srv, stateFilename); err != nil {
 		return err
 	}
 
 	c.Log("listen on ", bind)
-	return c.ListenAndServe(bind, service)
+	return c.ListenAndServe(bind, srv)
 }
 
 // initStateRestoration

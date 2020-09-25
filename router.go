@@ -12,6 +12,7 @@ import (
 
 func NewRouter(sys *rs.System) *Router {
 	nop := fox.NewSyncLog(ioutil.Discard)
+
 	return &Router{
 		Logger: nop,
 		warn:   nop.Log,
