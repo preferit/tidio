@@ -10,7 +10,6 @@ KillMode=process
 WorkingDirectory=/var/local/tidio
 ExecStart=/home/gregory/bin/tidio
 Restart=always
-RestartSec=2
 LimitNOFILE=5555
 
 [Install]
