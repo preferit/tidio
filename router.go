@@ -3,12 +3,30 @@ package tidio
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 
+	"github.com/gregoryv/fox"
 	"github.com/gregoryv/rs"
 )
 
-func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func NewRouter(sys *rs.System) *Router {
+	nop := fox.NewSyncLog(ioutil.Discard)
+	return &Router{
+		Logger: nop,
+		warn:   nop.Log,
+		sys:    sys,
+	}
+}
+
+type Router struct {
+	fox.Logger
+	warn func(...interface{})
+
+	sys *rs.System
+}
+
+func (me *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
 		view := NewHelpView()
 		view.Render().WriteTo(w)
@@ -69,7 +87,7 @@ func textErr(w http.ResponseWriter, status int, err error) {
 	w.Write([]byte(err.Error()))
 }
 
-func (me *Service) authenticate(r *http.Request) (*rs.Account, error) {
+func (me *Router) authenticate(r *http.Request) (*rs.Account, error) {
 	h := r.Header.Get("Authorization")
 	if h == "" {
 		return rs.Anonymous, nil

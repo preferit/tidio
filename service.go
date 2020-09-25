@@ -26,7 +26,8 @@ func NewService() *Service {
 	w.Close()
 
 	srv := &Service{
-		sys: sys,
+		sys:    sys,
+		Router: NewRouter(sys),
 	}
 	srv.SetLogger(fox.NewSyncLog(ioutil.Discard))
 	return srv
@@ -37,6 +38,7 @@ type Service struct {
 	warn func(...interface{})
 
 	sys *rs.System
+	*Router
 }
 
 // AddAccount creates a system account and stores the secret in
