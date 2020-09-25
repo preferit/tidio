@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/gregoryv/asserter"
@@ -24,6 +25,7 @@ func Test_cli(t *testing.T) {
 		Logger:        t,
 		stateFilename: "somefile",
 	}))
+	os.RemoveAll("somefile")
 
 	ok(run(&cli{
 		bind: ":8080",

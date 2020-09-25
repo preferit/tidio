@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path"
 
 	"github.com/gregoryv/fox"
 	"github.com/gregoryv/stamp"
@@ -46,12 +47,26 @@ func run(c *cli) error {
 	service.SetLogger(c.Logger)
 
 	if c.stateFilename != "" {
-		if err := service.RestoreState(c.stateFilename); err != nil {
-			service.Log(err)
-		}
-		dest := tidio.NewFileStorage(c.stateFilename)
-		service.AutoPersist(dest)
+		c.initStateRestoration(service)
 	}
 	c.Log("listen on ", c.bind)
 	return c.ListenAndServe(c.bind, service)
+}
+
+// initStateRestoration
+func (me *cli) initStateRestoration(service *tidio.Service) {
+	dest := tidio.NewFileStorage(me.stateFilename)
+	if _, err := os.Stat(me.stateFilename); os.IsNotExist(err) {
+		wd, _ := os.Getwd()
+		me.Log("creating ", path.Join(wd, me.stateFilename))
+		if err := service.PersistState(dest); err != nil {
+			me.Log(err)
+		}
+
+	} else {
+		if err := service.RestoreState(me.stateFilename); err != nil {
+			me.Log(err)
+		}
+	}
+	service.AutoPersist(dest)
 }

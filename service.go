@@ -92,17 +92,21 @@ func (me *Service) AutoPersist(dest Storage) {
 				continue
 			}
 			last = modified
-			w, err := dest.Create()
-			if err != nil {
-				me.warn(err)
-				continue
-			}
-			err = me.sys.Export(w)
+			err := me.PersistState(dest)
 			me.warn(err)
-			w.Close() // do not defer, it's an endless loop
-			me.Log("system persisted")
 		}
 	}()
+}
+
+// PersistState
+func (me *Service) PersistState(dest Storage) error {
+	me.Log("persist state")
+	w, err := dest.Create()
+	if err != nil {
+		return err
+	}
+	defer w.Close()
+	return me.sys.Export(w)
 }
 
 type Storage interface {
