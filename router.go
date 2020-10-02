@@ -82,8 +82,11 @@ func (me *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func textErr(w http.ResponseWriter, status int, err error) {
-	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "plain/text")
+	if status == http.StatusUnauthorized {
+		w.Header().Set("WWW-Authenticate", `Basic realm="tidio"`)
+	}
+	w.WriteHeader(status)
 	w.Write([]byte(err.Error()))
 }
 
