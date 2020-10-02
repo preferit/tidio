@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path"
 	"time"
@@ -26,8 +27,7 @@ func NewService() *Service {
 	w.Close()
 
 	srv := &Service{
-		sys:    sys,
-		Router: NewRouter(sys),
+		sys: sys,
 	}
 	srv.SetLogger(fox.NewSyncLog(ioutil.Discard))
 	return srv
@@ -38,7 +38,17 @@ type Service struct {
 	warn func(...interface{})
 
 	sys *rs.System
-	*Router
+}
+
+func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	resp := &Response{
+		sys: me.sys,
+	}
+	err := resp.Build(me.sys, r)
+	if err != nil {
+		resp.WriteError(w, err)
+	}
+	resp.Send(w)
 }
 
 // AddAccount creates a system account and stores the secret in
@@ -59,7 +69,6 @@ func (me *Service) AddAccount(name, secret string) error {
 func (me *Service) SetLogger(log fox.Logger) {
 	me.Logger = log
 	me.warn = fox.NewFilterEmpty(log).Log
-	me.Router.Logger = log
 }
 
 // RestoreState restores the resource system from the given filename.

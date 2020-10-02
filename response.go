@@ -43,13 +43,6 @@ func (resp *Response) Build(sys *rs.System, r *http.Request) error {
 		return resp.End(http.StatusOK, NewHelpView())
 	}
 
-	// TODO design routing as a chained responsibility
-	//
-	// Select response format by accept header
-	// Authorize
-	// Check resources
-	// Find command for Method+Mimetype
-	// Exec and respond with
 	acc, err := resp.authenticate(r)
 	if err != nil {
 		return resp.Fail(http.StatusUnauthorized, err)
