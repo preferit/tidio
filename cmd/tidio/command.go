@@ -59,7 +59,7 @@ func (c *Command) run(args ...string) error {
 	}
 	c.Log("add account john")
 	c.Log(srv.AddAccount("john", "secret"))
-
+	c.Log(srv.InitResources())
 	c.Log("listen on ", bind)
 	return c.ListenAndServe(bind, srv)
 }

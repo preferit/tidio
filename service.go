@@ -21,11 +21,6 @@ func NewService() *Service {
 	asRoot.Exec("/bin/mkdir /api")
 	asRoot.Exec("/bin/mkdir /api/timesheets")
 
-	// default templates
-	w, _ := asRoot.Create("/api/timesheets/202001.timesheet")
-	timesheet.Render(w, 2020, 1, 8)
-	w.Close()
-
 	srv := &Service{
 		sys: sys,
 	}
@@ -40,13 +35,29 @@ type Service struct {
 	sys *rs.System
 }
 
+// InitResources
+func (me *Service) InitResources() error {
+	// default templates
+	asRoot := rs.Root.Use(me.sys)
+	w, err := asRoot.Create("/api/timesheets/202001.timesheet")
+	if err != nil {
+		return err
+	}
+	timesheet.Render(w, 2020, 1, 8)
+	w.Close()
+	asRoot.Exec("/bin/chmod 05555 /api/timesheets/202001.timesheet")
+	return nil
+}
+
 func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	resp := &Response{
 		sys: me.sys,
 	}
 	err := resp.Build(me.sys, r)
 	if err != nil {
+		me.warn(err)
 		resp.WriteError(w, err)
+		return
 	}
 	resp.Send(w)
 }
