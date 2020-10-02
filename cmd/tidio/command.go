@@ -57,6 +57,8 @@ func (c *Command) run(args ...string) error {
 	if err := c.initStateRestoration(srv, stateFilename); err != nil {
 		return err
 	}
+	c.Log("add account john")
+	c.Log(srv.AddAccount("john", "secret"))
 
 	c.Log("listen on ", bind)
 	return c.ListenAndServe(bind, srv)
