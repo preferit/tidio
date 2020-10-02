@@ -14,17 +14,22 @@ import (
 
 func TestService_AddAccount(t *testing.T) {
 	srv := NewService()
-	ok, bad := asserter.NewErrors(t)
+	ok := asserter.Wrap(t).Ok
 	ok(srv.AddAccount("john", "secret"))
+
+	bad := asserter.Wrap(t).Bad
 	bad(srv.AddAccount("john", "secret"))
 	bad(srv.AddAccount("root", "secret"))
-	_, err := rs.Root.Use(srv.sys).Stat("/api/timesheets/john")
-	ok(err)
+	bad(srv.AddAccount("eva", ""))
+
+	xok := asserter.Wrap(t).MixOk
+	asRoot := rs.Root.Use(srv.sys)
+	xok(asRoot.Stat("/api/timesheets/john"))
 }
 
 func TestService_RestoreState_missing_file(t *testing.T) {
 	srv := NewService()
-	_, bad := asserter.NewErrors(t)
+	bad := asserter.Wrap(t).Bad
 	bad(srv.RestoreState("no-such-file"))
 }
 
@@ -33,7 +38,7 @@ func TestService_RestoreState_ok_file(t *testing.T) {
 	tmp, _ := ioutil.TempFile("", "restorestate")
 	srv.sys.Export(tmp)
 	tmp.Close()
-	ok, _ := asserter.NewErrors(t)
+	ok := asserter.Wrap(t).Ok
 	ok(srv.RestoreState(tmp.Name()))
 	os.RemoveAll(tmp.Name())
 }

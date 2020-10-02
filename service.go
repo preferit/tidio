@@ -44,20 +44,15 @@ type Service struct {
 // AddAccount creates a system account and stores the secret in
 // /etc/basic
 func (me *Service) AddAccount(name, secret string) error {
-	asRoot := rs.Root.Use(me.sys)
-	cmd := rs.NewCmd("/bin/mkacc", name)
-	if err := asRoot.Run(cmd); err != nil {
-		return err
-	}
-	cmd = rs.NewCmd("/bin/secure", "-a", name, "-s", secret)
-	asRoot.Run(cmd)
+	asRoot := NewShell(rs.Root.Use(me.sys))
+	asRoot.Execf("/bin/mkacc %s", name)
+	asRoot.Execf("/bin/secure -a %s -s %s", name, secret)
+	asRoot.Execf("/bin/mkdir /api/timesheets")
 
 	dir := path.Join("/api/timesheets", name)
-	cmd = rs.NewCmd("/bin/mkdir", dir)
-	asRoot.Run(cmd)
+	asRoot.Execf("/bin/mkdir %s", dir)
 
-	cmd = rs.NewCmd("/bin/chown", name, dir)
-	return asRoot.Run(cmd)
+	return asRoot.Execf("/bin/chown %s %s", name, dir)
 }
 
 // SetLogger
@@ -67,7 +62,6 @@ func (me *Service) SetLogger(log fox.Logger) {
 }
 
 // RestoreState restores the resource system from the given filename.
-// Restoring the state replaces current system.
 func (me *Service) RestoreState(filename string) error {
 	me.Log("restore state: ", filename)
 	r, err := os.Open(filename)
@@ -75,7 +69,7 @@ func (me *Service) RestoreState(filename string) error {
 		return fmt.Errorf("open state file: %w", err)
 	}
 	defer r.Close()
-	me.sys, err = rs.Import(r)
+	err = me.sys.Import("/", r)
 	//me.warn(err)
 	return err
 }
