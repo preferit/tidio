@@ -1,6 +1,7 @@
 package tidio
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -28,62 +29,101 @@ type Router struct {
 }
 
 func (me *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/" {
-		NewHelpView().WriteTo(w)
+	var resp Response
+	err := me.endpoint(&resp, r)
+	if err != nil {
+		textErr(w, resp.statusCode, err)
 		return
 	}
-
-	acc, err := me.authenticate(r)
-	me.warn(err)
-	if err != nil {
-		me.warn(err)
-		w.WriteHeader(http.StatusUnauthorized)
+	w.WriteHeader(resp.statusCode)
+	switch view := resp.view.(type) {
+	case io.ReadCloser:
+		io.Copy(w, view)
+		view.Close()
 		return
+	case io.WriterTo:
+		view.WriteTo(w)
+		return
+	}
+}
+
+func (me *Router) endpoint(resp *Response, r *http.Request) error {
+
+	// TODO perhaps add help as a resource
+	if r.URL.Path == "/" {
+		resp.view = NewHelpView()
+		resp.statusCode = 200
+		return nil
+	}
+
+	// TODO design routing as a chained responsibility
+	//
+	// Select response format by accept header
+	// Authorize
+	// Check resources
+	// Find command for Method+Mimetype
+	// Exec and respond with
+	acc, err := me.authenticate(r)
+	if err != nil {
+		return resp.Fail(http.StatusUnauthorized, err)
 	}
 	asAcc := acc.Use(me.sys)
 
 	// Check resource access permissions
 	res, err := asAcc.Stat(r.URL.Path)
 	if acc == rs.Anonymous && err != nil {
-		textErr(w, http.StatusUnauthorized, err)
-		return
+		return resp.Fail(http.StatusUnauthorized, err)
 	}
 
 	// Serve the specific method
 	switch r.Method {
 	case "GET":
 		if res == nil {
-			textErr(w, http.StatusNotFound, err)
-			return
+			return resp.Fail(http.StatusNotFound, err)
 		}
 		if res.IsDir() == nil {
 			cmd := rs.NewCmd("/bin/ls", "-json", "-json-name", "resources", r.URL.Path)
-			cmd.Out = w
+			var buf bytes.Buffer
+			cmd.Out = &buf
+			resp.view = &buf
 			asAcc.Run(cmd)
-			return
+			return nil
 		}
 		res, err := asAcc.Open(r.URL.Path)
 		if err != nil {
-			me.warn(err)
-			textErr(w, http.StatusUnauthorized, err)
-			return
+			return resp.Fail(http.StatusUnauthorized, err)
 		}
-		io.Copy(w, res)
+		resp.view = res
+		return nil
 	case "POST":
 		if r.Body != nil {
 			defer r.Body.Close()
 		}
 		res, err := asAcc.Create(r.URL.Path)
 		if err != nil {
-			textErr(w, http.StatusBadRequest, err)
-			return
+			// FIXME if write permission error use Forbidden
+			return resp.Fail(http.StatusBadRequest, err)
 		}
+		resp.statusCode = http.StatusCreated
 		io.Copy(res, r.Body)
 		res.Close() // important to flush the data
-		w.WriteHeader(http.StatusCreated)
+		resp.statusCode = http.StatusCreated
+		return nil
 	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
+		return resp.Fail(http.StatusMethodNotAllowed, fmt.Errorf("Method not allowed"))
 	}
+}
+
+// Endpoints build a response
+type Response struct {
+	view       interface{}
+	statusCode int
+}
+
+// Fail
+func (me *Response) Fail(code int, err error) error {
+	me.statusCode = code
+	return err
 }
 
 func textErr(w http.ResponseWriter, status int, err error) {

@@ -30,6 +30,9 @@ func Test_GET_timesheet_asJohn(t *testing.T) {
 	exp.StatusCode(201, "POST", path, &sheet, john)
 	exp.StatusCode(200, "GET", path, john)
 	exp.BodyIs(sheetStr, "GET", path, john)
+	// FIXME
+	//exp.StatusCode(403, "POST", "/api/timesheets/202001.timesheet", &sheet, john)
+	exp.Contains("denied", "POST", "/api/timesheets/202001.timesheet", &sheet, john)
 
 	exp.StatusCode(404, "GET", "/api/no-such-path", john)
 	// FIXME
