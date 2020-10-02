@@ -51,9 +51,7 @@ func (me *Router) endpoint(resp *Response, r *http.Request) error {
 
 	// TODO perhaps add help as a resource
 	if r.URL.Path == "/" {
-		resp.view = NewHelpView()
-		resp.statusCode = 200
-		return nil
+		return resp.End(http.StatusOK, NewHelpView())
 	}
 
 	// TODO design routing as a chained responsibility
@@ -85,16 +83,15 @@ func (me *Router) endpoint(resp *Response, r *http.Request) error {
 			cmd := rs.NewCmd("/bin/ls", "-json", "-json-name", "resources", r.URL.Path)
 			var buf bytes.Buffer
 			cmd.Out = &buf
-			resp.view = &buf
 			asAcc.Run(cmd)
-			return nil
+			return resp.End(http.StatusOK, &buf)
 		}
 		res, err := asAcc.Open(r.URL.Path)
 		if err != nil {
 			return resp.Fail(http.StatusUnauthorized, err)
 		}
-		resp.view = res
-		return nil
+		return resp.End(http.StatusOK, res)
+
 	case "POST":
 		if r.Body != nil {
 			defer r.Body.Close()
@@ -107,23 +104,10 @@ func (me *Router) endpoint(resp *Response, r *http.Request) error {
 		resp.statusCode = http.StatusCreated
 		io.Copy(res, r.Body)
 		res.Close() // important to flush the data
-		resp.statusCode = http.StatusCreated
-		return nil
+		return resp.End(http.StatusCreated)
 	default:
 		return resp.Fail(http.StatusMethodNotAllowed, fmt.Errorf("Method not allowed"))
 	}
-}
-
-// Endpoints build a response
-type Response struct {
-	view       interface{}
-	statusCode int
-}
-
-// Fail
-func (me *Response) Fail(code int, err error) error {
-	me.statusCode = code
-	return err
 }
 
 func textErr(w http.ResponseWriter, status int, err error) {
