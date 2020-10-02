@@ -34,6 +34,7 @@ func (me *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	acc, err := me.authenticate(r)
+	me.warn(err)
 	if err != nil {
 		me.warn(err)
 		w.WriteHeader(http.StatusUnauthorized)
@@ -51,6 +52,10 @@ func (me *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Serve the specific method
 	switch r.Method {
 	case "GET":
+		if res == nil {
+			textErr(w, http.StatusNotFound, err)
+			return
+		}
 		if res.IsDir() == nil {
 			cmd := rs.NewCmd("/bin/ls", "-json", "-json-name", "resources", r.URL.Path)
 			cmd.Out = w
@@ -97,6 +102,7 @@ func (me *Router) authenticate(r *http.Request) (*rs.Account, error) {
 	}
 
 	name, secret, ok := r.BasicAuth()
+	me.Log("authenticate ", name)
 	if !ok {
 		return rs.Anonymous, fmt.Errorf("authentication failed")
 	}

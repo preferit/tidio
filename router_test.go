@@ -2,6 +2,7 @@ package tidio
 
 import (
 	"bytes"
+	"encoding/base64"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -15,26 +16,24 @@ import (
 func Test_GET_timesheet_asJohn(t *testing.T) {
 	srv := NewService()
 	srv.AddAccount("john", "secret")
+	exp := asserter.Wrap(t).ResponseFrom(srv)
+
+	// Basic authentication
+	john := http.Header{}
+	secret := base64.StdEncoding.EncodeToString([]byte("john:secret"))
+	john.Set("Authorization", "Basic "+secret)
 
 	var sheet bytes.Buffer
 	timesheet.Render(&sheet, 2020, 1, 8)
-	exp := sheet.Bytes()
+	sheetStr := sheet.String()
 	path := "/api/timesheets/john/202001.timesheet"
-	w, r := wr(t, "POST", path, bytes.NewReader(exp))
-	r.SetBasicAuth("john", "secret")
-	srv.ServeHTTP(w, r)
+	exp.StatusCode(201, "POST", path, &sheet, john)
+	exp.StatusCode(200, "GET", path, john)
+	exp.BodyIs(sheetStr, "GET", path, john)
 
-	w, r = wr(t, "GET", path, nil)
-	r.SetBasicAuth("john", "secret")
-	srv.ServeHTTP(w, r)
-	resp := w.Result()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(body, exp) {
-		t.Error(string(body))
-	}
+	exp.StatusCode(404, "GET", "/api/no-such-path", john)
+	// FIXME
+	//exp.StatusCode(403, "GET", "/etc/accounts/john", john)
 }
 
 func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRecorder, *http.Request) {

@@ -3,6 +3,7 @@ module github.com/preferit/tidio
 go 1.14
 
 require (
+	github.com/gorilla/mux v1.8.0
 	github.com/gregoryv/asserter v0.4.0
 	github.com/gregoryv/cmdline v0.0.0-20200822134937-e77bcfd6d968
 	github.com/gregoryv/fox v0.5.1-0.20200918082722-970fad18326f

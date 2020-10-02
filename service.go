@@ -59,6 +59,7 @@ func (me *Service) AddAccount(name, secret string) error {
 func (me *Service) SetLogger(log fox.Logger) {
 	me.Logger = log
 	me.warn = fox.NewFilterEmpty(log).Log
+	me.Router.Logger = log
 }
 
 // RestoreState restores the resource system from the given filename.
