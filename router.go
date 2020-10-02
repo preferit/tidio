@@ -32,9 +32,17 @@ func (me *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var resp Response
 	err := me.endpoint(&resp, r)
 	if err != nil {
-		textErr(w, resp.statusCode, err)
+		// Handle any errors
+		w.Header().Set("Content-Type", "plain/text")
+		if resp.statusCode == http.StatusUnauthorized {
+			w.Header().Set("WWW-Authenticate", `Basic realm="tidio"`)
+		}
+		w.WriteHeader(resp.statusCode)
+		w.Write([]byte(err.Error()))
+
 		return
 	}
+	// Render ok response
 	w.WriteHeader(resp.statusCode)
 	switch view := resp.view.(type) {
 	case io.ReadCloser:
@@ -108,15 +116,6 @@ func (me *Router) endpoint(resp *Response, r *http.Request) error {
 	default:
 		return resp.Fail(http.StatusMethodNotAllowed, fmt.Errorf("Method not allowed"))
 	}
-}
-
-func textErr(w http.ResponseWriter, status int, err error) {
-	w.Header().Set("Content-Type", "plain/text")
-	if status == http.StatusUnauthorized {
-		w.Header().Set("WWW-Authenticate", `Basic realm="tidio"`)
-	}
-	w.WriteHeader(status)
-	w.Write([]byte(err.Error()))
 }
 
 func (me *Router) authenticate(r *http.Request) (*rs.Account, error) {
