@@ -58,8 +58,11 @@ github.com/gregoryv/fox v0.5.1-0.20200918082722-970fad18326f h1:8cOP/X8Fkt/W5eJQ
 github.com/gregoryv/fox v0.5.1-0.20200918082722-970fad18326f/go.mod h1:s96q/0H5V5vdMLYr7Z44DKlu3mkN4sTu5PCw9iTveFY=
 github.com/gregoryv/go-timesheet v0.1.0 h1:DPFeb0TrkbEx+DFihB7ItB4FtwHItl6rkHTii27J0wQ=
 github.com/gregoryv/go-timesheet v0.1.0/go.mod h1:+3KIsZJgy3SxeT6mETSoRZY1/EAOsGrPOebYEECLllg=
+github.com/gregoryv/go-timesheet v0.3.0 h1:oU3nxNIJyziLv+p6ox+lM0QZ4NT7fmr8GuBYr72tWCY=
+github.com/gregoryv/go-timesheet v0.3.0/go.mod h1:Wk5uSemiHe3/RS8i0KEQMcNm0a0MJM0Vrbx9Fv7xE3E=
 github.com/gregoryv/gocyclo v0.0.0-20180305144948-0be7902fabdc h1:chhF7lRELMFmxWl3AWbZ2UT1xQtN9nqFGyhL3jwGWDs=
 github.com/gregoryv/gocyclo v0.0.0-20180305144948-0be7902fabdc/go.mod h1:x/QA8cT1gfn/XriQ/CVNX7I8IM4Z2YJAAEWFym2clZI=
+github.com/gregoryv/golden v0.2.0/go.mod h1:gwYSBOmvGF+fefo7P1PyBpAqqvYx6S85dmkUaI6QMU4=
 github.com/gregoryv/golden v0.3.0/go.mod h1:gwYSBOmvGF+fefo7P1PyBpAqqvYx6S85dmkUaI6QMU4=
 github.com/gregoryv/golden v0.3.1 h1:OdVsKRhiTWQj/euKcBU09KHK1iYfLljijh+lE01GETc=
 github.com/gregoryv/golden v0.3.1/go.mod h1:gwYSBOmvGF+fefo7P1PyBpAqqvYx6S85dmkUaI6QMU4=

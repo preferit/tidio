@@ -43,7 +43,7 @@ func (me *Service) InitResources() error {
 	if err != nil {
 		return err
 	}
-	timesheet.Render(w, 2020, 1, 8)
+	timesheet.RenderTo(w, 2020, 1, 8)
 	w.Close()
 	asRoot.Exec("/bin/chmod 05555 /api/timesheets/202001.timesheet")
 	return nil

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gregoryv/asserter"
@@ -14,29 +15,35 @@ import (
 )
 
 func Test_GET_timesheet_asJohn(t *testing.T) {
-	srv := NewService()
-	srv.AddAccount("john", "secret")
-	exp := asserter.Wrap(t).ResponseFrom(srv)
-
-	// Basic authentication
-	john := http.Header{}
-	secret := base64.StdEncoding.EncodeToString([]byte("john:secret"))
-	john.Set("Authorization", "Basic "+secret)
-
-	var sheet bytes.Buffer
-	timesheet.Render(&sheet, 2020, 1, 8)
+	var (
+		srv     = NewService()
+		_       = srv.AddAccount("john", "secret")
+		exp     = asserter.Wrap(t).ResponseFrom(srv)
+		headers = basicAuthHeaders("john", "secret")
+		sheet   bytes.Buffer
+		path    = "/api/timesheets/john/202001.timesheet"
+	)
+	timesheet.RenderTo(&sheet, 2020, 1, 8)
 	sheetStr := sheet.String()
-	path := "/api/timesheets/john/202001.timesheet"
-	exp.StatusCode(201, "POST", path, &sheet, john)
-	exp.StatusCode(200, "GET", path, john)
-	exp.BodyIs(sheetStr, "GET", path, john)
-	// FIXME
-	//exp.StatusCode(403, "POST", "/api/timesheets/202001.timesheet", &sheet, john)
-	exp.Contains("denied", "POST", "/api/timesheets/202001.timesheet", &sheet, john)
 
-	exp.StatusCode(404, "GET", "/api/no-such-path", john)
+	exp.StatusCode(201, "POST", path, strings.NewReader(sheetStr), headers)
+	exp.StatusCode(200, "GET", path, headers)
+	exp.BodyIs(sheetStr, "GET", path, headers)
 	// FIXME
-	//exp.StatusCode(403, "GET", "/etc/accounts/john", john)
+	//exp.StatusCode(403, "POST", "/api/timesheets/202001.timesheet", &sheet, headers)
+	exp.Contains("denied", "POST", "/api/timesheets/202001.timesheet",
+		strings.NewReader(sheetStr), headers)
+
+	exp.StatusCode(404, "GET", "/api/no-such-path", headers)
+	// FIXME
+	//exp.StatusCode(403, "GET", "/etc/accounts/john", headers)
+}
+
+func basicAuthHeaders(user, pass string) http.Header {
+	headers := http.Header{}
+	secret := base64.StdEncoding.EncodeToString([]byte("john:secret"))
+	headers.Set("Authorization", "Basic "+secret)
+	return headers
 }
 
 func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRecorder, *http.Request) {
@@ -54,9 +61,7 @@ func Test_POST_timesheet_asJohn(t *testing.T) {
 	srv.SetLogger(t)
 	srv.AddAccount("john", "secret")
 
-	var sheet bytes.Buffer
-	timesheet.Render(&sheet, 2020, 1, 8)
-	w, r := wr(t, "POST", "/api/timesheets/john/202001.timesheet", &sheet)
+	w, r := wr(t, "POST", "/api/timesheets/john/202001.timesheet", timesheet.Render(2020, 1, 8))
 	r.SetBasicAuth("john", "secret")
 	srv.ServeHTTP(w, r)
 	resp := w.Result()
