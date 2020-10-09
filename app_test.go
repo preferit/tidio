@@ -1,4 +1,4 @@
-package main
+package tidio
 
 import (
 	"net/http"
@@ -7,18 +7,18 @@ import (
 	"github.com/gregoryv/wolf"
 )
 
-func TestTidio_supports_help_flag(t *testing.T) {
+func TestApp_supports_help_flag(t *testing.T) {
 	cmd := wolf.NewTCmd("x", "-h")
 	defer cmd.Cleanup()
-	if NewTidio(cmd).Run() != 0 {
+	if NewApp(cmd).Run() != 0 {
 		t.Error(cmd.Dump())
 	}
 }
 
-func TestTidio_has_sane_default_values(t *testing.T) {
+func TestApp_has_sane_default_values(t *testing.T) {
 	cmd := wolf.NewTCmd()
 	defer cmd.Cleanup()
-	app := NewTidio(cmd)
+	app := NewApp(cmd)
 	var started bool
 	app.ListenAndServe = func(string, http.Handler) error {
 		started = true
@@ -30,10 +30,10 @@ func TestTidio_has_sane_default_values(t *testing.T) {
 	}
 }
 
-func TestTidio_fails_on_wrong_option(t *testing.T) {
+func TestApp_fails_on_wrong_option(t *testing.T) {
 	cmd := wolf.NewTCmd("x", "-wrong-option", "value")
 	defer cmd.Cleanup()
-	if NewTidio(cmd).Run() == 0 {
+	if NewApp(cmd).Run() == 0 {
 		t.Error(cmd.Err)
 	}
 }
@@ -41,7 +41,7 @@ func TestTidio_fails_on_wrong_option(t *testing.T) {
 func Test_can_specify_state_file(t *testing.T) {
 	cmd := wolf.NewTCmd("x", "-state", "other.file")
 	defer cmd.Cleanup()
-	app := NewTidio(cmd)
+	app := NewApp(cmd)
 	app.ListenAndServe = noopListenAndServe
 	if app.Run() != 0 {
 		t.Error("failed")
@@ -55,7 +55,7 @@ func Test_state_file_cannot_be_written(t *testing.T) {
 	cmd := wolf.NewTCmd("x", "-state", "/var/no-such")
 	defer cmd.Cleanup()
 
-	app := NewTidio(cmd)
+	app := NewApp(cmd)
 	app.ListenAndServe = noopListenAndServe
 
 	if app.Run() == 0 {
@@ -67,7 +67,7 @@ func Test_state_option_is_empty(t *testing.T) {
 	cmd := wolf.NewTCmd("x", "-state", "")
 	defer cmd.Cleanup()
 
-	app := NewTidio(cmd)
+	app := NewApp(cmd)
 	app.ListenAndServe = noopListenAndServe
 
 	if app.Run() == 0 {

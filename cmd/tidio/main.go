@@ -5,12 +5,13 @@ import (
 	"os"
 
 	"github.com/gregoryv/wolf"
+	"github.com/preferit/tidio"
 )
 
 //go:generate stamp -clfile ../../changelog.md -go build_stamp.go
 
 func main() {
 	cmd := wolf.NewOSCmd()
-	code := NewTidio(cmd).Run()
+	code := tidio.NewApp(cmd).Run()
 	os.Exit(code)
 }

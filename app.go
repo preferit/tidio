@@ -1,4 +1,4 @@
-package main
+package tidio
 
 import (
 	"bytes"
@@ -9,25 +9,24 @@ import (
 
 	"github.com/gregoryv/fox"
 	"github.com/gregoryv/wolf"
-	"github.com/preferit/tidio"
 )
 
-// NewTidio returns a Tidio without logging and default options
-func NewTidio(cmd wolf.Command) *Tidio {
-	return &Tidio{
+// NewApp returns a App without logging and default options
+func NewApp(cmd wolf.Command) *App {
+	return &App{
 		Command:        cmd,
 		ListenAndServe: http.ListenAndServe,
 		Logger:         fox.NewSyncLog(cmd.Stderr()).FilterEmpty(),
 	}
 }
 
-type Tidio struct {
+type App struct {
 	wolf.Command
 	ListenAndServe func(string, http.Handler) error
 	fox.Logger
 }
 
-func (me *Tidio) Run() int {
+func (me *App) Run() int {
 	if err := me.run(); err != nil {
 		me.Log(err)
 		return me.Stop(1)
@@ -35,7 +34,7 @@ func (me *Tidio) Run() int {
 	return me.Stop(0)
 }
 
-func (me *Tidio) run() error {
+func (me *App) run() error {
 	var (
 		fs            = flag.NewFlagSet(me.Args()[0], flag.ContinueOnError)
 		bind          = fs.String("bind", ":13001", "[host]:port to bind to")
@@ -53,7 +52,7 @@ func (me *Tidio) run() error {
 		return nil
 	}
 
-	srv := tidio.NewService()
+	srv := NewService()
 	srv.SetLogger(me.Logger)
 
 	if err := me.initStateRestoration(srv, *stateFilename); err != nil {
@@ -67,8 +66,8 @@ func (me *Tidio) run() error {
 }
 
 // initStateRestoration
-func (me *Tidio) initStateRestoration(service *tidio.Service, filename string) error {
-	dest := tidio.NewFileStorage(filename)
+func (me *App) initStateRestoration(service *Service, filename string) error {
+	dest := NewFileStorage(filename)
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		if err := service.PersistState(dest); err != nil {
 			return err
