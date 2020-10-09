@@ -45,10 +45,13 @@ func TestService_RestoreState_ok_file(t *testing.T) {
 
 func TestService_AutoPersist(t *testing.T) {
 	srv := NewService()
+	var buflog BufferedLogger
+	srv.SetLogger(&buflog)
+
 	tmp, _ := ioutil.TempFile("", "restorestate")
 	tmp.Close()
 	defer os.RemoveAll(tmp.Name())
-	srv.SetLogger(t)
+
 	dest := NewFileStorage(tmp.Name())
 	srv.AutoPersist(dest, time.Millisecond)
 
@@ -59,16 +62,17 @@ func TestService_AutoPersist(t *testing.T) {
 	time.Sleep(10 * time.Millisecond)
 	got, err := ioutil.ReadFile(tmp.Name())
 	if err != nil {
-		t.Fatal(err)
+		t.Fatal(err, "\n", buflog.String())
 	}
 
 	assert := asserter.New(t)
-	assert(len(got) != 0).Error("empty state")
+	assert(len(got) != 0).Error("empty state", "\n", buflog.String())
 }
 
 func TestService_AutoPersist_create_file_fails(t *testing.T) {
 	srv := NewService()
-	srv.SetLogger(t)
+	var buflog BufferedLogger
+	srv.SetLogger(&buflog)
 	dest := &brokenStorage{}
 	srv.AutoPersist(dest, time.Millisecond)
 
@@ -78,7 +82,7 @@ func TestService_AutoPersist_create_file_fails(t *testing.T) {
 
 	time.Sleep(10 * time.Millisecond)
 	assert := asserter.New(t)
-	assert(dest.called).Error("state persisted")
+	assert(dest.called).Error("state persisted", "\n", buflog.String())
 }
 
 type brokenStorage struct {
