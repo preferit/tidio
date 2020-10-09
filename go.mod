@@ -11,4 +11,5 @@ require (
 	github.com/gregoryv/rs v0.4.0
 	github.com/gregoryv/stamp v0.2.0
 	github.com/gregoryv/web v0.9.0
+	github.com/gregoryv/wolf v0.5.0
 )

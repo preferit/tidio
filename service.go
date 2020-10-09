@@ -115,7 +115,7 @@ func (me *Service) AutoPersist(dest Storage, every time.Duration) {
 
 // PersistState
 func (me *Service) PersistState(dest Storage) error {
-	me.Log("persist state")
+	me.Log("persist state: ", dest)
 	w, err := dest.Create()
 	if err != nil {
 		return err
@@ -140,3 +140,5 @@ type FileStorage struct {
 func (me *FileStorage) Create() (io.WriteCloser, error) {
 	return os.Create(me.filename)
 }
+
+func (me *FileStorage) String() string { return me.filename }
