@@ -45,8 +45,7 @@ func TestService_RestoreState_ok_file(t *testing.T) {
 
 func TestService_AutoPersist(t *testing.T) {
 	srv := NewService()
-	var buflog BufferedLogger
-	srv.SetLogger(&buflog)
+	buflog := Buflog(srv)
 
 	tmp, _ := ioutil.TempFile("", "restorestate")
 	tmp.Close()
@@ -71,8 +70,8 @@ func TestService_AutoPersist(t *testing.T) {
 
 func TestService_AutoPersist_create_file_fails(t *testing.T) {
 	srv := NewService()
-	var buflog BufferedLogger
-	srv.SetLogger(&buflog)
+	buflog := Buflog(srv)
+
 	dest := &brokenStorage{}
 	srv.AutoPersist(dest, time.Millisecond)
 

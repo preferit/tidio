@@ -38,7 +38,7 @@ func (me *Response) authenticate(r *http.Request) (*rs.Account, error) {
 
 func (resp *Response) Build(sys *rs.System, r *http.Request) error {
 
-	// TODO perhaps add help as a resource
+	// todo perhaps add help as a resource
 	if r.URL.Path == "/" {
 		return resp.End(http.StatusOK, NewHelpView())
 	}

@@ -2,7 +2,6 @@ package tidio
 
 import (
 	"bytes"
-	"encoding/base64"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,6 +12,37 @@ import (
 	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/go-timesheet"
 )
+
+func TestAPI(t *testing.T) {
+	srv, output := newTestService()
+	ts := httptest.NewServer(srv)
+	defer ts.Close()
+
+	v1 := NewAPIv1(ts.URL, Credentials{account: "john", secret: "secret"})
+	ok := func(err error) {
+		t.Helper()
+		if err != nil {
+			t.Fatal(err, output)
+		}
+	}
+	ok(v1.CreateTimesheet(
+		"/api/timesheets/john/202001.timesheet",
+		timesheet.Render(2020, 1, 8),
+	))
+
+	bad := func(err error) {
+		t.Helper()
+		if err == nil {
+			t.Fatal("should fail", output)
+		}
+	}
+	bad(v1.CreateTimesheet(
+		"/NOTOK/timesheets/john/202001.timesheet",
+		timesheet.Render(2020, 1, 8),
+	))
+	_ = bad
+
+}
 
 func Test_GET_timesheet_asJohn(t *testing.T) {
 	var (
@@ -39,13 +69,6 @@ func Test_GET_timesheet_asJohn(t *testing.T) {
 	//exp.StatusCode(403, "GET", "/etc/accounts/john", headers)
 }
 
-func basicAuthHeaders(user, pass string) http.Header {
-	headers := http.Header{}
-	secret := base64.StdEncoding.EncodeToString([]byte("john:secret"))
-	headers.Set("Authorization", "Basic "+secret)
-	return headers
-}
-
 func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRecorder, *http.Request) {
 	t.Helper()
 	w := httptest.NewRecorder()
@@ -57,25 +80,22 @@ func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRec
 }
 
 func Test_POST_timesheet_asJohn(t *testing.T) {
-	srv := NewService()
-	srv.SetLogger(t)
-	srv.AddAccount("john", "secret")
+	srv, output := newTestService()
 
-	w, r := wr(t, "POST", "/api/timesheets/john/202001.timesheet", timesheet.Render(2020, 1, 8))
+	body := timesheet.Render(2020, 1, 8)
+	w, r := wr(t, "POST", "/api/timesheets/john/202001.timesheet", body)
 	r.SetBasicAuth("john", "secret")
 	srv.ServeHTTP(w, r)
 	resp := w.Result()
 
 	if resp.StatusCode != 201 {
 		body, _ := ioutil.ReadAll(resp.Body)
-		t.Error(resp.Status, string(body))
+		t.Error(resp.Status, string(body), output)
 	}
 }
 
 func Test_POST_timesheets_missing_body_asJohn(t *testing.T) {
-	srv := NewService()
-	srv.SetLogger(t)
-	srv.AddAccount("john", "secret")
+	srv, output := newTestService()
 
 	w, r := wr(t, "POST", "/api/timesheets/john", nil)
 	r.SetBasicAuth("john", "secret")
@@ -83,13 +103,12 @@ func Test_POST_timesheets_missing_body_asJohn(t *testing.T) {
 	got := w.Result()
 
 	if got.StatusCode != 400 {
-		t.Error(got.Status)
+		t.Error(got.Status, output)
 	}
 }
 
 func Test_GET_timesheets_authenticated(t *testing.T) {
-	srv := NewService()
-	srv.AddAccount("john", "secret")
+	srv, output := newTestService()
 
 	w, r := wr(t, "GET", "/api/timesheets/john", nil)
 	r.SetBasicAuth("john", "secret")
@@ -97,14 +116,12 @@ func Test_GET_timesheets_authenticated(t *testing.T) {
 	got := w.Result()
 
 	if got.StatusCode != 200 {
-		t.Error(got.Status)
+		t.Error(got.Status, output)
 	}
 }
 
 func Test_GET_timesheets_badheader(t *testing.T) {
-	srv := NewService()
-	srv.SetLogger(t)
-	srv.AddAccount("john", "secret")
+	srv, output := newTestService()
 
 	w, r := wr(t, "GET", "/api/timesheets/john", nil)
 	r.Header.Set("Authorization", "Basic jibberish")
@@ -112,14 +129,12 @@ func Test_GET_timesheets_badheader(t *testing.T) {
 	got := w.Result()
 
 	if got.StatusCode != 401 {
-		t.Error(got.Status)
+		t.Error(got.Status, output)
 	}
 }
 
 func Test_GET_timesheets_autherror(t *testing.T) {
-	srv := NewService()
-	srv.SetLogger(t)
-	srv.AddAccount("john", "secret")
+	srv, output := newTestService()
 
 	w, r := wr(t, "GET", "/api/timesheets/john", nil)
 	r.SetBasicAuth("john", "wrong")
@@ -127,7 +142,7 @@ func Test_GET_timesheets_autherror(t *testing.T) {
 	got := w.Result()
 
 	if got.StatusCode != 401 {
-		t.Error(got.Status)
+		t.Error(got.Status, output)
 	}
 }
 
@@ -140,4 +155,11 @@ func Test_defaults(t *testing.T) {
 	exp.StatusCode(405, "X", "/api")
 	exp.StatusCode(http.StatusUnauthorized, "GET", "/api/timesheets")
 	exp.BodyIs(`{"resources":[{"name": "timesheets"}]}`, "GET", "/api")
+}
+
+func newTestService() (*Service, *BufferedLogger) {
+	srv := NewService()
+	buflog := Buflog(srv)
+	srv.AddAccount("john", "secret")
+	return srv, buflog
 }

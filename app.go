@@ -1,7 +1,6 @@
 package tidio
 
 import (
-	"bytes"
 	"flag"
 	"net/http"
 	"os"
@@ -40,12 +39,9 @@ func (me *App) run() error {
 		bind          = fs.String("bind", ":13001", "[host]:port to bind to")
 		stateFilename = fs.String("state", "system.state", "")
 	)
+	fs.SetOutput(me.Stderr())
 	err := fs.Parse(me.Args()[1:])
 	if err != nil {
-		var buf bytes.Buffer
-		fs.SetOutput(&buf)
-		fs.PrintDefaults()
-		me.Log(buf.String())
 		if err != flag.ErrHelp {
 			return err
 		}
