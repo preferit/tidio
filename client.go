@@ -28,48 +28,28 @@ type Client struct {
 	fox.Logger
 	cred Credentials
 	host string
-
-	err  error          // last error
-	req  *http.Request  // last request
-	resp *http.Response // last response
 }
 
-func (me *Client) Request() *http.Request   { return me.req }
-func (me *Client) Response() *http.Response { return me.resp }
-
 func (me *Client) CreateTimesheet(loc string, body io.Reader) error {
-	if me.err != nil {
-		return me.err
+	r, err := http.NewRequest("POST", me.host+loc, body)
+	if err != nil {
+		me.Log(err)
+		return err
 	}
-	me.newRequest("POST", me.host+loc, body)
-	me.send()
-	me.checkStatusCode(201)
-	return me.err
+	r.Header = me.cred.BasicAuth()
+	resp, err := me.Do(r)
+	if err != nil {
+		me.Log(r.Method, r.URL, err)
+		return err
+	}
+	me.Log(r.Method, r.URL, resp.StatusCode)
+	return checkStatusCode(resp, 201)
 }
 
 // checkStatusCode
-func (me *Client) checkStatusCode(exp int) {
-	if me.err != nil {
-		return
+func checkStatusCode(resp *http.Response, exp int) error {
+	if resp.StatusCode != exp {
+		return fmt.Errorf("unexpected status code: %v", resp.StatusCode)
 	}
-	if me.resp.StatusCode != exp {
-		me.err = fmt.Errorf("unexpected status code: %v", me.resp.StatusCode)
-	}
-}
-
-// newRequest
-func (me *Client) newRequest(method, path string, body io.Reader) {
-	me.req, me.err = http.NewRequest(method, path, body)
-}
-
-func (me *Client) send() {
-	if me.err != nil {
-		return
-	}
-	if me.req == nil {
-		panic("cannot send nil")
-	}
-	me.req.Header = me.cred.BasicAuth()
-	me.resp, me.err = me.Do(me.req)
-	me.Log(me.req.Method, me.req.URL, me.resp.StatusCode)
+	return nil
 }
