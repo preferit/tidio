@@ -27,29 +27,13 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 		Credentials{account: "john", secret: "secret"},
 		UseHost(ts.URL),
 	)
-	ok := func(err error) {
-		t.Helper()
-		if err != nil {
-			t.Fatal(err)
-		}
-	}
-	ok(client.CreateTimesheet(
-		"/api/timesheets/john/202001.timesheet",
-		timesheet.Render(2020, 1, 8),
-	))
 
-	bad := func(err error) {
-		t.Helper()
-		if err == nil {
-			t.Fatal("should fail")
-		}
+	path := "/api/timesheets/john/202001.timesheet"
+	body := timesheet.Render(2020, 1, 8)
+	err := client.CreateTimesheet(path, body)
+	if err != nil {
+		t.Fatal(err)
 	}
-	bad(client.CreateTimesheet(
-		"/NOTOK/timesheets/john/202001.timesheet",
-		timesheet.Render(2020, 1, 8),
-	))
-	_ = bad
-
 }
 
 func Test_GET_timesheet_asJohn(t *testing.T) {

@@ -20,12 +20,12 @@ func (me UseLogger) ForService(srv *Service) error {
 }
 
 type InitialAccount struct {
-	name   string
-	secret string
+	account string
+	secret  string
 }
 
 func (me InitialAccount) ForService(srv *Service) error {
-	return srv.AddAccount(me.name, me.secret)
+	return srv.AddAccount(me.account, me.secret)
 }
 
 type UseHost string
