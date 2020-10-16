@@ -14,6 +14,25 @@ import (
 	"github.com/gregoryv/go-timesheet"
 )
 
+func TestClient_verifies_status_code(t *testing.T) {
+	ts := httptest.NewServer(broken(http.StatusInternalServerError))
+	defer ts.Close()
+	client := NewClient(
+		UseHost(ts.URL),
+	)
+	// we know this implementation checks for a valid 200
+	_, err := client.ReadTimesheet("/")
+	if err == nil {
+		t.Error("not checked")
+	}
+}
+
+func broken(statusCode int) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(statusCode)
+	}
+}
+
 func TestClient_error_handling(t *testing.T) {
 	var called bool
 	client := NewClient(
