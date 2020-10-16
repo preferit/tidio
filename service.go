@@ -59,7 +59,7 @@ func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	resp := &Response{
 		sys: me.sys,
 	}
-	err := resp.Build(me.sys, r)
+	err := resp.Build(r)
 	if err != nil {
 		me.warn(err)
 		resp.WriteError(w, err)

@@ -36,8 +36,7 @@ func (me *Response) authenticate(r *http.Request) (*rs.Account, error) {
 	return &acc, err
 }
 
-func (resp *Response) Build(sys *rs.System, r *http.Request) error {
-
+func (resp *Response) Build(r *http.Request) error {
 	// todo perhaps add help as a resource
 	if r.URL.Path == "/" {
 		return resp.End(http.StatusOK, NewHelpView())
@@ -47,7 +46,7 @@ func (resp *Response) Build(sys *rs.System, r *http.Request) error {
 	if err != nil {
 		return resp.Fail(http.StatusUnauthorized, err)
 	}
-	asAcc := acc.Use(sys)
+	asAcc := acc.Use(resp.sys)
 
 	// Check resource access permissions
 	res, err := asAcc.Stat(r.URL.Path)
