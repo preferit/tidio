@@ -34,6 +34,7 @@ func (me *Client) Use(settings ...Setting) error {
 	for _, setting := range settings {
 		err := setting.Set(me)
 		if err != nil {
+			me.handle(&err)
 			return err
 		}
 	}
