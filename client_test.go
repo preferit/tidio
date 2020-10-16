@@ -2,6 +2,7 @@ package tidio
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -32,6 +33,26 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestClient_Request(t *testing.T) {
+	if NewClient().Request() != nil {
+		t.Error("expected request to be nil on unused client")
+	}
+}
+
+func TestClient_Response(t *testing.T) {
+	if NewClient().Response() != nil {
+		t.Error("expected response to be nil on unused client")
+	}
+}
+
+func TestClient_panics_on_bad_setting(t *testing.T) {
+	defer catchPanic(t)
+	NewClient(SetFunc(func(interface{}) error {
+		return fmt.Errorf("bad client setting")
+	}))
+	t.Error("should panic")
 }
 
 func Test_GET_timesheet_asJohn(t *testing.T) {
