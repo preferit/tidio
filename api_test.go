@@ -14,12 +14,13 @@ import (
 )
 
 func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
-	srv := NewService(
-		LoggerOption{t},
+	var (
+		srv = NewService(
+			UseLogger{t},
+			InitialAccount{"john", "secret"},
+		)
+		ts = httptest.NewServer(srv)
 	)
-	srv.AddAccount("john", "secret")
-
-	ts := httptest.NewServer(srv)
 	defer ts.Close()
 
 	v1 := NewAPIv1(ts.URL, Credentials{account: "john", secret: "secret"})

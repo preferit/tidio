@@ -6,11 +6,20 @@ type ServiceOption interface {
 	ForService(srv *Service) error
 }
 
-type LoggerOption struct {
+type UseLogger struct {
 	fox.Logger
 }
 
-func (me LoggerOption) ForService(srv *Service) error {
+func (me UseLogger) ForService(srv *Service) error {
 	srv.SetLogger(me)
 	return nil
+}
+
+type InitialAccount struct {
+	name   string
+	secret string
+}
+
+func (me InitialAccount) ForService(srv *Service) error {
+	return srv.AddAccount(me.name, me.secret)
 }
