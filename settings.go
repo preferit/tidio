@@ -30,11 +30,11 @@ func (me ErrorHandling) Set(v interface{}) error {
 	return nil
 }
 
-type UseLogger struct {
+type Logging struct {
 	fox.Logger
 }
 
-func (me UseLogger) Set(v interface{}) error {
+func (me Logging) Set(v interface{}) error {
 	switch v := v.(type) {
 	case *Service:
 		v.SetLogger(me)

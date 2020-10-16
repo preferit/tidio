@@ -48,14 +48,14 @@ func TestClient_error_handling(t *testing.T) {
 
 func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	t.Helper()
-	srv := NewService(UseLogger{t}, InitialAccount{"john", "secret"})
+	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
 
 	client := NewClient(
 		Credentials{account: "john", secret: "secret"},
 		UseHost(ts.URL),
-		UseLogger{t},
+		Logging{t},
 	)
 
 	path := "/api/timesheets/john/202001.timesheet"
@@ -67,18 +67,17 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 }
 
 func TestClient_ReadTimesheet_asJohn(t *testing.T) {
-	t.Helper()
-	srv := NewService(UseLogger{t}, InitialAccount{"john", "secret"})
+	srv := NewService(
+		Logging{t}, InitialAccount{"john", "secret"},
+	)
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
-
 	client := NewClient(
 		Credentials{account: "john", secret: "secret"},
 		UseHost(ts.URL),
-		UseLogger{t},
+		Logging{t},
 		ErrorHandling(t.Fatal),
 	)
-
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
 	client.CreateTimesheet(path, body)
@@ -86,25 +85,24 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 }
 
 func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
-	t.Helper()
-	srv := NewService(UseLogger{t}, InitialAccount{"john", "secret"})
+	srv := NewService(
+		Logging{t}, InitialAccount{"john", "secret"},
+	)
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
-
 	asJohn := NewClient(
 		Credentials{account: "john", secret: "secret"},
 		UseHost(ts.URL),
-		UseLogger{t},
+		Logging{t},
 		ErrorHandling(t.Fatal),
 	)
-
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
 	asJohn.CreateTimesheet(path, body)
 
 	asAnonymous := NewClient(
 		UseHost(ts.URL),
-		UseLogger{t},
+		Logging{t},
 	)
 	rbody, err := asAnonymous.ReadTimesheet(path)
 	if err == nil {

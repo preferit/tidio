@@ -14,11 +14,9 @@ func NewClient(settings ...Setting) *Client {
 		Client: http.DefaultClient,
 		Logger: fox.NewSyncLog(ioutil.Discard),
 	}
-	for _, setting := range settings {
-		err := setting.Set(&client)
-		if err != nil {
-			panic(err) // or client.err = err
-		}
+	err := client.Use(settings...)
+	if err != nil {
+		panic(err)
 	}
 	return &client
 }
@@ -29,6 +27,17 @@ type Client struct {
 	check func(...interface{})
 	cred  *Credentials
 	host  string
+}
+
+// Use configures client with new settings.
+func (me *Client) Use(settings ...Setting) error {
+	for _, setting := range settings {
+		err := setting.Set(me)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // handle
