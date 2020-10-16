@@ -5,13 +5,22 @@ import (
 	"net/http"
 )
 
-type API struct{}
+func NewAPI(host string) *API {
+	return &API{host: host}
+}
 
-// CreateTimesheet
+type API struct {
+	host string
+}
+
 func (me API) CreateTimesheet(loc string, body io.Reader) (*http.Request, error) {
-	r, err := http.NewRequest("POST", loc, body)
-	if err != nil {
-		return nil, err
-	}
-	return r, nil
+	return http.NewRequest("POST", me.url(loc), body)
+}
+
+func (me API) ReadTimesheet(loc string) (*http.Request, error) {
+	return http.NewRequest("GET", me.url(loc), nil)
+}
+
+func (me API) url(path string) string {
+	return me.host + path
 }
