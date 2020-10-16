@@ -2,6 +2,12 @@ package tidio
 
 import "github.com/gregoryv/fox"
 
+type ServiceOptFunc func(srv *Service) error
+
+func (me ServiceOptFunc) ForService(srv *Service) error {
+	return me(srv)
+}
+
 type ServiceOption interface {
 	ForService(srv *Service) error
 }

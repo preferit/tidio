@@ -15,11 +15,8 @@ import (
 
 func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	var (
-		srv = NewService(
-			UseLogger{t},
-			InitialAccount{"john", "secret"},
-		)
-		ts = httptest.NewServer(srv)
+		srv = NewService(UseLogger{t}, InitialAccount{"john", "secret"})
+		ts  = httptest.NewServer(srv)
 	)
 	defer ts.Close()
 
