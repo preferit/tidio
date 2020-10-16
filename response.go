@@ -67,13 +67,6 @@ func (resp *Response) Build(r *http.Request) error {
 			asAcc.Run(cmd)
 			return resp.End(http.StatusOK, &buf)
 		}
-		// debug
-		cmd := rs.NewCmd("/bin/ls", "-l", r.URL.Path)
-		var buf bytes.Buffer
-		cmd.Out = &buf
-		asAcc.Run(cmd)
-		fmt.Println(acc, buf.String())
-
 		// todo check read error here
 		res, _ := asAcc.Open(r.URL.Path)
 		return resp.End(http.StatusOK, res)
