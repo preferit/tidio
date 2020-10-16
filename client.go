@@ -52,9 +52,6 @@ func (me *Client) checkStatusCode(exp int) {
 	if me.err != nil {
 		return
 	}
-	if me.resp == nil {
-		panic("response is nil")
-	}
 	if me.resp.StatusCode != exp {
 		me.err = fmt.Errorf("unexpected status code: %v", me.resp.StatusCode)
 	}

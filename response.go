@@ -99,13 +99,8 @@ func (me *Response) Fail(code int, err error) error {
 	return err
 }
 
-// End sets a 2xx code, optional view and returns nil. If code is not 2xx it panics.
-//
+// End sets a 2xx code, optional view and returns nil.
 func (me *Response) End(code int, view ...interface{}) error {
-	if code < 200 || code > 299 {
-		panic(code)
-	}
-
 	me.statusCode = code
 	if len(view) > 0 {
 		me.view = view[0]
