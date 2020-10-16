@@ -15,13 +15,3 @@ func (me Credentials) BasicAuth(h *http.Header) {
 	v := base64.StdEncoding.EncodeToString(plain)
 	h.Set("Authorization", "Basic "+v)
 }
-
-func (me Credentials) Set(v interface{}) error {
-	switch v := v.(type) {
-	case *Client:
-		v.cred = &me
-	default:
-		return setErr(me, v)
-	}
-	return nil
-}

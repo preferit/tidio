@@ -23,9 +23,6 @@ type Client struct {
 	*http.Client
 	fox.Logger
 	check func(...interface{})
-
-	cred *Credentials
-	host string
 }
 
 // Use configures client with new settings.

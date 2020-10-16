@@ -51,23 +51,10 @@ type InitialAccount struct {
 	secret  string
 }
 
-// Method
 func (me InitialAccount) Set(v interface{}) error {
 	switch v := v.(type) {
 	case *Service:
 		v.AddAccount(me.account, me.secret)
-	default:
-		return setErr(me, v)
-	}
-	return nil
-}
-
-type APIHost string
-
-func (me APIHost) Set(v interface{}) error {
-	switch v := v.(type) {
-	case *Client:
-		v.host = string(me)
 	default:
 		return setErr(me, v)
 	}
