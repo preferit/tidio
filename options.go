@@ -12,6 +12,12 @@ type ServiceOption interface {
 	ForService(srv *Service) error
 }
 
+type ClientOptFunc func(cli *Client) error
+
+func (me ClientOptFunc) ForClient(cli *Client) error {
+	return me(cli)
+}
+
 type ClientOption interface {
 	ForClient(cli *Client) error
 }
