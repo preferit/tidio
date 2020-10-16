@@ -25,8 +25,9 @@ type Client struct {
 	*http.Client
 	fox.Logger
 	check func(...interface{})
-	cred  *Credentials
-	host  string
+
+	cred *Credentials
+	host string
 }
 
 // Use configures client with new settings.
@@ -49,22 +50,29 @@ func (me *Client) handle(err *error) error {
 	return *err
 }
 
-func (me *Client) CreateTimesheet(loc string, body io.Reader) (err error) {
-	defer me.handle(&err)
-	r, err := http.NewRequest("POST", me.host+loc, body)
-	if err != nil {
-		me.Log(err)
-		return
-	}
-	if me.cred != nil {
-		r.Header = me.cred.BasicAuth()
-	}
+// send
+func (me *Client) send(r *http.Request) (*http.Response, error) {
 	resp, err := me.Do(r)
 	if err != nil {
 		me.Log(r.Method, r.URL, err)
-		return
+		return resp, err
 	}
 	me.Log(r.Method, r.URL, resp.StatusCode)
+	return resp, nil
+}
+
+func (me *Client) CreateTimesheet(loc string, body io.Reader) (err error) {
+	defer me.handle(&err)
+	api := API{host: me.host, cred: me.cred}
+
+	r, err := api.CreateTimesheet(loc, body)
+	if err != nil {
+		return
+	}
+	resp, err := me.send(r)
+	if err != nil {
+		return
+	}
 	return checkStatusCode(resp, 201)
 }
 
@@ -76,7 +84,7 @@ func (me *Client) ReadTimesheet(loc string) (body io.ReadCloser, err error) {
 		return
 	}
 	if me.cred != nil {
-		r.Header = me.cred.BasicAuth()
+		me.cred.BasicAuth(&r.Header)
 	}
 	resp, err := me.Do(r)
 	if err != nil {

@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/gregoryv/asserter"
@@ -110,27 +108,6 @@ func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 	}
 }
 
-func Test_GET_timesheet_asJohn(t *testing.T) {
-	var (
-		srv     = NewService()
-		_       = srv.AddAccount("john", "secret")
-		exp     = asserter.Wrap(t).ResponseFrom(srv)
-		headers = basicAuthHeaders("john", "secret")
-		sheet   bytes.Buffer
-	)
-	timesheet.RenderTo(&sheet, 2020, 1, 8)
-	sheetStr := sheet.String()
-
-	// FIXME
-	//exp.StatusCode(403, "POST", "/api/timesheets/202001.timesheet", &sheet, headers)
-	exp.Contains("denied", "POST", "/api/timesheets/202001.timesheet",
-		strings.NewReader(sheetStr), headers)
-
-	exp.StatusCode(404, "GET", "/api/no-such-path", headers)
-	// FIXME
-	//exp.StatusCode(403, "GET", "/etc/accounts/john", headers)
-}
-
 func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRecorder, *http.Request) {
 	t.Helper()
 	w := httptest.NewRecorder()
@@ -139,21 +116,6 @@ func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRec
 		t.Fatal(err)
 	}
 	return w, r
-}
-
-func Test_POST_timesheet_asJohn(t *testing.T) {
-	srv, output := newTestService()
-
-	body := timesheet.Render(2020, 1, 8)
-	w, r := wr(t, "POST", "/api/timesheets/john/202001.timesheet", body)
-	r.SetBasicAuth("john", "secret")
-	srv.ServeHTTP(w, r)
-	resp := w.Result()
-
-	if resp.StatusCode != 201 {
-		body, _ := ioutil.ReadAll(resp.Body)
-		t.Error(resp.Status, string(body), output)
-	}
 }
 
 func Test_POST_timesheets_missing_body_asJohn(t *testing.T) {
@@ -165,19 +127,6 @@ func Test_POST_timesheets_missing_body_asJohn(t *testing.T) {
 	got := w.Result()
 
 	if got.StatusCode != 400 {
-		t.Error(got.Status, output)
-	}
-}
-
-func Test_GET_timesheets_authenticated(t *testing.T) {
-	srv, output := newTestService()
-
-	w, r := wr(t, "GET", "/api/timesheets/john", nil)
-	r.SetBasicAuth("john", "secret")
-	srv.ServeHTTP(w, r)
-	got := w.Result()
-
-	if got.StatusCode != 200 {
 		t.Error(got.Status, output)
 	}
 }
