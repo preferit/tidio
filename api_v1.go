@@ -6,19 +6,15 @@ import (
 	"net/http"
 )
 
-type APIv1 interface {
-	CreateTimesheet(path string, timesheet io.Reader) error
-}
-
-func NewAPIv1(host string, cred Credentials) APIv1 {
-	return &v1{
+func NewClient(host string, cred Credentials) *Client {
+	return &Client{
 		Client: http.DefaultClient,
 		cred:   cred,
 		host:   host,
 	}
 }
 
-type v1 struct {
+type Client struct {
 	*http.Client
 	cred Credentials
 	host string
@@ -28,10 +24,10 @@ type v1 struct {
 	resp *http.Response // last response
 }
 
-func (me *v1) Request() *http.Request   { return me.req }
-func (me *v1) Response() *http.Response { return me.resp }
+func (me *Client) Request() *http.Request   { return me.req }
+func (me *Client) Response() *http.Response { return me.resp }
 
-func (me *v1) CreateTimesheet(loc string, body io.Reader) error {
+func (me *Client) CreateTimesheet(loc string, body io.Reader) error {
 	if me.err != nil {
 		return nil
 	}
@@ -42,7 +38,7 @@ func (me *v1) CreateTimesheet(loc string, body io.Reader) error {
 }
 
 // checkStatusCode
-func (me *v1) checkStatusCode(exp int) {
+func (me *Client) checkStatusCode(exp int) {
 	if me.err != nil {
 		return
 	}
@@ -55,11 +51,11 @@ func (me *v1) checkStatusCode(exp int) {
 }
 
 // newRequest
-func (me *v1) newRequest(method, path string, body io.Reader) {
+func (me *Client) newRequest(method, path string, body io.Reader) {
 	me.req, me.err = http.NewRequest(method, path, body)
 }
 
-func (me *v1) send() {
+func (me *Client) send() {
 	if me.err != nil {
 		return
 	}

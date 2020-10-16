@@ -23,14 +23,14 @@ func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 	)
 	defer ts.Close()
 
-	v1 := NewAPIv1(ts.URL, Credentials{account: "john", secret: "secret"})
+	Client := NewClient(ts.URL, Credentials{account: "john", secret: "secret"})
 	ok := func(err error) {
 		t.Helper()
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
-	ok(v1.CreateTimesheet(
+	ok(Client.CreateTimesheet(
 		"/api/timesheets/john/202001.timesheet",
 		timesheet.Render(2020, 1, 8),
 	))
@@ -41,7 +41,7 @@ func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 			t.Fatal("should fail")
 		}
 	}
-	bad(v1.CreateTimesheet(
+	bad(Client.CreateTimesheet(
 		"/NOTOK/timesheets/john/202001.timesheet",
 		timesheet.Render(2020, 1, 8),
 	))
