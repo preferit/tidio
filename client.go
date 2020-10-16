@@ -6,13 +6,15 @@ import (
 	"net/http"
 )
 
-func NewClient(cred Credentials, options ...ClientOption) *Client {
+func NewClient(options ...ClientOption) *Client {
 	client := Client{
 		Client: http.DefaultClient,
-		cred:   cred,
 	}
 	for _, option := range options {
-		option.ForClient(&client)
+		err := option.ForClient(&client)
+		if err != nil {
+			panic(err) // or client.err = err
+		}
 	}
 	return &client
 }
