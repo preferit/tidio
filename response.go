@@ -72,9 +72,7 @@ func (resp *Response) Build(r *http.Request) error {
 		return resp.End(http.StatusOK, res)
 
 	case "POST":
-		if r.Body != nil {
-			defer r.Body.Close()
-		}
+		defer r.Body.Close()
 		res, err := asAcc.Create(r.URL.Path)
 		if err != nil {
 			// FIXME if write permission error use Forbidden

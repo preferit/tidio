@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
@@ -92,6 +94,36 @@ func TestNewService_panics_on_bad_settings(t *testing.T) {
 		}),
 	)
 	t.Error("should panic")
+}
+
+func newTestService() (*Service, *BufferedLogger) {
+	srv := NewService()
+	buflog := Buflog(srv)
+	srv.AddAccount("john", "secret")
+	return srv, buflog
+}
+
+func Test_GET_timesheets_badheader(t *testing.T) {
+	srv, output := newTestService()
+
+	w, r := wr(t, "GET", "/api/timesheets/john", nil)
+	r.Header.Set("Authorization", "Basic jibberish")
+	srv.ServeHTTP(w, r)
+	got := w.Result()
+
+	if got.StatusCode != 401 {
+		t.Error(got.Status, output)
+	}
+}
+
+func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRecorder, *http.Request) {
+	t.Helper()
+	w := httptest.NewRecorder()
+	r, err := http.NewRequest(method, url, body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return w, r
 }
 
 func catchPanic(t *testing.T) {

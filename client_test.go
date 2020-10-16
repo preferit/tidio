@@ -27,6 +27,13 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	client.Send(r, &cred)
 }
 
+func dump(r io.Reader) string {
+	var buf bytes.Buffer
+	buf.WriteString("\n")
+	io.Copy(&buf, r)
+	return buf.String()
+}
+
 func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
 	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
@@ -68,55 +75,6 @@ func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 	}
 }
 
-func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRecorder, *http.Request) {
-	t.Helper()
-	w := httptest.NewRecorder()
-	r, err := http.NewRequest(method, url, body)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return w, r
-}
-
-func Test_POST_timesheets_missing_body_asJohn(t *testing.T) {
-	srv, output := newTestService()
-
-	w, r := wr(t, "POST", "/api/timesheets/john", nil)
-	r.SetBasicAuth("john", "secret")
-	srv.ServeHTTP(w, r)
-	got := w.Result()
-
-	if got.StatusCode != 400 {
-		t.Error(got.Status, output)
-	}
-}
-
-func Test_GET_timesheets_badheader(t *testing.T) {
-	srv, output := newTestService()
-
-	w, r := wr(t, "GET", "/api/timesheets/john", nil)
-	r.Header.Set("Authorization", "Basic jibberish")
-	srv.ServeHTTP(w, r)
-	got := w.Result()
-
-	if got.StatusCode != 401 {
-		t.Error(got.Status, output)
-	}
-}
-
-func Test_GET_timesheets_autherror(t *testing.T) {
-	srv, output := newTestService()
-
-	w, r := wr(t, "GET", "/api/timesheets/john", nil)
-	r.SetBasicAuth("john", "wrong")
-	srv.ServeHTTP(w, r)
-	got := w.Result()
-
-	if got.StatusCode != 401 {
-		t.Error(got.Status, output)
-	}
-}
-
 func Test_defaults(t *testing.T) {
 	srv := NewService()
 	assert := asserter.New(t)
@@ -134,11 +92,4 @@ func TestClient_with_bad_setting(t *testing.T) {
 		return fmt.Errorf("bad client setting")
 	}))
 	t.Error("should panic")
-}
-
-func newTestService() (*Service, *BufferedLogger) {
-	srv := NewService()
-	buflog := Buflog(srv)
-	srv.AddAccount("john", "secret")
-	return srv, buflog
 }
