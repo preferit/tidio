@@ -25,11 +25,9 @@ func NewService(settings ...Setting) *Service {
 		sys: sys,
 	}
 	srv.SetLogger(fox.NewSyncLog(ioutil.Discard))
-	for _, setting := range settings {
-		err := setting.Set(srv)
-		if err != nil {
-			panic(err)
-		}
+	err := srv.Use(settings...)
+	if err != nil {
+		panic(err)
 	}
 	return srv
 }
@@ -39,6 +37,17 @@ type Service struct {
 	warn func(...interface{})
 
 	sys *rs.System
+}
+
+// Use configures service with new settings.
+func (me *Service) Use(settings ...Setting) error {
+	for _, setting := range settings {
+		err := setting.Set(me)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // InitResources
