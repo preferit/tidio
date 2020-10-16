@@ -6,6 +6,10 @@ type ServiceOption interface {
 	ForService(srv *Service) error
 }
 
+type ClientOption interface {
+	ForClient(cli *Client) error
+}
+
 type UseLogger struct {
 	fox.Logger
 }
@@ -22,4 +26,11 @@ type InitialAccount struct {
 
 func (me InitialAccount) ForService(srv *Service) error {
 	return srv.AddAccount(me.name, me.secret)
+}
+
+type UseHost string
+
+func (me UseHost) ForClient(cli *Client) error {
+	cli.host = string(me)
+	return nil
 }

@@ -6,12 +6,15 @@ import (
 	"net/http"
 )
 
-func NewClient(host string, cred Credentials) *Client {
-	return &Client{
+func NewClient(cred Credentials, options ...ClientOption) *Client {
+	client := Client{
 		Client: http.DefaultClient,
 		cred:   cred,
-		host:   host,
 	}
+	for _, option := range options {
+		option.ForClient(&client)
+	}
+	return &client
 }
 
 type Client struct {

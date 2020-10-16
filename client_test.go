@@ -13,7 +13,7 @@ import (
 	"github.com/gregoryv/go-timesheet"
 )
 
-func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
+func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	var (
 		srv = NewService(
 			UseLogger{t},
@@ -23,14 +23,17 @@ func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 	)
 	defer ts.Close()
 
-	Client := NewClient(ts.URL, Credentials{account: "john", secret: "secret"})
+	client := NewClient(
+		Credentials{account: "john", secret: "secret"},
+		UseHost(ts.URL),
+	)
 	ok := func(err error) {
 		t.Helper()
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
-	ok(Client.CreateTimesheet(
+	ok(client.CreateTimesheet(
 		"/api/timesheets/john/202001.timesheet",
 		timesheet.Render(2020, 1, 8),
 	))
@@ -41,7 +44,7 @@ func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 			t.Fatal("should fail")
 		}
 	}
-	bad(Client.CreateTimesheet(
+	bad(client.CreateTimesheet(
 		"/NOTOK/timesheets/john/202001.timesheet",
 		timesheet.Render(2020, 1, 8),
 	))
