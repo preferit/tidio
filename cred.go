@@ -21,7 +21,12 @@ func basicAuthHeaders(user, pass string) http.Header {
 	return headers
 }
 
-func (me Credentials) ForClient(cli *Client) error {
-	cli.cred = me
+func (me Credentials) Set(v interface{}) error {
+	switch v := v.(type) {
+	case *Client:
+		v.cred = me
+	default:
+		return setErr(me, v)
+	}
 	return nil
 }

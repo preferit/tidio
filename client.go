@@ -9,13 +9,13 @@ import (
 	"github.com/gregoryv/fox"
 )
 
-func NewClient(options ...ClientOption) *Client {
+func NewClient(settings ...Setting) *Client {
 	client := Client{
 		Client: http.DefaultClient,
 		Logger: fox.NewSyncLog(ioutil.Discard),
 	}
-	for _, option := range options {
-		err := option.ForClient(&client)
+	for _, setting := range settings {
+		err := setting.Set(&client)
 		if err != nil {
 			panic(err) // or client.err = err
 		}

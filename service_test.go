@@ -87,7 +87,7 @@ func TestService_AutoPersist_create_file_fails(t *testing.T) {
 func TestService_options(t *testing.T) {
 	defer catchPanic(t)
 	NewService(
-		ServiceOptFunc(func(*Service) error {
+		SetFunc(func(interface{}) error {
 			return fmt.Errorf("option failed")
 		}),
 	)

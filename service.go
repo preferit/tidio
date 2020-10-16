@@ -14,7 +14,7 @@ import (
 	"github.com/gregoryv/rs"
 )
 
-func NewService(options ...ServiceOption) *Service {
+func NewService(settings ...Setting) *Service {
 	sys := rs.NewSystem()
 	asRoot := rs.Root.Use(sys)
 	asRoot.Exec("/bin/mkdir /etc/basic")
@@ -25,8 +25,8 @@ func NewService(options ...ServiceOption) *Service {
 		sys: sys,
 	}
 	srv.SetLogger(fox.NewSyncLog(ioutil.Discard))
-	for _, option := range options {
-		err := option.ForService(srv)
+	for _, setting := range settings {
+		err := setting.Set(srv)
 		if err != nil {
 			panic(err)
 		}
