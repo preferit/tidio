@@ -13,8 +13,12 @@ import (
 	"github.com/gregoryv/go-timesheet"
 )
 
-func TestAPI(t *testing.T) {
-	srv, output := newTestService()
+func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
+	srv := NewService(
+		LoggerOption{t},
+	)
+	srv.AddAccount("john", "secret")
+
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
 
@@ -22,7 +26,7 @@ func TestAPI(t *testing.T) {
 	ok := func(err error) {
 		t.Helper()
 		if err != nil {
-			t.Fatal(err, output)
+			t.Fatal(err)
 		}
 	}
 	ok(v1.CreateTimesheet(
@@ -33,7 +37,7 @@ func TestAPI(t *testing.T) {
 	bad := func(err error) {
 		t.Helper()
 		if err == nil {
-			t.Fatal("should fail", output)
+			t.Fatal("should fail")
 		}
 	}
 	bad(v1.CreateTimesheet(
