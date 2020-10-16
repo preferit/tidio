@@ -26,6 +26,7 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	client := NewClient(
 		Credentials{account: "john", secret: "secret"},
 		UseHost(ts.URL),
+		UseLogger{t},
 	)
 
 	path := "/api/timesheets/john/202001.timesheet"

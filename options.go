@@ -19,6 +19,11 @@ func (me UseLogger) ForService(srv *Service) error {
 	return nil
 }
 
+func (me UseLogger) ForClient(cli *Client) error {
+	cli.Logger = me
+	return nil
+}
+
 type InitialAccount struct {
 	account string
 	secret  string

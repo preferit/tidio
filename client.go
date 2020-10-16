@@ -3,12 +3,16 @@ package tidio
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
+
+	"github.com/gregoryv/fox"
 )
 
 func NewClient(options ...ClientOption) *Client {
 	client := Client{
 		Client: http.DefaultClient,
+		Logger: fox.NewSyncLog(ioutil.Discard),
 	}
 	for _, option := range options {
 		err := option.ForClient(&client)
@@ -21,6 +25,7 @@ func NewClient(options ...ClientOption) *Client {
 
 type Client struct {
 	*http.Client
+	fox.Logger
 	cred Credentials
 	host string
 
@@ -69,4 +74,5 @@ func (me *Client) send() {
 	}
 	me.req.Header = me.cred.BasicAuth()
 	me.resp, me.err = me.Do(me.req)
+	me.Log(me.req.Method, me.req.URL, me.resp.StatusCode)
 }
