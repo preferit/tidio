@@ -18,7 +18,7 @@ func TestClient_verifies_status_code(t *testing.T) {
 	ts := httptest.NewServer(broken(http.StatusInternalServerError))
 	defer ts.Close()
 	client := NewClient(
-		UseHost(ts.URL),
+		APIHost(ts.URL),
 	)
 	// we know this implementation checks for a valid 200
 	_, err := client.ReadTimesheet("/")
@@ -54,7 +54,7 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 
 	client := NewClient(
 		Credentials{account: "john", secret: "secret"},
-		UseHost(ts.URL),
+		APIHost(ts.URL),
 		Logging{t},
 	)
 
@@ -74,7 +74,7 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 	defer ts.Close()
 	client := NewClient(
 		Credentials{account: "john", secret: "secret"},
-		UseHost(ts.URL),
+		APIHost(ts.URL),
 		Logging{t},
 		ErrorHandling(t.Fatal),
 	)
@@ -92,7 +92,7 @@ func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 	defer ts.Close()
 	asJohn := NewClient(
 		Credentials{account: "john", secret: "secret"},
-		UseHost(ts.URL),
+		APIHost(ts.URL),
 		Logging{t},
 		ErrorHandling(t.Fatal),
 	)
@@ -101,7 +101,7 @@ func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 	asJohn.CreateTimesheet(path, body)
 
 	asAnonymous := NewClient(
-		UseHost(ts.URL),
+		APIHost(ts.URL),
 		Logging{t},
 	)
 	rbody, err := asAnonymous.ReadTimesheet(path)

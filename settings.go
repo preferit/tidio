@@ -62,9 +62,9 @@ func (me InitialAccount) Set(v interface{}) error {
 	return nil
 }
 
-type UseHost string
+type APIHost string
 
-func (me UseHost) Set(v interface{}) error {
+func (me APIHost) Set(v interface{}) error {
 	switch v := v.(type) {
 	case *Client:
 		v.host = string(me)

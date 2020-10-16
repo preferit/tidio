@@ -3,7 +3,7 @@ package tidio
 import "testing"
 
 func TestSettings(t *testing.T) {
-	setFail(t, UseHost(""), nil)
+	setFail(t, APIHost(""), nil)
 	setFail(t, InitialAccount{}, nil)
 	setFail(t, Logging{}, nil)
 	setFail(t, Credentials{}, nil)
