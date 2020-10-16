@@ -39,7 +39,7 @@ func (me *Client) Response() *http.Response { return me.resp }
 
 func (me *Client) CreateTimesheet(loc string, body io.Reader) error {
 	if me.err != nil {
-		return nil
+		return me.err
 	}
 	me.newRequest("POST", me.host+loc, body)
 	me.send()

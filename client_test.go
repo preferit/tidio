@@ -15,10 +15,8 @@ import (
 )
 
 func TestClient_CreateTimesheet_asJohn(t *testing.T) {
-	var (
-		srv = NewService(UseLogger{t}, InitialAccount{"john", "secret"})
-		ts  = httptest.NewServer(srv)
-	)
+	srv := NewService(UseLogger{t}, InitialAccount{"john", "secret"})
+	ts := httptest.NewServer(srv)
 	defer ts.Close()
 
 	client := NewClient(
@@ -33,6 +31,16 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestClient_fails_if_already_failed(t *testing.T) {
+	client := NewClient()
+	exp := fmt.Errorf("already failed")
+	client.err = exp
+
+	assert := asserter.New(t)
+	assert().Equals(client.CreateTimesheet("", nil), exp)
+	// check all client methods
 }
 
 func TestClient_Request(t *testing.T) {
