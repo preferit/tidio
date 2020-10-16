@@ -13,6 +13,7 @@ import (
 )
 
 func TestClient_CreateTimesheet_asJohn(t *testing.T) {
+	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
 	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
@@ -21,32 +22,23 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
 	r, _ := api.CreateTimesheet(path, body)
-	client := NewClient(
-		Logging{t},
-	)
+
 	cred := Credentials{account: "john", secret: "secret"}
-	_, err := client.Send(r, &cred)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client.Send(r, &cred)
 }
 
 func TestClient_ReadTimesheet_asJohn(t *testing.T) {
-	srv := NewService(
-		Logging{t}, InitialAccount{"john", "secret"},
-	)
+	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
+	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
-	api := NewAPI(ts.URL)
-	client := NewClient(
-		Logging{t},
-		ErrorHandling(t.Fatal),
-	)
-	cred := &Credentials{account: "john", secret: "secret"}
 
+	api := NewAPI(ts.URL)
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
 	r, _ := api.CreateTimesheet(path, body)
+
+	cred := &Credentials{account: "john", secret: "secret"}
 	client.Send(r, cred)
 
 	r, _ = api.ReadTimesheet(path)
@@ -54,20 +46,17 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 }
 
 func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
-	srv := NewService(
-		Logging{t}, InitialAccount{"john", "secret"},
-	)
+	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
+	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
-	client := NewClient(
-		Logging{t},
-		ErrorHandling(t.Fatal),
-	)
+
 	api := NewAPI(ts.URL)
-	cred := &Credentials{account: "john", secret: "secret"}
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
 	r, _ := api.CreateTimesheet(path, body)
+
+	cred := &Credentials{account: "john", secret: "secret"}
 	client.Send(r, cred)
 
 	r, _ = api.ReadTimesheet(path)
