@@ -27,7 +27,7 @@ type Client struct {
 	*http.Client
 	fox.Logger
 	check func(...interface{})
-	cred  Credentials
+	cred  *Credentials
 	host  string
 }
 
@@ -44,13 +44,15 @@ func (me *Client) CreateTimesheet(loc string, body io.Reader) (err error) {
 	r, err := http.NewRequest("POST", me.host+loc, body)
 	if err != nil {
 		me.Log(err)
-		return err
+		return
 	}
-	r.Header = me.cred.BasicAuth()
+	if me.cred != nil {
+		r.Header = me.cred.BasicAuth()
+	}
 	resp, err := me.Do(r)
 	if err != nil {
 		me.Log(r.Method, r.URL, err)
-		return err
+		return
 	}
 	me.Log(r.Method, r.URL, resp.StatusCode)
 	return checkStatusCode(resp, 201)
@@ -63,7 +65,9 @@ func (me *Client) ReadTimesheet(loc string) (body io.ReadCloser, err error) {
 		me.Log(err)
 		return
 	}
-	r.Header = me.cred.BasicAuth()
+	if me.cred != nil {
+		r.Header = me.cred.BasicAuth()
+	}
 	resp, err := me.Do(r)
 	if err != nil {
 		me.Log(r.Method, r.URL, err)

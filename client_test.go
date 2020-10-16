@@ -85,6 +85,35 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 	client.ReadTimesheet(path)
 }
 
+func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
+	t.Helper()
+	srv := NewService(UseLogger{t}, InitialAccount{"john", "secret"})
+	ts := httptest.NewServer(srv)
+	defer ts.Close()
+
+	asJohn := NewClient(
+		Credentials{account: "john", secret: "secret"},
+		UseHost(ts.URL),
+		UseLogger{t},
+		ErrorHandling(t.Fatal),
+	)
+
+	path := "/api/timesheets/john/202001.timesheet"
+	body := timesheet.Render(2020, 1, 8)
+	asJohn.CreateTimesheet(path, body)
+
+	asAnonymous := NewClient(
+		UseHost(ts.URL),
+		UseLogger{t},
+	)
+	rbody, err := asAnonymous.ReadTimesheet(path)
+	if err == nil {
+		var buf bytes.Buffer
+		io.Copy(&buf, rbody)
+		t.Error("should fail\n", buf.String())
+	}
+}
+
 func Test_GET_timesheet_asJohn(t *testing.T) {
 	var (
 		srv     = NewService()

@@ -24,7 +24,7 @@ func basicAuthHeaders(user, pass string) http.Header {
 func (me Credentials) Set(v interface{}) error {
 	switch v := v.(type) {
 	case *Client:
-		v.cred = me
+		v.cred = &me
 	default:
 		return setErr(me, v)
 	}
