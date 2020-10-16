@@ -7,6 +7,7 @@ func TestSettings(t *testing.T) {
 	setFail(t, InitialAccount{}, nil)
 	setFail(t, UseLogger{}, nil)
 	setFail(t, Credentials{}, nil)
+	setFail(t, ErrorHandling(t.Fatal), nil)
 }
 
 func setFail(t *testing.T, s Setting, v interface{}) {

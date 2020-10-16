@@ -26,11 +26,21 @@ func NewClient(settings ...Setting) *Client {
 type Client struct {
 	*http.Client
 	fox.Logger
-	cred Credentials
-	host string
+	check func(...interface{})
+	cred  Credentials
+	host  string
 }
 
-func (me *Client) CreateTimesheet(loc string, body io.Reader) error {
+// handle
+func (me *Client) handle(err *error) error {
+	if *err != nil && me.check != nil {
+		me.check(*err)
+	}
+	return *err
+}
+
+func (me *Client) CreateTimesheet(loc string, body io.Reader) (err error) {
+	defer me.handle(&err)
 	r, err := http.NewRequest("POST", me.host+loc, body)
 	if err != nil {
 		me.Log(err)
@@ -46,20 +56,23 @@ func (me *Client) CreateTimesheet(loc string, body io.Reader) error {
 	return checkStatusCode(resp, 201)
 }
 
-func (me *Client) ReadTimesheet(loc string) (io.ReadCloser, error) {
+func (me *Client) ReadTimesheet(loc string) (body io.ReadCloser, err error) {
+	defer me.handle(&err)
 	r, err := http.NewRequest("GET", me.host+loc, nil)
 	if err != nil {
 		me.Log(err)
-		return nil, err
+		return
 	}
 	r.Header = me.cred.BasicAuth()
 	resp, err := me.Do(r)
 	if err != nil {
 		me.Log(r.Method, r.URL, err)
-		return nil, err
+		return
 	}
 	me.Log(r.Method, r.URL, resp.StatusCode)
-	return resp.Body, checkStatusCode(resp, 200)
+	body = resp.Body
+	err = checkStatusCode(resp, 200)
+	return
 }
 
 // checkStatusCode

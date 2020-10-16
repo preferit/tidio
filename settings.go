@@ -18,6 +18,18 @@ type Setting interface {
 
 // ----------------------------------------
 
+type ErrorHandling func(...interface{})
+
+func (me ErrorHandling) Set(v interface{}) error {
+	switch v := v.(type) {
+	case *Client:
+		v.check = me
+	default:
+		return setErr(me, v)
+	}
+	return nil
+}
+
 type UseLogger struct {
 	fox.Logger
 }

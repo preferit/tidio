@@ -14,6 +14,19 @@ import (
 	"github.com/gregoryv/go-timesheet"
 )
 
+func TestClient_error_handling(t *testing.T) {
+	var called bool
+	client := NewClient(
+		ErrorHandling(func(v ...interface{}) {
+			called = true
+		}),
+	)
+	client.ReadTimesheet("nosuchpath")
+	if !called {
+		t.Error("was not called")
+	}
+}
+
 func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	t.Helper()
 	srv := NewService(UseLogger{t}, InitialAccount{"john", "secret"})
@@ -44,18 +57,13 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 		Credentials{account: "john", secret: "secret"},
 		UseHost(ts.URL),
 		UseLogger{t},
+		ErrorHandling(t.Fatal),
 	)
 
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
-	err := client.CreateTimesheet(path, body)
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = client.ReadTimesheet(path)
-	if err != nil {
-		t.Error(err)
-	}
+	client.CreateTimesheet(path, body)
+	client.ReadTimesheet(path)
 }
 
 func Test_GET_timesheet_asJohn(t *testing.T) {
