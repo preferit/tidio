@@ -46,6 +46,22 @@ func (me *Client) CreateTimesheet(loc string, body io.Reader) error {
 	return checkStatusCode(resp, 201)
 }
 
+func (me *Client) ReadTimesheet(loc string) (io.ReadCloser, error) {
+	r, err := http.NewRequest("GET", me.host+loc, nil)
+	if err != nil {
+		me.Log(err)
+		return nil, err
+	}
+	r.Header = me.cred.BasicAuth()
+	resp, err := me.Do(r)
+	if err != nil {
+		me.Log(r.Method, r.URL, err)
+		return nil, err
+	}
+	me.Log(r.Method, r.URL, resp.StatusCode)
+	return resp.Body, checkStatusCode(resp, 200)
+}
+
 // checkStatusCode
 func checkStatusCode(resp *http.Response, exp int) error {
 	if resp.StatusCode != exp {

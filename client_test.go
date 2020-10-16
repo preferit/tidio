@@ -15,6 +15,7 @@ import (
 )
 
 func TestClient_CreateTimesheet_asJohn(t *testing.T) {
+	t.Helper()
 	srv := NewService(UseLogger{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
@@ -33,12 +34,28 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	}
 }
 
-func TestClient_panics_on_bad_setting(t *testing.T) {
-	defer catchPanic(t)
-	NewClient(SetFunc(func(interface{}) error {
-		return fmt.Errorf("bad client setting")
-	}))
-	t.Error("should panic")
+func TestClient_ReadTimesheet_asJohn(t *testing.T) {
+	t.Helper()
+	srv := NewService(UseLogger{t}, InitialAccount{"john", "secret"})
+	ts := httptest.NewServer(srv)
+	defer ts.Close()
+
+	client := NewClient(
+		Credentials{account: "john", secret: "secret"},
+		UseHost(ts.URL),
+		UseLogger{t},
+	)
+
+	path := "/api/timesheets/john/202001.timesheet"
+	body := timesheet.Render(2020, 1, 8)
+	err := client.CreateTimesheet(path, body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = client.ReadTimesheet(path)
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func Test_GET_timesheet_asJohn(t *testing.T) {
@@ -48,14 +65,10 @@ func Test_GET_timesheet_asJohn(t *testing.T) {
 		exp     = asserter.Wrap(t).ResponseFrom(srv)
 		headers = basicAuthHeaders("john", "secret")
 		sheet   bytes.Buffer
-		path    = "/api/timesheets/john/202001.timesheet"
 	)
 	timesheet.RenderTo(&sheet, 2020, 1, 8)
 	sheetStr := sheet.String()
 
-	exp.StatusCode(201, "POST", path, strings.NewReader(sheetStr), headers)
-	exp.StatusCode(200, "GET", path, headers)
-	exp.BodyIs(sheetStr, "GET", path, headers)
 	// FIXME
 	//exp.StatusCode(403, "POST", "/api/timesheets/202001.timesheet", &sheet, headers)
 	exp.Contains("denied", "POST", "/api/timesheets/202001.timesheet",
@@ -152,6 +165,14 @@ func Test_defaults(t *testing.T) {
 	exp.StatusCode(405, "X", "/api")
 	exp.StatusCode(http.StatusUnauthorized, "GET", "/api/timesheets")
 	exp.BodyIs(`{"resources":[{"name": "timesheets"}]}`, "GET", "/api")
+}
+
+func TestClient_with_bad_setting(t *testing.T) {
+	defer catchPanic(t)
+	NewClient(SetFunc(func(interface{}) error {
+		return fmt.Errorf("bad client setting")
+	}))
+	t.Error("should panic")
 }
 
 func newTestService() (*Service, *BufferedLogger) {
