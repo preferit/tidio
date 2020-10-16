@@ -49,14 +49,17 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
+
+	api := API{}
+	path := "/api/timesheets/john/202001.timesheet"
+	body := timesheet.Render(2020, 1, 8)
+	r, _ := api.CreateTimesheet(path, body)
 	client := NewClient(
-		Credentials{account: "john", secret: "secret"},
 		APIHost(ts.URL),
 		Logging{t},
 	)
-	path := "/api/timesheets/john/202001.timesheet"
-	body := timesheet.Render(2020, 1, 8)
-	err := client.CreateTimesheet(path, body)
+	cred := Credentials{account: "john", secret: "secret"}
+	_, err := client.Send(r, &cred)
 	if err != nil {
 		t.Fatal(err)
 	}
