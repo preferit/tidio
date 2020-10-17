@@ -36,54 +36,61 @@ func (me *Response) authenticate(r *http.Request) (*rs.Account, error) {
 	return &acc, err
 }
 
-func (resp *Response) Build(r *http.Request) error {
-	// todo perhaps add help as a resource
+// todo build does too much, maybe split
+// authentication
+// Figure out how to map mimetype + method + to resource
+//
+//
+func (me *Response) Build(r *http.Request) error {
+	// todo perhaps add help as a resource and change the requested path
+	// without redirect, ie. to /api/help.html
 	if r.URL.Path == "/" {
-		return resp.End(http.StatusOK, NewHelpView())
+
+		return me.End(http.StatusOK, NewHelpView())
 	}
 
-	acc, err := resp.authenticate(r)
+	acc, err := me.authenticate(r)
 	if err != nil {
-		return resp.Fail(http.StatusUnauthorized, err)
+		return me.Fail(http.StatusUnauthorized, err)
 	}
-	asAcc := acc.Use(resp.sys)
+	asAcc := acc.Use(me.sys)
 
 	// Check resource access permissions
 	res, err := asAcc.Stat(r.URL.Path)
 	if acc == rs.Anonymous && err != nil {
-		return resp.Fail(http.StatusUnauthorized, err)
+		return me.Fail(http.StatusUnauthorized, err)
 	}
 
 	// Serve the specific method
 	switch r.Method {
 	case "GET":
 		if res == nil {
-			return resp.Fail(http.StatusNotFound, err)
+			return me.Fail(http.StatusNotFound, err)
 		}
 		if res.IsDir() == nil {
 			cmd := rs.NewCmd("/bin/ls", "-json", "-json-name", "resources", r.URL.Path)
 			var buf bytes.Buffer
 			cmd.Out = &buf
 			asAcc.Run(cmd)
-			return resp.End(http.StatusOK, &buf)
+			return me.End(http.StatusOK, &buf)
 		}
 		// todo check read error here
 		res, _ := asAcc.Open(r.URL.Path)
-		return resp.End(http.StatusOK, res)
+		return me.End(http.StatusOK, res)
 
 	case "POST":
 		defer r.Body.Close()
 		res, err := asAcc.Create(r.URL.Path)
 		if err != nil {
 			// FIXME if write permission error use Forbidden
-			return resp.Fail(http.StatusBadRequest, err)
+			return me.Fail(http.StatusBadRequest, err)
 		}
-		resp.statusCode = http.StatusCreated
+		me.statusCode = http.StatusCreated
 		io.Copy(res, r.Body)
 		res.Close() // important to flush the data
-		return resp.End(http.StatusCreated)
+		return me.End(http.StatusCreated)
 	default:
-		return resp.Fail(http.StatusMethodNotAllowed, fmt.Errorf("Method not allowed"))
+		return me.Fail(http.StatusMethodNotAllowed, fmt.Errorf("Method not allowed"))
 	}
 }
 
