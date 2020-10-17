@@ -34,7 +34,6 @@ func NewService(settings ...Setting) *Service {
 
 type Service struct {
 	fox.Logger
-	warn func(...interface{})
 
 	sys *rs.System
 }
@@ -70,7 +69,7 @@ func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	err := resp.Build(r)
 	if err != nil {
-		me.warn(err)
+		me.Log(err)
 		resp.WriteError(w, err)
 		return
 	}
@@ -94,7 +93,6 @@ func (me *Service) AddAccount(name, secret string) error {
 // SetLogger
 func (me *Service) SetLogger(log fox.Logger) {
 	me.Logger = log
-	me.warn = fox.NewFilterEmpty(log).Log
 }
 
 // RestoreState restores the resource system from the given filename.
@@ -106,7 +104,6 @@ func (me *Service) RestoreState(filename string) error {
 	}
 	defer r.Close()
 	err = me.sys.Import("/", r)
-	//me.warn(err)
 	return err
 }
 
@@ -123,7 +120,9 @@ func (me *Service) AutoPersist(dest Storage, every time.Duration) {
 			}
 			last = modified
 			err := me.PersistState(dest)
-			me.warn(err)
+			if err != nil {
+				me.Log(err)
+			}
 		}
 	}()
 }
