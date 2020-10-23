@@ -18,7 +18,7 @@ func TestApp_supports_help_flag(t *testing.T) {
 func TestApp_has_sane_default_values(t *testing.T) {
 	cmd := wolf.NewTCmd()
 	defer cmd.Cleanup()
-	app := NewApp(cmd)
+	app := NewApp(cmd, Logging{t})
 	var started bool
 	app.ListenAndServe = func(string, http.Handler) error {
 		started = true

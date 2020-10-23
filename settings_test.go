@@ -3,18 +3,11 @@ package tidio
 import (
 	"testing"
 
-	"github.com/gregoryv/ant"
+	"github.com/gregoryv/asserter"
 )
 
 func TestSettings(t *testing.T) {
-	setFail(t, InitialAccount{}, nil)
-	setFail(t, Logging{}, nil)
-}
-
-func setFail(t *testing.T, s ant.Setting, v interface{}) {
-	t.Helper()
-	if err := s.Set(v); err == nil {
-		t.Error("should fail")
-	}
-
+	bad := asserter.Wrap(t).Bad
+	bad(InitialAccount{}.Set(nil))
+	bad(Logging{}.Set(nil))
 }

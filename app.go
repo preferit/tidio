@@ -6,17 +6,20 @@ import (
 	"os"
 	"time"
 
+	"github.com/gregoryv/ant"
 	"github.com/gregoryv/fox"
 	"github.com/gregoryv/wolf"
 )
 
 // NewApp returns a App without logging and default options
-func NewApp(cmd wolf.Command) *App {
-	return &App{
+func NewApp(cmd wolf.Command, settings ...ant.Setting) *App {
+	app := App{
 		Command:        cmd,
 		ListenAndServe: http.ListenAndServe,
 		Logger:         fox.NewSyncLog(cmd.Stderr()).FilterEmpty(),
 	}
+	ant.MustConfigure(&app, settings...)
+	return &app
 }
 
 type App struct {
