@@ -25,14 +25,14 @@ func NewHelpView() *Page {
 			),
 			H3("Create or update"),
 			doc.Use(api.CreateTimesheet(
-				"/api/timesheets/john/202001.timesheet",
+				"/api/timesheets/john/201506.timesheet",
 				strings.NewReader(timesheet201506),
 			).Request),
 			doc.JsonResponse(),
 
 			H3("Read specific timesheet"),
 			doc.Use(api.ReadTimesheet(
-				"/api/timesheets/john/202001.timesheet",
+				"/api/timesheets/john/201506.timesheet",
 			).Request),
 			doc.Response(),
 		),
