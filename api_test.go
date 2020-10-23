@@ -17,7 +17,7 @@ var (
 	asJohn          = NewCredentials("john", "secret")
 )
 
-func TestClient_CreateTimesheet_asJohn(t *testing.T) {
+func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 	var (
 		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
@@ -35,7 +35,7 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	}
 }
 
-func TestClient_CreateTimesheet_asAnonymous(t *testing.T) {
+func TestAPI_CreateTimesheet_asAnonymous(t *testing.T) {
 	var (
 		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
@@ -53,7 +53,7 @@ func TestClient_CreateTimesheet_asAnonymous(t *testing.T) {
 	}
 }
 
-func TestClient_ReadTimesheet_asJohn(t *testing.T) {
+func TestAPI_ReadTimesheet_asJohn(t *testing.T) {
 	var (
 		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
@@ -72,7 +72,7 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 	}
 }
 
-func TestClient_ReadTimesheet_noSuchResource(t *testing.T) {
+func TestAPI_ReadTimesheet_noSuchResource(t *testing.T) {
 	var (
 		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
@@ -88,7 +88,7 @@ func TestClient_ReadTimesheet_noSuchResource(t *testing.T) {
 	}
 }
 
-func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
+func TestAPI_ReadTimesheet_asAnonymous(t *testing.T) {
 	var (
 		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
