@@ -21,7 +21,7 @@ type Credentials struct {
 func (me *Credentials) Set(v interface{}) error {
 	switch v := v.(type) {
 	case usesCredentials:
-		v.SetCredentials(*me)
+		v.SetCredentials(me)
 	default:
 		return ant.SetFailed(v, me)
 	}
@@ -29,5 +29,5 @@ func (me *Credentials) Set(v interface{}) error {
 }
 
 type usesCredentials interface {
-	SetCredentials(Credentials)
+	SetCredentials(*Credentials)
 }

@@ -15,8 +15,8 @@ func NewAPI(host string, settings ...ant.Setting) *API {
 	api := API{
 		host:   host,
 		client: http.DefaultClient,
-		auth:   BasicAuth,
 	}
+	api.SetCredentials(nil)
 	ant.MustConfigure(&api, settings...)
 	return &api
 }
@@ -27,8 +27,7 @@ type API struct {
 	Logger
 	host   string
 	client *http.Client
-	cred   *Credentials
-	auth   func(*http.Request, *Credentials) (*http.Request, error)
+	auth   ant.Setting // applied
 
 	// last api
 	Request *http.Request
@@ -43,7 +42,7 @@ func (me *API) Auth(r *http.Request, err error) {
 	if err != nil {
 		return
 	}
-	me.Request, me.Err = me.auth(r, me.cred)
+	me.Err = ant.Configure(r, me.auth)
 }
 
 func (me *API) CreateTimesheet(loc string, body io.Reader) *API {
@@ -56,7 +55,9 @@ func (me *API) ReadTimesheet(loc string) *API {
 	return me
 }
 
-func (me *API) SetCredentials(c Credentials) { me.cred = &c }
+func (me *API) SetCredentials(c *Credentials) {
+	me.auth = NewBasicAuth(c)
+}
 
 func (me *API) url(path string) string {
 	return me.host + path
