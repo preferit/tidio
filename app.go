@@ -16,16 +16,18 @@ func NewApp(cmd wolf.Command, settings ...ant.Setting) *App {
 	app := App{
 		Command:        cmd,
 		ListenAndServe: http.ListenAndServe,
-		Logger:         fox.NewSyncLog(cmd.Stderr()).FilterEmpty(),
+		Logger: Logger{
+			fox.NewSyncLog(cmd.Stderr()).FilterEmpty(),
+		},
 	}
 	ant.MustConfigure(&app, settings...)
 	return &app
 }
 
 type App struct {
+	Logger
 	wolf.Command
 	ListenAndServe func(string, http.Handler) error
-	fox.Logger
 }
 
 func (me *App) Run() int {
@@ -35,8 +37,6 @@ func (me *App) Run() int {
 	}
 	return me.Stop(0)
 }
-
-func (me *App) SetLogger(l fox.Logger) { me.Logger = l }
 
 func (me *App) run() error {
 	var (
@@ -54,7 +54,7 @@ func (me *App) run() error {
 	}
 
 	srv := NewService()
-	srv.SetLogger(me.Logger)
+	ant.MustConfigure(srv, Logging{me})
 
 	if err := me.initStateRestoration(srv, *stateFilename); err != nil {
 		return err

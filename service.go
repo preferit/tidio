@@ -3,14 +3,12 @@ package tidio
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
 	"time"
 
 	"github.com/gregoryv/ant"
-	"github.com/gregoryv/fox"
 	"github.com/gregoryv/go-timesheet"
 	"github.com/gregoryv/rs"
 )
@@ -23,15 +21,14 @@ func NewService(settings ...ant.Setting) *Service {
 	asRoot.Exec("/bin/mkdir /api/timesheets")
 
 	srv := Service{
-		Logger: fox.NewSyncLog(ioutil.Discard),
-		sys:    sys,
+		sys: sys,
 	}
 	ant.MustConfigure(&srv, settings...)
 	return &srv
 }
 
 type Service struct {
-	fox.Logger
+	Logger
 
 	sys *rs.System
 }
@@ -75,11 +72,6 @@ func (me *Service) AddAccount(name, secret string) error {
 	asRoot.Execf("/bin/mkdir %s", dir)
 
 	return asRoot.Execf("/bin/chown %s %s", name, dir)
-}
-
-// SetLogger
-func (me *Service) SetLogger(log fox.Logger) {
-	me.Logger = log
 }
 
 // RestoreState restores the resource system from the given filename.

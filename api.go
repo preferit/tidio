@@ -2,11 +2,9 @@ package tidio
 
 import (
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gregoryv/ant"
-	"github.com/gregoryv/fox"
 )
 
 // NewAPI returns the API for the given host.
@@ -15,7 +13,6 @@ import (
 // host is compatible with the given implementation.
 func NewAPI(host string, settings ...ant.Setting) *API {
 	api := API{
-		Logger: fox.NewSyncLog(ioutil.Discard),
 		host:   host,
 		client: http.DefaultClient,
 		auth:   BasicAuth,
@@ -27,7 +24,7 @@ func NewAPI(host string, settings ...ant.Setting) *API {
 // API provides http request builders for the tidio service
 // The requests returned should be valid and complete.
 type API struct {
-	fox.Logger
+	Logger
 	host   string
 	client *http.Client
 	asJohn Credentials
@@ -37,8 +34,6 @@ type API struct {
 	Request *http.Request
 	Err     error
 }
-
-func (me *API) SetLogger(l fox.Logger) { me.Logger = l }
 
 // Auth applies credentials to the request and sets them as last
 // values on the api.
