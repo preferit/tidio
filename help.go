@@ -12,7 +12,7 @@ import (
 func NewHelpView() *Page {
 	john := &InitialAccount{account: "john", secret: "secret"}
 	srv := NewService(john)
-	doc := apidoc.NewDoc(srv)
+	doc := apidoc.NewDoc(srv.Router())
 	api := NewAPI("https://tidio.preferit.se")
 	asJohn := NewCredentials(john.account, john.secret)
 	ant.MustConfigure(api, asJohn)

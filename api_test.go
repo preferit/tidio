@@ -22,7 +22,7 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	var (
 		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
-		ts  = httptest.NewServer(srv)
+		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
 	var (
@@ -40,7 +40,7 @@ func TestClient_CreateTimesheet_asAnonymous(t *testing.T) {
 	var (
 		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
-		ts  = httptest.NewServer(srv)
+		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
 	var (
@@ -58,7 +58,7 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 	var (
 		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
-		ts  = httptest.NewServer(srv)
+		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
 	var (
@@ -77,7 +77,7 @@ func TestClient_ReadTimesheet_noSuchResource(t *testing.T) {
 	var (
 		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
-		ts  = httptest.NewServer(srv)
+		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
 	var (
@@ -93,7 +93,7 @@ func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 	var (
 		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
-		ts  = httptest.NewServer(srv)
+		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
 	var (
@@ -115,10 +115,15 @@ func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 func Test_defaults(t *testing.T) {
 	srv := NewService()
 	assert := asserter.New(t)
-	exp := assert().ResponseFrom(srv)
+	exp := assert().ResponseFrom(srv.Router())
 	exp.StatusCode(200, "GET", "/")
 	exp.StatusCode(200, "GET", "/api")
 	exp.StatusCode(405, "X", "/api")
 	exp.StatusCode(http.StatusUnauthorized, "GET", "/api/timesheets")
+	exp.StatusCode(http.StatusUnauthorized, "GET", "/api/timesheets",
+		http.Header{
+			"Authorization": []string{"Basic invalid-encoding"},
+		},
+	)
 	exp.BodyIs(`{"resources":[{"name": "timesheets"}]}`, "GET", "/api")
 }

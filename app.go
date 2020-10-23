@@ -63,7 +63,7 @@ func (me *App) run() error {
 	me.Log(srv.AddAccount("john", "secret"))
 	me.Log(srv.InitResources())
 	me.Log("listen on ", *bind)
-	return me.ListenAndServe(*bind, srv)
+	return me.ListenAndServe(*bind, srv.Router())
 }
 
 // initStateRestoration

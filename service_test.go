@@ -104,19 +104,6 @@ func newTestService() (*Service, *BufferedLogger) {
 	return srv, buflog
 }
 
-func Test_GET_timesheets_badheader(t *testing.T) {
-	srv, output := newTestService()
-
-	w, r := wr(t, "GET", "/api/timesheets/john", nil)
-	r.Header.Set("Authorization", "Basic jibberish")
-	srv.ServeHTTP(w, r)
-	got := w.Result()
-
-	if got.StatusCode != 401 {
-		t.Error(got.Status, output)
-	}
-}
-
 func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRecorder, *http.Request) {
 	t.Helper()
 	w := httptest.NewRecorder()

@@ -3,7 +3,6 @@ package tidio
 import (
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path"
 	"time"
@@ -45,19 +44,6 @@ func (me *Service) InitResources() error {
 	w.Close()
 	asRoot.Exec("/bin/chmod 05555 /api/timesheets/202001.timesheet")
 	return nil
-}
-
-func (me *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	resp := &Response{
-		sys: me.sys,
-	}
-	err := resp.Build(r)
-	if err != nil {
-		me.Log(err)
-		resp.WriteError(w, err)
-		return
-	}
-	resp.Send(w)
 }
 
 // AddAccount creates a system account and stores the secret in
