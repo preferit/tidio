@@ -27,8 +27,8 @@ type API struct {
 	Logger
 	host   string
 	client *http.Client
-	asJohn Credentials
-	auth   func(*http.Request, Credentials) (*http.Request, error)
+	cred   *Credentials
+	auth   func(*http.Request, *Credentials) (*http.Request, error)
 
 	// last api
 	Request *http.Request
@@ -43,7 +43,7 @@ func (me *API) Auth(r *http.Request, err error) {
 	if err != nil {
 		return
 	}
-	me.Request, me.Err = me.auth(r, me.asJohn)
+	me.Request, me.Err = me.auth(r, me.cred)
 }
 
 func (me *API) CreateTimesheet(loc string, body io.Reader) *API {
@@ -56,7 +56,7 @@ func (me *API) ReadTimesheet(loc string) *API {
 	return me
 }
 
-func (me *API) SetCredentials(c Credentials) { me.asJohn = c }
+func (me *API) SetCredentials(c Credentials) { me.cred = &c }
 
 func (me *API) url(path string) string {
 	return me.host + path

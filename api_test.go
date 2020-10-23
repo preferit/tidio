@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gregoryv/ant"
 	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/fox"
 	"github.com/gregoryv/go-timesheet"
@@ -97,13 +96,12 @@ func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 	)
 	defer ts.Close()
 	var (
-		api       = NewAPI(ts.URL, asJohn)
-		path      = "/api/timesheets/john/202001.timesheet"
-		body      = timesheet.Render(2020, 1, 8)
-		_         = api.CreateTimesheet(path, body).MustSend()
-		anonymous = NewCredentials("", "")
+		api  = NewAPI(ts.URL, asJohn)
+		path = "/api/timesheets/john/202001.timesheet"
+		body = timesheet.Render(2020, 1, 8)
+		_    = api.CreateTimesheet(path, body).MustSend()
 	)
-	ant.MustConfigure(api, anonymous)
+	api = NewAPI(ts.URL) // anonymous
 	resp := api.ReadTimesheet(path).MustSend()
 	if resp.StatusCode == 200 {
 		var buf bytes.Buffer

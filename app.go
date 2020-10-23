@@ -11,7 +11,7 @@ import (
 	"github.com/gregoryv/wolf"
 )
 
-// NewApp returns a App without logging and default options
+// NewApp returns a App with stderr logging and default options
 func NewApp(cmd wolf.Command, settings ...ant.Setting) *App {
 	app := App{
 		Command:        cmd,

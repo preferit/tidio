@@ -6,8 +6,8 @@ import (
 
 // Credentials provides ways to authenticate a requests via header
 // manipulation. Zero value credentials means anonymous.
-func NewCredentials(account, secret string) Credentials {
-	return Credentials{
+func NewCredentials(account, secret string) *Credentials {
+	return &Credentials{
 		account: account,
 		secret:  secret,
 	}
@@ -18,10 +18,10 @@ type Credentials struct {
 	secret  string
 }
 
-func (me Credentials) Set(v interface{}) error {
+func (me *Credentials) Set(v interface{}) error {
 	switch v := v.(type) {
 	case usesCredentials:
-		v.SetCredentials(me)
+		v.SetCredentials(*me)
 	default:
 		return ant.SetFailed(v, me)
 	}

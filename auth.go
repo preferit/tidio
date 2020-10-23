@@ -5,8 +5,8 @@ import (
 	"net/http"
 )
 
-func BasicAuth(r *http.Request, cred Credentials) (*http.Request, error) {
-	if cred.account == "" { // anonymous
+func BasicAuth(r *http.Request, cred *Credentials) (*http.Request, error) {
+	if cred == nil { // anonymous
 		return r, nil
 	}
 	plain := []byte(cred.account + ":" + cred.secret)
