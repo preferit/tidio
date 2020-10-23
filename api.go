@@ -56,17 +56,14 @@ func (me *API) Auth(r *http.Request) {
 	if r == nil {
 		return
 	}
-	if err := ant.Configure(r, me.auth); err != nil {
-		me.Log(err)
-	}
+	err := ant.Configure(r, me.auth)
+	me.warn(err)
 }
 
 // newRequest
 func (me *API) newRequest(method, path string, body io.Reader) *http.Request {
 	r, err := http.NewRequest(method, me.host+path, body)
-	if err != nil {
-		me.Log(err)
-	}
+	me.warn(err)
 	me.Request = r
 	return r
 }
@@ -92,6 +89,14 @@ func (me *API) Send() (*http.Response, error) {
 	}
 	me.Log(r.Method, r.URL, resp.StatusCode)
 	return resp, nil
+}
+
+// warn logs non nil errors
+func (me *API) warn(err error) {
+	if err == nil {
+		return
+	}
+	me.Log(err)
 }
 
 /*

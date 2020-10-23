@@ -2,6 +2,7 @@ package tidio
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -153,6 +154,15 @@ func TestAPI_Send_nil_request(t *testing.T) {
 		}
 	}()
 	api.MustSend()
+}
+
+func TestAPI_warnings(t *testing.T) {
+	var (
+		log = fox.Logging{t}
+		api = NewAPI("http://localhost", log)
+	)
+	api.warn(nil)
+	api.warn(fmt.Errorf("failed"))
 }
 
 func Test_defaults(t *testing.T) {
