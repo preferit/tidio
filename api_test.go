@@ -156,6 +156,17 @@ func TestAPI_Send_nil_request(t *testing.T) {
 	api.MustSend()
 }
 
+func TestAPI_Send_failing_response(t *testing.T) {
+	var (
+		log = fox.Logging{t}
+		api = NewAPI("http://_1234nosuchhost.net", log)
+	)
+	api.Request, _ = http.NewRequest("GET", "/", nil)
+	if _, err := api.Send(); err == nil {
+		t.Error("should fail")
+	}
+}
+
 func TestAPI_warnings(t *testing.T) {
 	var (
 		log = fox.Logging{t}
