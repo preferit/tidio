@@ -1,9 +1,6 @@
 package tidio
 
 import (
-	"encoding/base64"
-	"net/http"
-
 	"github.com/gregoryv/ant"
 )
 
@@ -19,17 +16,6 @@ func NewCredentials(account, secret string) Credentials {
 type Credentials struct {
 	account string
 	secret  string
-}
-
-// todo decouple use of credentials from authentication method
-// maybe add type AuthMethod interface {
-func (me Credentials) BasicAuth(h http.Header) {
-	if me.account == "" { // anonymous
-		return
-	}
-	plain := []byte(me.account + ":" + me.secret)
-	v := base64.StdEncoding.EncodeToString(plain)
-	h.Set("Authorization", "Basic "+v)
 }
 
 func (me Credentials) Set(v interface{}) error {

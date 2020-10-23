@@ -26,7 +26,8 @@ func NewHelpView() *Page {
 			),
 			H3("Create or update"),
 			doc.Use(func() *http.Request {
-				r, _ := api.CreateTimesheet("/api/timesheets/john/202001.timesheet",
+				r, _ := api.CreateTimesheet(
+					"/api/timesheets/john/202001.timesheet",
 					strings.NewReader(timesheet201506),
 				)
 				return r
@@ -34,14 +35,13 @@ func NewHelpView() *Page {
 			doc.JsonResponse(),
 
 			H3("Read specific timesheet"),
-			Pre(`HTTP/1.1 GET {host}/api/timesheets/{account}/{yyyymm}.timesheet
-Authorization: {auth}`),
-			"Responds with timesheet",
-
-			H3("List timesheets of a specific user"),
-			Pre(`HTTP/1.1 GET {host}/api/timesheets/{account}/
-Authorization: {auth}`),
-			`Responds with json {"timesheets": []}`,
+			doc.Use(func() *http.Request {
+				r, _ := api.ReadTimesheet(
+					"/api/timesheets/john/202001.timesheet",
+				)
+				return r
+			}()),
+			doc.Response(),
 		),
 
 		Section(

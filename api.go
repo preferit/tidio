@@ -12,7 +12,10 @@ import (
 // In the future some kind of validation might be put here that the
 // host is compatible with the given implementation.
 func NewAPI(host string, settings ...ant.Setting) *API {
-	api := API{host: host}
+	api := API{
+		host: host,
+		auth: BasicAuth,
+	}
 	ant.MustConfigure(&api, settings...)
 	return &api
 }
@@ -22,6 +25,7 @@ func NewAPI(host string, settings ...ant.Setting) *API {
 type API struct {
 	host string
 	cred Credentials
+	auth func(*http.Request, Credentials) (*http.Request, error)
 }
 
 // SetCredentials
@@ -44,12 +48,18 @@ be necessary, though could be provided for convenience.
 
 func (me API) CreateTimesheet(loc string, body io.Reader) (*http.Request, error) {
 	r, err := http.NewRequest("POST", me.url(loc), body)
-	me.cred.BasicAuth(r.Header)
-	return r, err
+	if err != nil {
+		return nil, err
+	}
+	return me.auth(r, me.cred)
 }
 
 func (me API) ReadTimesheet(loc string) (*http.Request, error) {
-	return http.NewRequest("GET", me.url(loc), nil)
+	r, err := http.NewRequest("GET", me.url(loc), nil)
+	if err != nil {
+		return nil, err
+	}
+	return me.auth(r, me.cred)
 }
 
 func (me API) url(path string) string {

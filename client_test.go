@@ -19,7 +19,7 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
 
-	api := API{host: ts.URL}
+	api := NewAPI(ts.URL)
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
 	r, _ := api.CreateTimesheet(path, body)
@@ -64,13 +64,14 @@ func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
 	r, _ := api.CreateTimesheet(path, body)
-
 	client.Send(r)
 
-	r, _ = api.ReadTimesheet(path)
 	anonymous := NewCredentials("", "")
-	ant.Configure(&api, anonymous)
+	ant.MustConfigure(api, anonymous)
+
+	r, _ = api.ReadTimesheet(path)
 	resp, _ := client.Send(r)
+
 	if resp.StatusCode == 200 {
 		var buf bytes.Buffer
 		io.Copy(&buf, resp.Body)
