@@ -9,44 +9,31 @@ import (
 	"path"
 	"time"
 
+	"github.com/gregoryv/ant"
 	"github.com/gregoryv/fox"
 	"github.com/gregoryv/go-timesheet"
 	"github.com/gregoryv/rs"
 )
 
-func NewService(settings ...Setting) *Service {
+func NewService(settings ...ant.Setting) *Service {
 	sys := rs.NewSystem()
 	asRoot := rs.Root.Use(sys)
 	asRoot.Exec("/bin/mkdir /etc/basic")
 	asRoot.Exec("/bin/mkdir /api")
 	asRoot.Exec("/bin/mkdir /api/timesheets")
 
-	srv := &Service{
-		sys: sys,
+	srv := Service{
+		Logger: fox.NewSyncLog(ioutil.Discard),
+		sys:    sys,
 	}
-	srv.SetLogger(fox.NewSyncLog(ioutil.Discard))
-	err := srv.Use(settings...)
-	if err != nil {
-		panic(err)
-	}
-	return srv
+	ant.MustConfigure(&srv, settings...)
+	return &srv
 }
 
 type Service struct {
 	fox.Logger
 
 	sys *rs.System
-}
-
-// Use configures service with new settings.
-func (me *Service) Use(settings ...Setting) error {
-	for _, setting := range settings {
-		err := setting.Set(me)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // InitResources

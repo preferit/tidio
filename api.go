@@ -15,8 +15,10 @@ func NewAPI(host string) *API {
 }
 
 // API provides http request builders for the tidio service
+// The requests returned should be valid and complete.
 type API struct {
 	host string
+	cred Credentials
 }
 
 /* todo should the API provide validation on this end? probably even
@@ -28,7 +30,9 @@ for convenience.
 */
 
 func (me API) CreateTimesheet(loc string, body io.Reader) (*http.Request, error) {
-	return http.NewRequest("POST", me.url(loc), body)
+	r, err := http.NewRequest("POST", me.url(loc), body)
+	me.cred.BasicAuth(&r.Header)
+	return r, err
 }
 
 func (me API) ReadTimesheet(loc string) (*http.Request, error) {

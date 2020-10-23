@@ -4,18 +4,16 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/gregoryv/ant"
 	"github.com/gregoryv/fox"
 )
 
-func NewClient(settings ...Setting) *Client {
+func NewClient(settings ...ant.Setting) *Client {
 	client := Client{
 		Client: http.DefaultClient,
 		Logger: fox.NewSyncLog(ioutil.Discard),
 	}
-	err := client.Use(settings...)
-	if err != nil {
-		panic(err)
-	}
+	ant.MustConfigure(&client, settings...)
 	return &client
 }
 
@@ -23,17 +21,6 @@ type Client struct {
 	*http.Client
 	fox.Logger
 	check func(...interface{})
-}
-
-// Use configures client with new settings.
-func (me *Client) Use(settings ...Setting) error {
-	for _, setting := range settings {
-		err := setting.Set(me)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // Send

@@ -33,6 +33,8 @@ func (me *App) Run() int {
 	return me.Stop(0)
 }
 
+func (me *App) SetLogger(l fox.Logger) { me.Logger = l }
+
 func (me *App) run() error {
 	var (
 		fs            = flag.NewFlagSet(me.Args()[0], flag.ContinueOnError)

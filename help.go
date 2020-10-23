@@ -1,12 +1,19 @@
 package tidio
 
 import (
+	"net/http"
+	"strings"
 	"time"
 
 	. "github.com/gregoryv/web"
+	"github.com/gregoryv/web/apidoc"
 )
 
 func NewHelpView() *Page {
+
+	doc := apidoc.NewDoc(NewService())
+	api := NewAPI("https://tidio.preferit.se")
+
 	content := Div(
 		Section(
 			H2("Timesheets"),
@@ -14,10 +21,13 @@ func NewHelpView() *Page {
 				``,
 			),
 			H3("Create or update"),
-			Pre(`HTTP/1.1 POST {host}/api/timesheets/{account}/{yyyymm}.timesheet
-Authorization: {auth}
-
--- body contains timesheet --`),
+			doc.Use(func() *http.Request {
+				r, _ := api.CreateTimesheet("/api/timesheets/john",
+					strings.NewReader("--- timesheet body"),
+				)
+				return r
+			}()),
+			doc.JsonResponse(),
 
 			H3("Read specific timesheet"),
 			Pre(`HTTP/1.1 GET {host}/api/timesheets/{account}/{yyyymm}.timesheet

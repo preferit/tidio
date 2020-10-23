@@ -1,22 +1,9 @@
 package tidio
 
 import (
-	"fmt"
-
+	"github.com/gregoryv/ant"
 	"github.com/gregoryv/fox"
 )
-
-type SetFunc func(v interface{}) error
-
-func (me SetFunc) Set(v interface{}) error {
-	return me(v)
-}
-
-type Setting interface {
-	Set(v interface{}) error
-}
-
-// ----------------------------------------
 
 type ErrorHandling func(...interface{})
 
@@ -25,7 +12,7 @@ func (me ErrorHandling) Set(v interface{}) error {
 	case *Client:
 		v.check = me
 	default:
-		return setErr(me, v)
+		return ant.SetFailed(v, me)
 	}
 	return nil
 }
@@ -37,11 +24,11 @@ type Logging struct {
 func (me Logging) Set(v interface{}) error {
 	switch v := v.(type) {
 	case *Service:
-		v.SetLogger(me)
+		v.SetLogger(me.Logger)
 	case *Client:
-		v.Logger = me
+		v.Logger = me.Logger
 	default:
-		return setErr(me, v)
+		return ant.SetFailed(v, me)
 	}
 	return nil
 }
@@ -56,11 +43,7 @@ func (me InitialAccount) Set(v interface{}) error {
 	case *Service:
 		v.AddAccount(me.account, me.secret)
 	default:
-		return setErr(me, v)
+		return ant.SetFailed(v, me)
 	}
 	return nil
-}
-
-func setErr(s, v interface{}) error {
-	return fmt.Errorf("%t cannot be set on %t", s, v)
 }

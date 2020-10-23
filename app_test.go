@@ -43,9 +43,11 @@ func Test_can_specify_state_file(t *testing.T) {
 	defer cmd.Cleanup()
 	app := NewApp(cmd)
 	app.ListenAndServe = noopListenAndServe
+	//app.SetLogger(t) fails as reload is done in the background
 	if app.Run() != 0 {
 		t.Error("failed")
 	}
+	// todo test reload without auto reload
 	if app.Run() != 0 {
 		t.Error("reload")
 	}

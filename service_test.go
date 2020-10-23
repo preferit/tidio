@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gregoryv/ant"
 	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/rs"
 )
@@ -89,7 +90,7 @@ func TestService_AutoPersist_create_file_fails(t *testing.T) {
 func TestNewService_panics_on_bad_settings(t *testing.T) {
 	defer catchPanic(t)
 	NewService(
-		SetFunc(func(interface{}) error {
+		ant.SetFunc(func(interface{}) error {
 			return fmt.Errorf("option failed")
 		}),
 	)

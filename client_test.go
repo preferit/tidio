@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gregoryv/ant"
 	"github.com/gregoryv/asserter"
 	"github.com/gregoryv/go-timesheet"
 )
@@ -23,7 +24,7 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	body := timesheet.Render(2020, 1, 8)
 	r, _ := api.CreateTimesheet(path, body)
 
-	cred := Credentials{account: "john", secret: "secret"}
+	cred := NewCredentials("john", "secret")
 	client.Send(r, &cred)
 }
 
@@ -45,11 +46,11 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 	body := timesheet.Render(2020, 1, 8)
 	r, _ := api.CreateTimesheet(path, body)
 
-	cred := &Credentials{account: "john", secret: "secret"}
-	client.Send(r, cred)
+	cred := NewCredentials("john", "secret")
+	client.Send(r, &cred)
 
 	r, _ = api.ReadTimesheet(path)
-	client.Send(r, cred)
+	client.Send(r, &cred)
 }
 
 func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
@@ -63,8 +64,8 @@ func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 	body := timesheet.Render(2020, 1, 8)
 	r, _ := api.CreateTimesheet(path, body)
 
-	cred := &Credentials{account: "john", secret: "secret"}
-	client.Send(r, cred)
+	cred := NewCredentials("john", "secret")
+	client.Send(r, &cred)
 
 	r, _ = api.ReadTimesheet(path)
 	resp, _ := client.Send(r, nil) // anonymous, nil credentials
@@ -88,7 +89,7 @@ func Test_defaults(t *testing.T) {
 
 func TestClient_with_bad_setting(t *testing.T) {
 	defer catchPanic(t)
-	NewClient(SetFunc(func(interface{}) error {
+	NewClient(ant.SetFunc(func(interface{}) error {
 		return fmt.Errorf("bad client setting")
 	}))
 	t.Error("should panic")
