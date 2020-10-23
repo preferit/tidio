@@ -5,14 +5,18 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gregoryv/ant"
 	. "github.com/gregoryv/web"
 	"github.com/gregoryv/web/apidoc"
 )
 
 func NewHelpView() *Page {
-
-	doc := apidoc.NewDoc(NewService())
+	john := &InitialAccount{account: "john", secret: "secret"}
+	srv := NewService(john)
+	doc := apidoc.NewDoc(srv)
 	api := NewAPI("https://tidio.preferit.se")
+	cred := NewCredentials(john.account, john.secret)
+	ant.MustConfigure(api, cred)
 
 	content := Div(
 		Section(
@@ -22,8 +26,8 @@ func NewHelpView() *Page {
 			),
 			H3("Create or update"),
 			doc.Use(func() *http.Request {
-				r, _ := api.CreateTimesheet("/api/timesheets/john",
-					strings.NewReader("--- timesheet body"),
+				r, _ := api.CreateTimesheet("/api/timesheets/john/202001.timesheet",
+					strings.NewReader(timesheet201506),
 				)
 				return r
 			}()),
@@ -43,8 +47,23 @@ Authorization: {auth}`),
 		Section(
 			H2("Timesheet file format"),
 			P("Timesheets are plain text and are specific to year and month"),
-			Pre(Class("timesheet"),
-				`2015 June
+			Pre(Class("timesheet"), timesheet201506),
+		),
+	)
+
+	return NewPage(
+		"help.html",
+		Html(
+			Head(
+				apidoc.DefaultStyle,
+				Style(theme()),
+			),
+			Body(content, footer()),
+		),
+	)
+}
+
+const timesheet201506 = `2015 June
 ---------
 23  1 Mon 8
     2 Tue 8
@@ -75,21 +94,7 @@ Authorization: {auth}`),
    27 Sat
    28 Sun
 27 29 Mon 8
-   30 Tue 8`,
-			),
-		),
-	)
-
-	return NewPage(
-		"help.html",
-		Html(
-			Head(
-				Style(theme()),
-			),
-			Body(content, footer()),
-		),
-	)
-}
+   30 Tue 8`
 
 func theme() *CSS {
 	css := NewCSS()

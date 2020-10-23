@@ -9,7 +9,6 @@ type BufferedLogger struct {
 	bytes.Buffer
 }
 
-// Method
 func (me *BufferedLogger) Log(v ...interface{}) {
 	me.WriteString(fmt.Sprintln(v...))
 }
@@ -20,7 +19,7 @@ func Buflog(srv *Service) *BufferedLogger {
 	return &buflog
 }
 
-// String
+// String returns the content of the buffer prefixed with a newline
 func (me *BufferedLogger) String() string {
 	return "\n" + me.Buffer.String()
 }

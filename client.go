@@ -8,6 +8,8 @@ import (
 	"github.com/gregoryv/fox"
 )
 
+// NewClient returns a tidio client using the http default client with
+// logging disabled.
 func NewClient(settings ...ant.Setting) *Client {
 	client := Client{
 		Client: http.DefaultClient,
@@ -25,11 +27,7 @@ type Client struct {
 
 func (me *Client) SetLogger(l fox.Logger) { me.Logger = l }
 
-// Send
-func (me *Client) Send(r *http.Request, cred *Credentials) (*http.Response, error) {
-	if cred != nil {
-		cred.BasicAuth(&r.Header)
-	}
+func (me *Client) Send(r *http.Request) (*http.Response, error) {
 	resp, err := me.Do(r)
 	if err != nil {
 		me.Log(r.Method, r.URL, err)
