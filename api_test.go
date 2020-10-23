@@ -2,7 +2,6 @@ package tidio
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -14,7 +13,6 @@ import (
 )
 
 func TestClient_CreateTimesheet_asJohn(t *testing.T) {
-	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
 	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
@@ -23,16 +21,14 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	api := NewAPI(ts.URL, cred)
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
-	r, _ := api.CreateTimesheet(path, body)
+	resp, _ := api.CreateTimesheet(path, body).Send()
 
-	resp, _ := client.Send(r)
 	if resp.StatusCode != 201 {
 		t.Error(resp.Status)
 	}
 }
 
 func TestClient_CreateTimesheet_asAnonymous(t *testing.T) {
-	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
 	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
@@ -40,9 +36,8 @@ func TestClient_CreateTimesheet_asAnonymous(t *testing.T) {
 	api := NewAPI(ts.URL)
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
-	r, _ := api.CreateTimesheet(path, body)
+	resp, _ := api.CreateTimesheet(path, body).Send()
 
-	resp, _ := client.Send(r)
 	if resp.StatusCode != 401 {
 		t.Error(resp.Status)
 	}
@@ -56,7 +51,6 @@ func dump(r io.Reader) string {
 }
 
 func TestClient_ReadTimesheet_asJohn(t *testing.T) {
-	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
 	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
@@ -65,18 +59,15 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 	api := NewAPI(ts.URL, cred)
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
-	r, _ := api.CreateTimesheet(path, body)
-	client.Send(r)
+	api.CreateTimesheet(path, body).Send()
 
-	r, _ = api.ReadTimesheet(path)
-	resp, _ := client.Send(r)
+	resp, _ := api.ReadTimesheet(path).Send()
 	if resp.StatusCode != 200 {
 		t.Error(resp.Status)
 	}
 }
 
 func TestClient_ReadTimesheet_noSuchResource(t *testing.T) {
-	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
 	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
@@ -84,15 +75,13 @@ func TestClient_ReadTimesheet_noSuchResource(t *testing.T) {
 	cred := NewCredentials("john", "secret")
 	api := NewAPI(ts.URL, cred)
 
-	r, _ := api.ReadTimesheet("/api/timesheets/john/nosuch")
-	resp, _ := client.Send(r)
+	resp, _ := api.ReadTimesheet("/api/timesheets/john/nosuch").Send()
 	if resp.StatusCode != 404 {
 		t.Error(resp.Status)
 	}
 }
 
 func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
-	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
 	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
@@ -101,14 +90,12 @@ func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 	api := NewAPI(ts.URL, cred)
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
-	r, _ := api.CreateTimesheet(path, body)
-	client.Send(r)
+	api.CreateTimesheet(path, body).Send()
 
 	anonymous := NewCredentials("", "")
 	ant.MustConfigure(api, anonymous)
 
-	r, _ = api.ReadTimesheet(path)
-	resp, _ := client.Send(r)
+	resp, _ := api.ReadTimesheet(path).Send()
 
 	if resp.StatusCode == 200 {
 		var buf bytes.Buffer
@@ -126,12 +113,4 @@ func Test_defaults(t *testing.T) {
 	exp.StatusCode(405, "X", "/api")
 	exp.StatusCode(http.StatusUnauthorized, "GET", "/api/timesheets")
 	exp.BodyIs(`{"resources":[{"name": "timesheets"}]}`, "GET", "/api")
-}
-
-func TestClient_with_bad_setting(t *testing.T) {
-	defer catchPanic(t)
-	NewClient(ant.SetFunc(func(interface{}) error {
-		return fmt.Errorf("bad client setting")
-	}))
-	t.Error("should panic")
 }

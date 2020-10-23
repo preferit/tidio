@@ -2,9 +2,11 @@ package tidio
 
 import (
 	"io"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gregoryv/ant"
+	"github.com/gregoryv/fox"
 )
 
 // NewAPI returns the API for the given host.
@@ -13,8 +15,10 @@ import (
 // host is compatible with the given implementation.
 func NewAPI(host string, settings ...ant.Setting) *API {
 	api := API{
-		host: host,
-		auth: BasicAuth,
+		Logger: fox.NewSyncLog(ioutil.Discard),
+		host:   host,
+		client: http.DefaultClient,
+		auth:   BasicAuth,
 	}
 	ant.MustConfigure(&api, settings...)
 	return &api
@@ -23,13 +27,56 @@ func NewAPI(host string, settings ...ant.Setting) *API {
 // API provides http request builders for the tidio service
 // The requests returned should be valid and complete.
 type API struct {
-	host string
-	cred Credentials
-	auth func(*http.Request, Credentials) (*http.Request, error)
+	fox.Logger
+	host   string
+	client *http.Client
+	cred   Credentials
+	auth   func(*http.Request, Credentials) (*http.Request, error)
+
+	// last api
+	Request *http.Request
+	Err     error
 }
 
-// SetCredentials
+func (me *API) SetLogger(l fox.Logger) { me.Logger = l }
+
+// Auth applies credentials to the request and sets them as last
+// values on the api.
+func (me *API) Auth(r *http.Request, err error) {
+	me.Request = r
+	me.Err = err
+	if err != nil {
+		return
+	}
+	me.Request, me.Err = me.auth(r, me.cred)
+}
+
+func (me *API) CreateTimesheet(loc string, body io.Reader) *API {
+	me.Auth(http.NewRequest("POST", me.url(loc), body))
+	return me
+}
+
+func (me *API) ReadTimesheet(loc string) *API {
+	me.Auth(http.NewRequest("GET", me.url(loc), nil))
+	return me
+}
+
 func (me *API) SetCredentials(c Credentials) { me.cred = c }
+
+func (me *API) url(path string) string {
+	return me.host + path
+}
+
+func (me *API) Send() (*http.Response, error) {
+	r := me.Request
+	resp, err := me.client.Do(r)
+	if err != nil {
+		me.Log(r.Method, r.URL, err)
+		return resp, err
+	}
+	me.Log(r.Method, r.URL, resp.StatusCode)
+	return resp, nil
+}
 
 /*
 
@@ -45,23 +92,3 @@ needed. If we document a full response a model for parsing it may not
 be necessary, though could be provided for convenience.
 
 */
-
-func (me API) CreateTimesheet(loc string, body io.Reader) (*http.Request, error) {
-	r, err := http.NewRequest("POST", me.url(loc), body)
-	if err != nil {
-		return nil, err
-	}
-	return me.auth(r, me.cred)
-}
-
-func (me API) ReadTimesheet(loc string) (*http.Request, error) {
-	r, err := http.NewRequest("GET", me.url(loc), nil)
-	if err != nil {
-		return nil, err
-	}
-	return me.auth(r, me.cred)
-}
-
-func (me API) url(path string) string {
-	return me.host + path
-}

@@ -1,7 +1,6 @@
 package tidio
 
 import (
-	"net/http"
 	"strings"
 	"time"
 
@@ -25,22 +24,16 @@ func NewHelpView() *Page {
 				``,
 			),
 			H3("Create or update"),
-			doc.Use(func() *http.Request {
-				r, _ := api.CreateTimesheet(
-					"/api/timesheets/john/202001.timesheet",
-					strings.NewReader(timesheet201506),
-				)
-				return r
-			}()),
+			doc.Use(api.CreateTimesheet(
+				"/api/timesheets/john/202001.timesheet",
+				strings.NewReader(timesheet201506),
+			).Request),
 			doc.JsonResponse(),
 
 			H3("Read specific timesheet"),
-			doc.Use(func() *http.Request {
-				r, _ := api.ReadTimesheet(
-					"/api/timesheets/john/202001.timesheet",
-				)
-				return r
-			}()),
+			doc.Use(api.ReadTimesheet(
+				"/api/timesheets/john/202001.timesheet",
+			).Request),
 			doc.Response(),
 		),
 
