@@ -9,7 +9,10 @@ import (
 	"github.com/gregoryv/web/apidoc"
 )
 
-func NewHelpView() *Page {
+var apiSection *Element
+
+func init() {
+	// Cache api section
 	john := &InitialAccount{account: "john", secret: "secret"}
 	srv := NewService(john)
 	doc := apidoc.NewDoc(srv.Router())
@@ -17,25 +20,30 @@ func NewHelpView() *Page {
 	asJohn := NewCredentials(john.account, john.secret)
 	ant.MustConfigure(api, asJohn)
 
-	content := Div(
-		Section(
-			H2("Timesheets"),
-			P(
-				``,
-			),
-			H3("Create or update"),
-			doc.Use(api.CreateTimesheet(
-				"/api/timesheets/john/201506.timesheet",
-				strings.NewReader(timesheet201506),
-			).Request),
-			doc.JsonResponse(),
-
-			H3("Read specific timesheet"),
-			doc.Use(api.ReadTimesheet(
-				"/api/timesheets/john/201506.timesheet",
-			).Request),
-			doc.Response(),
+	apiSection = Section(
+		H2("Timesheets"),
+		P(
+			``,
 		),
+		H3("Create or update"),
+		doc.Use(api.CreateTimesheet(
+			"/api/timesheets/john/201506.timesheet",
+			strings.NewReader(timesheet201506),
+		).Request),
+		doc.JsonResponse(),
+
+		H3("Read specific timesheet"),
+		doc.Use(api.ReadTimesheet(
+			"/api/timesheets/john/201506.timesheet",
+		).Request),
+		doc.Response(),
+	)
+}
+
+func NewHelpView() *Page {
+
+	content := Div(
+		apiSection,
 
 		Section(
 			H2("Timesheet file format"),
