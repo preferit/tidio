@@ -1,6 +1,7 @@
 package tidio
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 
@@ -85,6 +86,9 @@ func (me *API) MustSend() *http.Response {
 
 func (me *API) Send() (*http.Response, error) {
 	r := me.Request
+	if r == nil {
+		return nil, fmt.Errorf("missing API request")
+	}
 	resp, err := me.client.Do(r)
 	if err != nil {
 		me.Log(r.Method, r.URL, err)

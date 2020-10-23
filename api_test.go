@@ -138,6 +138,23 @@ func Test_hacks(t *testing.T) {
 
 }
 
+func TestAPI_Send_nil_request(t *testing.T) {
+	var (
+		log = fox.Logging{t}
+		api = NewAPI("http://localhost", log)
+	)
+	if _, err := api.Send(); err == nil {
+		t.Error("should fail")
+	}
+
+	defer func() {
+		if e := recover(); e == nil {
+			t.Error("should panic")
+		}
+	}()
+	api.MustSend()
+}
+
 func Test_defaults(t *testing.T) {
 	srv := NewService()
 	assert := asserter.New(t)
