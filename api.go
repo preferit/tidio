@@ -71,10 +71,6 @@ func (me *API) newRequest(method, path string, body io.Reader) *http.Request {
 	return r
 }
 
-func (me *API) url(path string) string {
-	return me.host + path
-}
-
 // MustSend
 func (me *API) MustSend() *http.Response {
 	r, err := me.Send()
