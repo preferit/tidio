@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/gregoryv/fox/foxhttp"
 	"github.com/gregoryv/rs"
 )
 
@@ -14,6 +15,7 @@ func (me *Service) Router() *mux.Router {
 	r := mux.NewRouter()
 	r.Methods("GET").HandlerFunc(me.serveRead)
 	r.Methods("POST").HandlerFunc(me.serveCreate)
+	r.Use(foxhttp.NewRouteLog(me).Middleware)
 	return r
 }
 

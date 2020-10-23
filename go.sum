@@ -47,7 +47,10 @@ github.com/gregoryv/cmdline v0.0.0-20200822134937-e77bcfd6d968 h1:EncwlkTqRhIw7j
 github.com/gregoryv/cmdline v0.0.0-20200822134937-e77bcfd6d968/go.mod h1:DfbcpIEh/WREYcrSnx3qeYY0qRxbLlmAgLLP6AeLXI8=
 github.com/gregoryv/draw v0.9.0 h1:+Li4J4ePYzra0M1Ihh+f3kFAv3MF9UcaT37+IVck6TA=
 github.com/gregoryv/draw v0.9.0/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
+github.com/gregoryv/draw v0.13.0 h1:kSuKtJv6N6ibz77UrtLK+fVvO4SLsaffdk+RfNZDEvA=
 github.com/gregoryv/draw v0.13.0/go.mod h1:ZjcU2lJq2eA+jQAdIslryahmUzp8aAvTrBdEZIQ4V6I=
+github.com/gregoryv/draw v0.14.0 h1:CDQmzOMDaGYOKK6sR6Hxuzb0Jyel+y33QysEL+DYmUo=
+github.com/gregoryv/draw v0.14.0/go.mod h1:ZjcU2lJq2eA+jQAdIslryahmUzp8aAvTrBdEZIQ4V6I=
 github.com/gregoryv/ex v0.3.0 h1:CesRia5aIgQlEkMrp9zbVrRm9/VkoiXUEd8iQdbhH4A=
 github.com/gregoryv/ex v0.3.0/go.mod h1:m5suTcbRkA2j4NZogj/DYTFmh4Ff9U29tpRzeiYlx+0=
 github.com/gregoryv/find v0.0.0-20180328085109-1bbc2d70c482/go.mod h1:/xxQlO62bzxhyabf2iKJzGJa+VAJy25spLI/6ICTrxU=
@@ -62,6 +65,8 @@ github.com/gregoryv/fox v0.5.1-0.20200918082722-970fad18326f h1:8cOP/X8Fkt/W5eJQ
 github.com/gregoryv/fox v0.5.1-0.20200918082722-970fad18326f/go.mod h1:s96q/0H5V5vdMLYr7Z44DKlu3mkN4sTu5PCw9iTveFY=
 github.com/gregoryv/fox v0.6.0 h1:B+/RpaSMuM7KvrFXLyy4syf1MTCFB3stODWWzD1gGRU=
 github.com/gregoryv/fox v0.6.0/go.mod h1:q4zVFHqDsuwa2fxPOfNuh3CkRIVepBDpmXnu+IkpcQA=
+github.com/gregoryv/fox v0.6.1 h1:WsJWUk9ecFyE7LNfLxC/GOP0dG0AMm18ML5U2/8Icy8=
+github.com/gregoryv/fox v0.6.1/go.mod h1:q4zVFHqDsuwa2fxPOfNuh3CkRIVepBDpmXnu+IkpcQA=
 github.com/gregoryv/go-timesheet v0.1.0 h1:DPFeb0TrkbEx+DFihB7ItB4FtwHItl6rkHTii27J0wQ=
 github.com/gregoryv/go-timesheet v0.1.0/go.mod h1:+3KIsZJgy3SxeT6mETSoRZY1/EAOsGrPOebYEECLllg=
 github.com/gregoryv/go-timesheet v0.3.0 h1:oU3nxNIJyziLv+p6ox+lM0QZ4NT7fmr8GuBYr72tWCY=
