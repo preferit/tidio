@@ -23,6 +23,8 @@ type Client struct {
 	check func(...interface{})
 }
 
+func (me *Client) SetLogger(l fox.Logger) { me.Logger = l }
+
 // Send
 func (me *Client) Send(r *http.Request, cred *Credentials) (*http.Response, error) {
 	if cred != nil {

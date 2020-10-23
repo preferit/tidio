@@ -23,16 +23,19 @@ type Logging struct {
 
 func (me Logging) Set(v interface{}) error {
 	switch v := v.(type) {
-	case *Service:
+	case usesLogging:
 		v.SetLogger(me.Logger)
-	case *Client:
-		v.Logger = me.Logger
 	default:
 		return ant.SetFailed(v, me)
 	}
 	return nil
 }
 
+type usesLogging interface {
+	SetLogger(fox.Logger)
+}
+
+// Not really a setting but very helpful
 type InitialAccount struct {
 	account string
 	secret  string
