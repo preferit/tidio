@@ -2,26 +2,7 @@ package tidio
 
 import (
 	"github.com/gregoryv/ant"
-	"github.com/gregoryv/fox"
 )
-
-type Logging struct {
-	fox.Logger
-}
-
-func (me Logging) Set(v interface{}) error {
-	switch v := v.(type) {
-	case usesLogging:
-		v.SetLogger(me.Logger)
-	default:
-		return ant.SetFailed(v, me)
-	}
-	return nil
-}
-
-type usesLogging interface {
-	SetLogger(fox.Logger)
-}
 
 // Not really a setting but very helpful
 type InitialAccount struct {

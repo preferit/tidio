@@ -9,5 +9,4 @@ import (
 func TestSettings(t *testing.T) {
 	bad := asserter.Wrap(t).Bad
 	bad(InitialAccount{}.Set(nil))
-	bad(Logging{}.Set(nil))
 }

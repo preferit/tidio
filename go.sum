@@ -60,6 +60,8 @@ github.com/gregoryv/fox v0.3.2/go.mod h1:YHFvaSSaw6+XapVnfD27LIPcOMixy5PhLHC1h3S
 github.com/gregoryv/fox v0.5.0/go.mod h1:s96q/0H5V5vdMLYr7Z44DKlu3mkN4sTu5PCw9iTveFY=
 github.com/gregoryv/fox v0.5.1-0.20200918082722-970fad18326f h1:8cOP/X8Fkt/W5eJQitSOU5HUpo30j6aepai001nPEnc=
 github.com/gregoryv/fox v0.5.1-0.20200918082722-970fad18326f/go.mod h1:s96q/0H5V5vdMLYr7Z44DKlu3mkN4sTu5PCw9iTveFY=
+github.com/gregoryv/fox v0.6.0 h1:B+/RpaSMuM7KvrFXLyy4syf1MTCFB3stODWWzD1gGRU=
+github.com/gregoryv/fox v0.6.0/go.mod h1:q4zVFHqDsuwa2fxPOfNuh3CkRIVepBDpmXnu+IkpcQA=
 github.com/gregoryv/go-timesheet v0.1.0 h1:DPFeb0TrkbEx+DFihB7ItB4FtwHItl6rkHTii27J0wQ=
 github.com/gregoryv/go-timesheet v0.1.0/go.mod h1:+3KIsZJgy3SxeT6mETSoRZY1/EAOsGrPOebYEECLllg=
 github.com/gregoryv/go-timesheet v0.3.0 h1:oU3nxNIJyziLv+p6ox+lM0QZ4NT7fmr8GuBYr72tWCY=

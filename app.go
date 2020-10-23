@@ -54,7 +54,7 @@ func (me *App) run() error {
 	}
 
 	srv := NewService()
-	ant.MustConfigure(srv, Logging{me})
+	ant.MustConfigure(srv, fox.Logging{me})
 
 	if err := me.initStateRestoration(srv, *stateFilename); err != nil {
 		return err

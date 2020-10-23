@@ -9,6 +9,7 @@ import (
 
 	"github.com/gregoryv/ant"
 	"github.com/gregoryv/asserter"
+	"github.com/gregoryv/fox"
 	"github.com/gregoryv/go-timesheet"
 )
 
@@ -19,7 +20,7 @@ var (
 
 func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	var (
-		log = Logging{t}
+		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
 		ts  = httptest.NewServer(srv)
 	)
@@ -37,7 +38,7 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 
 func TestClient_CreateTimesheet_asAnonymous(t *testing.T) {
 	var (
-		log = Logging{t}
+		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
 		ts  = httptest.NewServer(srv)
 	)
@@ -55,7 +56,7 @@ func TestClient_CreateTimesheet_asAnonymous(t *testing.T) {
 
 func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 	var (
-		log = Logging{t}
+		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
 		ts  = httptest.NewServer(srv)
 	)
@@ -74,7 +75,7 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 
 func TestClient_ReadTimesheet_noSuchResource(t *testing.T) {
 	var (
-		log = Logging{t}
+		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
 		ts  = httptest.NewServer(srv)
 	)
@@ -90,7 +91,7 @@ func TestClient_ReadTimesheet_noSuchResource(t *testing.T) {
 
 func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
 	var (
-		log = Logging{t}
+		log = fox.Logging{t}
 		srv = NewService(log, withJohnAccount)
 		ts  = httptest.NewServer(srv)
 	)
