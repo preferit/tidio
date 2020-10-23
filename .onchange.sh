@@ -11,8 +11,9 @@ case $extension in
         ;;
 esac
 
+#run="-run=hacks"
 go build ./...
-go test -coverprofile /tmp/c.out ./... 
-uncover -min 90 /tmp/c.out
+go test -coverprofile /tmp/c.out $run ./... 
+uncover -min 90 /tmp/c.out 
 go build -o /home/gregory/bin/tidio ./cmd/tidio
 killall tidio

@@ -110,6 +110,34 @@ func TestAPI_ReadTimesheet_asAnonymous(t *testing.T) {
 	}
 }
 
+func Test_hacks(t *testing.T) {
+	var (
+		log = fox.Logging{t}
+		srv = NewService(log, withJohnAccount)
+		ts  = httptest.NewServer(srv.Router())
+	)
+	defer ts.Close()
+
+	t.Run("malformed basic auth", func(t *testing.T) {
+		api := NewAPI(ts.URL)
+		r := api.CreateTimesheet("", nil).Request
+		r.Header.Set("Authorization", "Basi")
+		resp := api.MustSend()
+		if resp.StatusCode != http.StatusUnauthorized {
+			t.Error("should fail:", resp.Status)
+		}
+	})
+
+	t.Run("empty basic auth", func(t *testing.T) {
+		api := NewAPI(ts.URL, &Credentials{})
+		resp := api.CreateTimesheet("", nil).MustSend()
+		if resp.StatusCode != http.StatusUnauthorized {
+			t.Error("should fail:", resp.Status)
+		}
+	})
+
+}
+
 func Test_defaults(t *testing.T) {
 	srv := NewService()
 	assert := asserter.New(t)

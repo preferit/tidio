@@ -99,6 +99,7 @@ func authenticate(sys *rs.System, r *http.Request) (*rs.Account, error) {
 	if !ok {
 		return rs.Anonymous, fmt.Errorf("authentication failed")
 	}
+
 	asRoot := rs.Root.Use(sys)
 	cmd := rs.NewCmd("/bin/secure", "-c", "-a", name, "-s", secret)
 	if err := asRoot.Run(cmd); err != nil {
