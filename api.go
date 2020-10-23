@@ -30,7 +30,7 @@ type API struct {
 	fox.Logger
 	host   string
 	client *http.Client
-	cred   Credentials
+	asJohn Credentials
 	auth   func(*http.Request, Credentials) (*http.Request, error)
 
 	// last api
@@ -48,7 +48,7 @@ func (me *API) Auth(r *http.Request, err error) {
 	if err != nil {
 		return
 	}
-	me.Request, me.Err = me.auth(r, me.cred)
+	me.Request, me.Err = me.auth(r, me.asJohn)
 }
 
 func (me *API) CreateTimesheet(loc string, body io.Reader) *API {
@@ -61,10 +61,19 @@ func (me *API) ReadTimesheet(loc string) *API {
 	return me
 }
 
-func (me *API) SetCredentials(c Credentials) { me.cred = c }
+func (me *API) SetCredentials(c Credentials) { me.asJohn = c }
 
 func (me *API) url(path string) string {
 	return me.host + path
+}
+
+// MustSend
+func (me *API) MustSend() *http.Response {
+	r, err := me.Send()
+	if err != nil {
+		panic(err)
+	}
+	return r
 }
 
 func (me *API) Send() (*http.Response, error) {

@@ -12,91 +12,98 @@ import (
 	"github.com/gregoryv/go-timesheet"
 )
 
+var (
+	withJohnAccount = InitialAccount{"john", "secret"}
+	asJohn          = NewCredentials("john", "secret")
+)
+
 func TestClient_CreateTimesheet_asJohn(t *testing.T) {
-	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
-	ts := httptest.NewServer(srv)
+	var (
+		log = Logging{t}
+		srv = NewService(log, withJohnAccount)
+		ts  = httptest.NewServer(srv)
+	)
 	defer ts.Close()
-
-	cred := NewCredentials("john", "secret")
-	api := NewAPI(ts.URL, cred, Logging{t})
-	path := "/api/timesheets/john/202001.timesheet"
-	body := timesheet.Render(2020, 1, 8)
-	resp, _ := api.CreateTimesheet(path, body).Send()
-
+	var (
+		api  = NewAPI(ts.URL, asJohn, log)
+		path = "/api/timesheets/john/202001.timesheet"
+		body = timesheet.Render(2020, 1, 8)
+		resp = api.CreateTimesheet(path, body).MustSend()
+	)
 	if resp.StatusCode != 201 {
 		t.Error(resp.Status)
 	}
 }
 
 func TestClient_CreateTimesheet_asAnonymous(t *testing.T) {
-	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
-	ts := httptest.NewServer(srv)
+	var (
+		log = Logging{t}
+		srv = NewService(log, withJohnAccount)
+		ts  = httptest.NewServer(srv)
+	)
 	defer ts.Close()
-
-	api := NewAPI(ts.URL)
-	path := "/api/timesheets/john/202001.timesheet"
-	body := timesheet.Render(2020, 1, 8)
-	resp, _ := api.CreateTimesheet(path, body).Send()
-
+	var (
+		api  = NewAPI(ts.URL, log)
+		path = "/api/timesheets/john/202001.timesheet"
+		body = timesheet.Render(2020, 1, 8)
+		resp = api.CreateTimesheet(path, body).MustSend()
+	)
 	if resp.StatusCode != 401 {
 		t.Error(resp.Status)
 	}
 }
 
-func dump(r io.Reader) string {
-	var buf bytes.Buffer
-	buf.WriteString("\n")
-	io.Copy(&buf, r)
-	return buf.String()
-}
-
 func TestClient_ReadTimesheet_asJohn(t *testing.T) {
-	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
-	ts := httptest.NewServer(srv)
+	var (
+		log = Logging{t}
+		srv = NewService(log, withJohnAccount)
+		ts  = httptest.NewServer(srv)
+	)
 	defer ts.Close()
-
-	cred := NewCredentials("john", "secret")
-	api := NewAPI(ts.URL, cred)
-	path := "/api/timesheets/john/202001.timesheet"
-	body := timesheet.Render(2020, 1, 8)
-	api.CreateTimesheet(path, body).Send()
-
-	resp, _ := api.ReadTimesheet(path).Send()
+	var (
+		api  = NewAPI(ts.URL, asJohn)
+		path = "/api/timesheets/john/202001.timesheet"
+		body = timesheet.Render(2020, 1, 8)
+		_    = api.CreateTimesheet(path, body).MustSend()
+		resp = api.ReadTimesheet(path).MustSend()
+	)
 	if resp.StatusCode != 200 {
 		t.Error(resp.Status)
 	}
 }
 
 func TestClient_ReadTimesheet_noSuchResource(t *testing.T) {
-	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
-	ts := httptest.NewServer(srv)
+	var (
+		log = Logging{t}
+		srv = NewService(log, withJohnAccount)
+		ts  = httptest.NewServer(srv)
+	)
 	defer ts.Close()
-
-	cred := NewCredentials("john", "secret")
-	api := NewAPI(ts.URL, cred)
-
-	resp, _ := api.ReadTimesheet("/api/timesheets/john/nosuch").Send()
+	var (
+		api  = NewAPI(ts.URL, asJohn)
+		resp = api.ReadTimesheet("/api/timesheets/john/nosuch").MustSend()
+	)
 	if resp.StatusCode != 404 {
 		t.Error(resp.Status)
 	}
 }
 
 func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
-	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
-	ts := httptest.NewServer(srv)
+	var (
+		log = Logging{t}
+		srv = NewService(log, withJohnAccount)
+		ts  = httptest.NewServer(srv)
+	)
 	defer ts.Close()
-
-	cred := NewCredentials("john", "secret")
-	api := NewAPI(ts.URL, cred)
-	path := "/api/timesheets/john/202001.timesheet"
-	body := timesheet.Render(2020, 1, 8)
-	api.CreateTimesheet(path, body).Send()
-
-	anonymous := NewCredentials("", "")
+	var (
+		api       = NewAPI(ts.URL, asJohn)
+		path      = "/api/timesheets/john/202001.timesheet"
+		body      = timesheet.Render(2020, 1, 8)
+		_         = api.CreateTimesheet(path, body).MustSend()
+		anonymous = NewCredentials("", "")
+	)
 	ant.MustConfigure(api, anonymous)
-
-	resp, _ := api.ReadTimesheet(path).Send()
-
+	resp := api.ReadTimesheet(path).MustSend()
 	if resp.StatusCode == 200 {
 		var buf bytes.Buffer
 		io.Copy(&buf, resp.Body)

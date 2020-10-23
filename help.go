@@ -14,8 +14,8 @@ func NewHelpView() *Page {
 	srv := NewService(john)
 	doc := apidoc.NewDoc(srv)
 	api := NewAPI("https://tidio.preferit.se")
-	cred := NewCredentials(john.account, john.secret)
-	ant.MustConfigure(api, cred)
+	asJohn := NewCredentials(john.account, john.secret)
+	ant.MustConfigure(api, asJohn)
 
 	content := Div(
 		Section(
