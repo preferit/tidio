@@ -34,12 +34,14 @@ type API struct {
 }
 
 func (me *API) CreateTimesheet(path string, body io.Reader) *API {
-	me.Auth(me.newRequest("POST", path, body))
+	r := me.newRequest("POST", path, body)
+	me.Auth(r)
 	return me
 }
 
 func (me *API) ReadTimesheet(path string) *API {
-	me.Auth(me.newRequest("GET", path, nil))
+	r := me.newRequest("GET", path, nil)
+	me.Auth(r)
 	return me
 }
 
@@ -50,7 +52,6 @@ func (me *API) SetCredentials(c *Credentials) {
 // Auth applies credentials to the request and sets them as last
 // values on the api.
 func (me *API) Auth(r *http.Request) {
-	me.Request = r
 	if r == nil {
 		return
 	}
@@ -65,6 +66,7 @@ func (me *API) newRequest(method, path string, body io.Reader) *http.Request {
 	if err != nil {
 		me.Log(err)
 	}
+	me.Request = r
 	return r
 }
 
