@@ -80,11 +80,10 @@ func (me *Response) Build(r *http.Request) error {
 
 	case "POST":
 		defer r.Body.Close()
-		res, err := asAcc.Create(r.URL.Path)
-		if err != nil {
-			// FIXME if write permission error use Forbidden
-			return me.Fail(http.StatusBadRequest, err)
-		}
+		res, _ := asAcc.Create(r.URL.Path)
+		// TODO when sharing is implemented and accounts have read but not write permissions
+		// Create will fail
+
 		me.statusCode = http.StatusCreated
 		io.Copy(res, r.Body)
 		res.Close() // important to flush the data

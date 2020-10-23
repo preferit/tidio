@@ -66,11 +66,29 @@ func TestClient_ReadTimesheet_asJohn(t *testing.T) {
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
 	r, _ := api.CreateTimesheet(path, body)
-
 	client.Send(r)
 
 	r, _ = api.ReadTimesheet(path)
-	client.Send(r)
+	resp, _ := client.Send(r)
+	if resp.StatusCode != 200 {
+		t.Error(resp.Status)
+	}
+}
+
+func TestClient_ReadTimesheet_noSuchResource(t *testing.T) {
+	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
+	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
+	ts := httptest.NewServer(srv)
+	defer ts.Close()
+
+	cred := NewCredentials("john", "secret")
+	api := NewAPI(ts.URL, cred)
+
+	r, _ := api.ReadTimesheet("/api/timesheets/john/nosuch")
+	resp, _ := client.Send(r)
+	if resp.StatusCode != 404 {
+		t.Error(resp.Status)
+	}
 }
 
 func TestClient_ReadTimesheet_asAnonymous(t *testing.T) {
