@@ -18,7 +18,7 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	defer ts.Close()
 
 	cred := NewCredentials("john", "secret")
-	api := NewAPI(ts.URL, cred)
+	api := NewAPI(ts.URL, cred, Logging{t})
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
 	resp, _ := api.CreateTimesheet(path, body).Send()
