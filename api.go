@@ -31,18 +31,6 @@ type API struct {
 
 	// last api
 	Request *http.Request
-	Err     error
-}
-
-// Auth applies credentials to the request and sets them as last
-// values on the api.
-func (me *API) Auth(r *http.Request, err error) {
-	me.Request = r
-	me.Err = err
-	if err != nil {
-		return
-	}
-	me.Err = ant.Configure(r, me.auth)
 }
 
 func (me *API) CreateTimesheet(loc string, body io.Reader) *API {
@@ -57,6 +45,22 @@ func (me *API) ReadTimesheet(loc string) *API {
 
 func (me *API) SetCredentials(c *Credentials) {
 	me.auth = NewBasicAuth(c)
+}
+
+// Auth applies credentials to the request and sets them as last
+// values on the api.
+func (me *API) Auth(r *http.Request, err error) {
+	me.Request = r
+	if err != nil {
+		me.Log(err)
+		return
+	}
+	if r == nil {
+		return
+	}
+	if err := ant.Configure(r, me.auth); err != nil {
+		me.Log(err)
+	}
 }
 
 func (me *API) url(path string) string {
