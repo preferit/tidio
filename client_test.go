@@ -19,13 +19,33 @@ func TestClient_CreateTimesheet_asJohn(t *testing.T) {
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
 
+	cred := NewCredentials("john", "secret")
+	api := NewAPI(ts.URL, cred)
+	path := "/api/timesheets/john/202001.timesheet"
+	body := timesheet.Render(2020, 1, 8)
+	r, _ := api.CreateTimesheet(path, body)
+
+	resp, _ := client.Send(r)
+	if resp.StatusCode != 201 {
+		t.Error(resp.Status)
+	}
+}
+
+func TestClient_CreateTimesheet_asAnonymous(t *testing.T) {
+	client := NewClient(Logging{t}, ErrorHandling(t.Fatal))
+	srv := NewService(Logging{t}, InitialAccount{"john", "secret"})
+	ts := httptest.NewServer(srv)
+	defer ts.Close()
+
 	api := NewAPI(ts.URL)
 	path := "/api/timesheets/john/202001.timesheet"
 	body := timesheet.Render(2020, 1, 8)
 	r, _ := api.CreateTimesheet(path, body)
 
-	api.cred = NewCredentials("john", "secret")
-	client.Send(r)
+	resp, _ := client.Send(r)
+	if resp.StatusCode != 401 {
+		t.Error(resp.Status)
+	}
 }
 
 func dump(r io.Reader) string {
