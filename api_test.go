@@ -176,6 +176,11 @@ func TestAPI_warnings(t *testing.T) {
 	api.warn(fmt.Errorf("failed"))
 }
 
+func TestAPI_Auth_nil_request(t *testing.T) {
+	api := NewAPI("http://localhost")
+	api.Auth(nil)
+}
+
 func Test_defaults(t *testing.T) {
 	srv := NewService()
 	assert := asserter.New(t)
