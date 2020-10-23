@@ -33,13 +33,13 @@ type API struct {
 	Request *http.Request
 }
 
-func (me *API) CreateTimesheet(loc string, body io.Reader) *API {
-	me.Auth(http.NewRequest("POST", me.url(loc), body))
+func (me *API) CreateTimesheet(path string, body io.Reader) *API {
+	me.Auth(me.newRequest("POST", path, body))
 	return me
 }
 
-func (me *API) ReadTimesheet(loc string) *API {
-	me.Auth(http.NewRequest("GET", me.url(loc), nil))
+func (me *API) ReadTimesheet(path string) *API {
+	me.Auth(me.newRequest("GET", path, nil))
 	return me
 }
 
@@ -49,18 +49,23 @@ func (me *API) SetCredentials(c *Credentials) {
 
 // Auth applies credentials to the request and sets them as last
 // values on the api.
-func (me *API) Auth(r *http.Request, err error) {
+func (me *API) Auth(r *http.Request) {
 	me.Request = r
-	if err != nil {
-		me.Log(err)
-		return
-	}
 	if r == nil {
 		return
 	}
 	if err := ant.Configure(r, me.auth); err != nil {
 		me.Log(err)
 	}
+}
+
+// newRequest
+func (me *API) newRequest(method, path string, body io.Reader) *http.Request {
+	r, err := http.NewRequest(method, me.host+path, body)
+	if err != nil {
+		me.Log(err)
+	}
+	return r
 }
 
 func (me *API) url(path string) string {

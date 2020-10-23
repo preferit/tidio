@@ -28,5 +28,4 @@ func (me *BasicAuth) Set(v interface{}) error {
 	default:
 		return ant.SetFailed(v, me)
 	}
-	return nil
 }
