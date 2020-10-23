@@ -98,18 +98,3 @@ func (me *API) warn(err error) {
 	}
 	me.Log(err)
 }
-
-/*
-
-todo
-
-- Should the API provide validation on this end? probably even
-though it's needed on the receiving end.
-
--Where should we put the model parsing of the response?
-
-one request could be parsed in multiple ways depending on what is
-needed. If we document a full response a model for parsing it may not
-be necessary, though could be provided for convenience.
-
-*/
