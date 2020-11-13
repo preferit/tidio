@@ -66,7 +66,7 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	acc, err := authenticate(me.sys, r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, err)
+		fmt.Fprintln(w, err)
 		return
 	}
 	asAcc := acc.Use(me.sys)
@@ -75,7 +75,7 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	_, err = asAcc.Stat(r.URL.Path)
 	if acc == rs.Anonymous && err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, err)
+		fmt.Fprintln(w, err)
 		return
 	}
 

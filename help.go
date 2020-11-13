@@ -43,7 +43,6 @@ func init() {
 func NewHelpView() *Page {
 	content := Div(
 		apiSection,
-
 		Section(
 			H2("Timesheet file format"),
 			P("Timesheets are plain text and are specific to year and month"),
@@ -51,15 +50,13 @@ func NewHelpView() *Page {
 		),
 	)
 
-	return NewFile(
-		"help.html",
-		Html(
-			Head(
-				apidoc.DefaultStyle,
-				Style(theme()),
-			),
-			Body(content, footer()),
+	return NewPage(Html(
+		Head(
+			apidoc.DefaultStyle(),
+			Style(theme()),
 		),
+		Body(content, footer()),
+	),
 	)
 }
 
