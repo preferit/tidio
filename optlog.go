@@ -3,14 +3,14 @@ package tidio
 import "github.com/gregoryv/fox"
 
 // Logger wraps a configurable logger. Empty logger is usable as mute.
-type Logger struct {
+type OptionalLogger struct {
 	fox.Logger
 }
 
-func (me *Logger) SetLogger(l fox.Logger) { me.Logger = l }
+func (me *OptionalLogger) SetLogger(l fox.Logger) { me.Logger = l }
 
 // Log is a noop unless fox logger is configured.
-func (me *Logger) Log(v ...interface{}) {
+func (me *OptionalLogger) Log(v ...interface{}) {
 	if me.Logger == nil {
 		return
 	}

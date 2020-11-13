@@ -10,7 +10,7 @@ require (
 	github.com/gregoryv/draw v0.14.0 // indirect
 	github.com/gregoryv/ex v0.4.0 // indirect
 	github.com/gregoryv/find v0.2.0 // indirect
-	github.com/gregoryv/fox v0.6.2
+	github.com/gregoryv/fox v0.6.3-0.20201113145101-022212e5f6eb
 	github.com/gregoryv/go-timesheet v0.3.0
 	github.com/gregoryv/rs v0.4.0
 	github.com/gregoryv/stamp v0.2.0

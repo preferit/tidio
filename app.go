@@ -2,7 +2,6 @@ package tidio
 
 import (
 	"flag"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -16,16 +15,13 @@ import (
 func NewApp(settings ...ant.Setting) *App {
 	app := App{
 		ListenAndServe: http.ListenAndServe,
-		Logger: Logger{
-			fox.NewSyncLog(ioutil.Discard),
-		},
 	}
 	ant.MustConfigure(&app, settings...)
 	return &app
 }
 
 type App struct {
-	Logger
+	OptionalLogger
 	wolf.Command
 	ListenAndServe func(string, http.Handler) error
 }

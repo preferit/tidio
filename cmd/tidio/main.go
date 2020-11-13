@@ -15,7 +15,7 @@ func main() {
 	cmd := wolf.NewOSCmd()
 	app := tidio.NewApp(
 		fox.Logging{
-			fox.NewSyncLog(os.Stderr).FilterEmpty(),
+			fox.NewSyncLog(os.Stderr),
 		},
 	)
 	code := app.Run(cmd)

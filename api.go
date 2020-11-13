@@ -25,7 +25,7 @@ func NewAPI(host string, settings ...ant.Setting) *API {
 // API provides http request builders for the tidio service
 // The requests returned should be valid and complete.
 type API struct {
-	Logger
+	OptionalLogger
 	host   string
 	client *http.Client
 	auth   ant.Setting // applied

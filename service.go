@@ -23,13 +23,11 @@ func NewService(settings ...ant.Setting) *Service {
 		sys: sys,
 	}
 	ant.MustConfigure(&srv, settings...)
-	sys.SetAuditer(&srv.Logger)
-
 	return &srv
 }
 
 type Service struct {
-	Logger
+	OptionalLogger
 
 	sys *rs.System
 }
