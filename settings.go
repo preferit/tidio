@@ -4,16 +4,22 @@ import (
 	"github.com/gregoryv/ant"
 )
 
-// Not really a setting but very helpful
+func NewInitialAccount(cred *Credentials) *InitialAccount {
+	return &InitialAccount{
+		Account: cred.account,
+		Secret:  cred.secret,
+	}
+}
+
 type InitialAccount struct {
-	account string
-	secret  string
+	Account string
+	Secret  string
 }
 
 func (me InitialAccount) Set(v interface{}) error {
 	switch v := v.(type) {
 	case *Service:
-		v.AddAccount(me.account, me.secret)
+		v.AddAccount(me.Account, me.Secret)
 	default:
 		return ant.SetFailed(v, me)
 	}
