@@ -23,6 +23,8 @@ func NewService(settings ...ant.Setting) *Service {
 		sys: sys,
 	}
 	ant.MustConfigure(&srv, settings...)
+	sys.SetAuditer(&srv.Logger)
+
 	return &srv
 }
 
@@ -42,7 +44,7 @@ func (me *Service) InitResources() error {
 	}
 	timesheet.RenderTo(w, 2020, 1, 8)
 	w.Close()
-	asRoot.Exec("/bin/chmod 05555 /api/timesheets/202001.timesheet")
+	me.Log(asRoot.Exec("/bin/chmod -m 05555 /api/timesheets/202001.timesheet"))
 	return nil
 }
 

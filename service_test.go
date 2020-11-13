@@ -26,8 +26,9 @@ func TestService_AddAccount(t *testing.T) {
 	bad(srv.AddAccount("eva", ""))
 
 	xok := asserter.Wrap(t).MixOk
-	asRoot := rs.Root.Use(srv.sys)
-	xok(asRoot.Stat("/api/timesheets/john"))
+	john := rs.NewAccount("john", 2)
+	asJohn := john.Use(srv.sys)
+	xok(asJohn.Stat("/api/timesheets/john"))
 }
 
 func TestService_RestoreState_missing_file(t *testing.T) {
