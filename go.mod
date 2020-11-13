@@ -6,7 +6,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gregoryv/ant v0.0.0-20201022113027-b550c4e3aba5
 	github.com/gregoryv/asserter v0.4.0
-	github.com/gregoryv/cmdline v0.0.0-20200822134937-e77bcfd6d968
+	github.com/gregoryv/cmdline v0.2.0
 	github.com/gregoryv/draw v0.14.0 // indirect
 	github.com/gregoryv/ex v0.4.0 // indirect
 	github.com/gregoryv/find v0.2.0 // indirect

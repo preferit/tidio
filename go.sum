@@ -45,6 +45,8 @@ github.com/gregoryv/asserter v0.4.0/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7q
 github.com/gregoryv/cli v0.0.0-20180329083318-9f0f54cf147f/go.mod h1:zrYlwj1/vKPPQ7V++Jw7nIPSwM61ERFQmJ8YAh6zibA=
 github.com/gregoryv/cmdline v0.0.0-20200822134937-e77bcfd6d968 h1:EncwlkTqRhIw7jZ3uX6dgRIVNbeknBBNB717fzxfk4s=
 github.com/gregoryv/cmdline v0.0.0-20200822134937-e77bcfd6d968/go.mod h1:DfbcpIEh/WREYcrSnx3qeYY0qRxbLlmAgLLP6AeLXI8=
+github.com/gregoryv/cmdline v0.2.0 h1:udrCa58Ratd2p5OJ9AfLmcUa/CXUSIbQRUpirT30FjM=
+github.com/gregoryv/cmdline v0.2.0/go.mod h1:DfbcpIEh/WREYcrSnx3qeYY0qRxbLlmAgLLP6AeLXI8=
 github.com/gregoryv/draw v0.9.0 h1:+Li4J4ePYzra0M1Ihh+f3kFAv3MF9UcaT37+IVck6TA=
 github.com/gregoryv/draw v0.9.0/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
 github.com/gregoryv/draw v0.13.0 h1:kSuKtJv6N6ibz77UrtLK+fVvO4SLsaffdk+RfNZDEvA=
