@@ -2,6 +2,7 @@ package tidio
 
 import (
 	"flag"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -11,13 +12,12 @@ import (
 	"github.com/gregoryv/wolf"
 )
 
-// NewApp returns a App with stderr logging and default options
-func NewApp(cmd wolf.Command, settings ...ant.Setting) *App {
+// NewApp returns a App with applied settings
+func NewApp(settings ...ant.Setting) *App {
 	app := App{
-		Command:        cmd,
 		ListenAndServe: http.ListenAndServe,
 		Logger: Logger{
-			fox.NewSyncLog(cmd.Stderr()).FilterEmpty(),
+			fox.NewSyncLog(ioutil.Discard),
 		},
 	}
 	ant.MustConfigure(&app, settings...)
@@ -30,22 +30,22 @@ type App struct {
 	ListenAndServe func(string, http.Handler) error
 }
 
-func (me *App) Run() int {
-	if err := me.run(); err != nil {
+func (me *App) Run(cmd wolf.Command) int {
+	if err := me.run(cmd); err != nil {
 		me.Log(err)
-		return me.Stop(1)
+		return cmd.Stop(1)
 	}
-	return me.Stop(0)
+	return cmd.Stop(0)
 }
 
-func (me *App) run() error {
+func (me *App) run(cmd wolf.Command) error {
 	var (
-		fs            = flag.NewFlagSet(me.Args()[0], flag.ContinueOnError)
+		fs            = flag.NewFlagSet(cmd.Args()[0], flag.ContinueOnError)
 		bind          = fs.String("bind", ":13001", "[host]:port to bind to")
 		stateFilename = fs.String("state", "system.state", "")
 	)
-	fs.SetOutput(me.Stderr())
-	err := fs.Parse(me.Args()[1:])
+	fs.SetOutput(cmd.Stderr())
+	err := fs.Parse(cmd.Args()[1:])
 	if err != nil {
 		if err != flag.ErrHelp {
 			return err
