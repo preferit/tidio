@@ -41,7 +41,6 @@ func init() {
 }
 
 func NewHelpView() *Page {
-
 	content := Div(
 		apiSection,
 
@@ -52,7 +51,7 @@ func NewHelpView() *Page {
 		),
 	)
 
-	return NewPage(
+	return NewFile(
 		"help.html",
 		Html(
 			Head(
