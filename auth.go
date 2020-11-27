@@ -2,9 +2,12 @@ package tidio
 
 import (
 	"encoding/base64"
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gregoryv/ant"
+	"github.com/gregoryv/rs"
 )
 
 func NewBasicAuth(c *Credentials) *BasicAuth {
@@ -28,4 +31,27 @@ func (me *BasicAuth) Set(v interface{}) error {
 	default:
 		return ant.SetFailed(v, me)
 	}
+}
+
+func authenticate(sys *rs.System, r *http.Request, trace *log.Logger) (*rs.Account, error) {
+	h := r.Header.Get("Authorization")
+	if h == "" {
+		return rs.Anonymous, nil
+	}
+	trace.Println(h)
+
+	name, secret, ok := r.BasicAuth()
+	if !ok {
+		return rs.Anonymous, fmt.Errorf("authentication failed")
+	}
+
+	asRoot := rs.Root.Use(sys)
+	cmd := rs.NewCmd("/bin/secure", "-c", "-a", name, "-s", secret)
+	trace.Println(cmd)
+	if err := asRoot.Run(cmd); err != nil {
+		return rs.Anonymous, err
+	}
+	var acc rs.Account
+	err := asRoot.LoadAccount(&acc, name)
+	return &acc, err
 }

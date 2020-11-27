@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -101,27 +100,4 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	io.Copy(res, r.Body)
 	res.Close() // important to flush the data
 	w.WriteHeader(http.StatusCreated)
-}
-
-func authenticate(sys *rs.System, r *http.Request, trace *log.Logger) (*rs.Account, error) {
-	h := r.Header.Get("Authorization")
-	if h == "" {
-		return rs.Anonymous, nil
-	}
-	trace.Println(h)
-
-	name, secret, ok := r.BasicAuth()
-	if !ok {
-		return rs.Anonymous, fmt.Errorf("authentication failed")
-	}
-
-	asRoot := rs.Root.Use(sys)
-	cmd := rs.NewCmd("/bin/secure", "-c", "-a", name, "-s", secret)
-	trace.Println(cmd)
-	if err := asRoot.Run(cmd); err != nil {
-		return rs.Anonymous, err
-	}
-	var acc rs.Account
-	err := asRoot.LoadAccount(&acc, name)
-	return &acc, err
 }
