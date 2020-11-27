@@ -2,15 +2,19 @@ package tidio
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gregoryv/fox"
 )
 
-func newTrace(dst fox.Logger, r *http.Request) (trace *log.Logger, cleanup func()) {
+func newTrace(dst fox.Logger, r *http.Request) (trace fox.Logger, cleanup func()) {
 	var buf bytes.Buffer
-	trace = log.New(&buf, "", log.Lshortfile)
+	l := log.New(&buf, "", log.Lshortfile)
+	trace = fox.LoggerFunc(func(v ...interface{}) {
+		l.Output(3, fmt.Sprint(v...))
+	})
 	cleanup = func() {
 		if buf.Len() > 0 {
 			dst.Log("------------------------------")

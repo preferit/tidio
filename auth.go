@@ -3,10 +3,10 @@ package tidio
 import (
 	"encoding/base64"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gregoryv/ant"
+	"github.com/gregoryv/fox"
 	"github.com/gregoryv/rs"
 )
 
@@ -33,12 +33,12 @@ func (me *BasicAuth) Set(v interface{}) error {
 	}
 }
 
-func authenticate(sys *rs.System, r *http.Request, trace *log.Logger) (*rs.Account, error) {
+func authenticate(sys *rs.System, r *http.Request, trace fox.Logger) (*rs.Account, error) {
 	h := r.Header.Get("Authorization")
 	if h == "" {
 		return rs.Anonymous, nil
 	}
-	trace.Println(h)
+	trace.Log(h)
 
 	name, secret, ok := r.BasicAuth()
 	if !ok {
@@ -47,7 +47,7 @@ func authenticate(sys *rs.System, r *http.Request, trace *log.Logger) (*rs.Accou
 
 	asRoot := rs.Root.Use(sys)
 	cmd := rs.NewCmd("/bin/secure", "-c", "-a", name, "-s", secret)
-	trace.Println(cmd)
+	trace.Log(cmd)
 	if err := asRoot.Run(cmd); err != nil {
 		return rs.Anonymous, err
 	}
