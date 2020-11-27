@@ -18,3 +18,4 @@ uncover -min 90 /tmp/c.out
 go install ./cmd/tidup
 go build -o /home/gregory/bin/tidio ./cmd/tidio
 killall tidio
+echo -e "\033[42m  \e[0m"
