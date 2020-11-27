@@ -45,7 +45,8 @@ func authenticate(sys *rs.System, r *http.Request, trace fox.Logger) (*rs.Accoun
 		return rs.Anonymous, fmt.Errorf("authentication failed")
 	}
 
-	asRoot := rs.Root.UseAudited(sys, trace)
+	asRoot := rs.Root.Use(sys)
+	asRoot.SetAuditer(trace)
 	cmd := rs.NewCmd("/bin/secure", "-c", "-a", name, "-s", secret)
 	if err := asRoot.Run(cmd); err != nil {
 		return rs.Anonymous, err

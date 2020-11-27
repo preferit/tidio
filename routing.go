@@ -77,7 +77,8 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err)
 		return
 	}
-	asAcc := acc.UseAudited(me.sys, trace)
+	asAcc := acc.Use(me.sys)
+	asAcc.SetAuditer(trace)
 
 	trace.Log(acc)
 	// Check resource access permissions
