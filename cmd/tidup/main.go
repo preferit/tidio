@@ -12,20 +12,25 @@ import (
 
 func main() {
 	var (
-		cli      = cmdline.New(os.Args...)
-		host     = cli.Option("--host").String("https://tidio.preferit.se")
-		help     = cli.Flag("-h, --help")
-		user     = cli.Option("-u, --username").String(os.Getenv("USER"))
-		pass     = cli.Option("-p, --password").String(os.Getenv("PASSWORD"))
-		cred     = tidio.NewCredentials(user, pass)
-		filename = cli.NeedArg("FILE", 0).String()
+		cli  = cmdline.NewParser(os.Args...)
+		host = cli.Option("--host").String("https://tidio.preferit.se")
+		help = cli.Flag("-h, --help")
+
+		user = cli.Option("-u, --username").String(os.Getenv("USER"))
+		pass = cli.Option("-p, --password").String(os.Getenv("PASSWORD"))
+		cred = tidio.NewCredentials(user, pass)
+
+		filename = cli.Required("FILE").String()
 	)
 
 	switch {
-	case !cli.Ok():
-		fmt.Println("Try --help for more information")
 	case help:
 		cli.WriteUsageTo(os.Stdout)
+
+	case !cli.Ok():
+		fmt.Println(cli.Error())
+		fmt.Println("Try -h for more information")
+
 	default:
 		uploadFile(cred, host, filename)
 	}
