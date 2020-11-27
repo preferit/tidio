@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -20,13 +21,16 @@ func (me *Service) Router() *mux.Router {
 }
 
 func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
+	trace, cleanup := newTrace(me, r)
+	defer cleanup()
+
 	if r.URL.Path == "/" {
 		w.WriteHeader(200)
 		NewHelpView().WriteTo(w)
 		return
 	}
 
-	acc, err := authenticate(me.sys, r)
+	acc, err := authenticate(me.sys, r, trace)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, err)
@@ -63,7 +67,12 @@ func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
 }
 
 func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
-	acc, err := authenticate(me.sys, r)
+	trace, cleanup := newTrace(me, r)
+	defer cleanup()
+
+	acc, err := authenticate(me.sys, r, trace)
+	trace.Println(acc.Name)
+	trace.Println(err)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, err)
@@ -71,11 +80,12 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	asAcc := acc.Use(me.sys)
 
-	me.Log("asAcc", asAcc)
+	trace.Println(acc)
 	// Check resource access permissions
 	_, err = asAcc.Stat(r.URL.Path)
 	if acc == rs.Anonymous && err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
+		//me.Log(err)
 		fmt.Fprintln(w, err)
 		return
 	}
@@ -83,7 +93,8 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	// Serve the specific method
 
 	defer r.Body.Close()
-	res, _ := asAcc.Create(r.URL.Path)
+	res, err := asAcc.Create(r.URL.Path)
+	trace.Println(err)
 	// TODO when sharing is implemented and accounts have read but not write permissions
 	// Create will fail
 
@@ -92,11 +103,12 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func authenticate(sys *rs.System, r *http.Request) (*rs.Account, error) {
+func authenticate(sys *rs.System, r *http.Request, trace *log.Logger) (*rs.Account, error) {
 	h := r.Header.Get("Authorization")
 	if h == "" {
 		return rs.Anonymous, nil
 	}
+	trace.Println(h)
 
 	name, secret, ok := r.BasicAuth()
 	if !ok {
@@ -105,6 +117,7 @@ func authenticate(sys *rs.System, r *http.Request) (*rs.Account, error) {
 
 	asRoot := rs.Root.Use(sys)
 	cmd := rs.NewCmd("/bin/secure", "-c", "-a", name, "-s", secret)
+	trace.Println(cmd)
 	if err := asRoot.Run(cmd); err != nil {
 		return rs.Anonymous, err
 	}

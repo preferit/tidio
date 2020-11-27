@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path"
 
@@ -55,5 +56,9 @@ func uploadFile(cred *tidio.Credentials, host, filename string) error {
 	resp := api.CreateTimesheet(path, fh).MustSend()
 	fmt.Println(api.Request.Header)
 	fmt.Println(resp.Status)
+	if resp.StatusCode >= 400 {
+		fmt.Println("--- body ---")
+		io.Copy(os.Stderr, resp.Body)
+	}
 	return nil
 }
