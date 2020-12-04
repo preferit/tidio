@@ -13,7 +13,8 @@ var apiSection *Element
 
 func init() {
 	// Cache api section
-	john := &InitialAccount{Account: "john", Secret: "secret"}
+	cred := NewCredentials("john", "secret")
+	john := NewInitialAccount(cred)
 	srv := NewService(john)
 	doc := apidoc.NewDoc(srv.Router())
 	api := NewAPI("https://tidio.preferit.se")
