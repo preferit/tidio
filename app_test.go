@@ -34,8 +34,11 @@ func TestApp_has_sane_default_values(t *testing.T) {
 func TestApp_fails_on_wrong_option(t *testing.T) {
 	cmd := wolf.NewTCmd("x", "-wrong-option", "value")
 	defer cmd.Cleanup()
-	if NewApp().Run(cmd) == 0 {
-		t.Error(cmd.Err)
+	app := NewApp()
+	app.SetLogger(t)
+	code := app.Run(cmd)
+	if code == 0 {
+		t.Error(cmd.Err.String())
 	}
 }
 

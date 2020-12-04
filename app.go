@@ -27,7 +27,7 @@ type App struct {
 
 func (me *App) Run(cmd wolf.Command) int {
 	if err := me.run(cmd); err != nil {
-		me.Log(err)
+		me.Log("Run", err)
 		return cmd.Stop(1)
 	}
 	return cmd.Stop(0)
