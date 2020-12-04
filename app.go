@@ -54,6 +54,10 @@ func (me *App) run(cmd wolf.Command) error {
 
 }
 
+type runnable interface {
+	Run(app *App) error
+}
+
 // ----------------------------------------
 
 type serveHTTP struct {
@@ -62,7 +66,6 @@ type serveHTTP struct {
 	filename string
 }
 
-// ExtraOptions
 func (me *serveHTTP) ExtraOptions(p *cmdline.Parser) {
 	me.bind = p.Option("-bind").String(":13001")
 	me.filename = p.Option("-state").String("system.state")
@@ -75,21 +78,18 @@ func (me *serveHTTP) Run(app *App) error {
 	// configure persistence
 	srv.dest = NewFileStorage(me.filename)
 
-	if _, err := os.Stat(me.filename); os.IsNotExist(err) {
-		if err := srv.PersistState(); err != nil {
-			return err
-		}
-	} else {
-		if err := srv.RestoreState(); err != nil {
-			return err
-		}
+	_, err := os.Stat(me.filename)
+	switch {
+	case os.IsNotExist(err):
+		srv.PersistState()
+	default:
+		srv.RestoreState()
+	}
+	if err := srv.Error(); err != nil {
+		return err
 	}
 	app.Log("listening on:", me.bind)
 	return app.ListenAndServe(me.bind, srv.Router())
 }
 
 // ----------------------------------------
-
-type runnable interface {
-	Run(app *App) error
-}
