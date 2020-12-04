@@ -49,15 +49,19 @@ func (me *Service) InitResources() error {
 // AddAccount creates a system account and stores the secret in
 // /etc/basic
 func (me *Service) AddAccount(name, secret string) error {
-	asRoot := NewShell(rs.Root.Use(me.sys))
-	asRoot.Execf("/bin/mkacc %s", name)
-	asRoot.Execf("/bin/secure -a %s -s %s", name, secret)
-	asRoot.Execf("/bin/mkdir /api/timesheets")
+	sh := NewShell(rs.Root.Use(me.sys))
+	return CreateAccount(sh, name, secret)
+}
 
+func CreateAccount(sh *Shell, name, secret string) error {
+	sh.Execf("/bin/mkacc %s", name)
+	sh.Execf("/bin/secure -a %s -s %s", name, secret)
+
+	// todo, better define system with /api/home/NAME
 	dir := path.Join("/api/timesheets", name)
-	asRoot.Execf("/bin/mkdir %s", dir)
+	sh.Execf("/bin/mkdir %s", dir)
 
-	return asRoot.Execf("/bin/chown %s %s", name, dir)
+	return sh.Execf("/bin/chown %s %s", name, dir)
 }
 
 // RestoreState restores the resource system from the given filename.
