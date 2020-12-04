@@ -55,10 +55,6 @@ func (me *App) run(cmd wolf.Command) error {
 	if err := me.initStateRestoration(srv, *stateFilename); err != nil {
 		return err
 	}
-	me.Log("add account john")
-	me.Log(srv.AddAccount("john", "secret"))
-	me.Log(srv.InitResources())
-	me.Log("listen on ", *bind)
 	return me.ListenAndServe(*bind, srv.Router())
 }
 
@@ -74,6 +70,7 @@ func (me *App) initStateRestoration(service *Service, filename string) error {
 			return err
 		}
 	}
+	// todo replace this with something else
 	service.AutoPersist(dest, 3*time.Second)
 	return nil
 }
