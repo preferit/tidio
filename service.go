@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 	"path"
-	"time"
 
 	"github.com/gregoryv/ant"
 	"github.com/gregoryv/go-timesheet"
@@ -29,7 +28,8 @@ func NewService(settings ...ant.Setting) *Service {
 type Service struct {
 	OptionalLogger
 
-	sys *rs.System
+	sys  *rs.System
+	dest Storage // for persisting the system to
 }
 
 // InitResources
@@ -76,30 +76,13 @@ func (me *Service) RestoreState(filename string) error {
 	return err
 }
 
-// AutoPersist enables automatic persistence of system state to given filename.
-func (me *Service) AutoPersist(dest Storage, every time.Duration) {
-	last := me.sys.LastModified()
-	go func() {
-		for {
-			// todo decouple and use events
-			modified := me.sys.LastModified()
-			if !modified.After(last) {
-				time.Sleep(every)
-				continue
-			}
-			last = modified
-			err := me.PersistState(dest)
-			if err != nil {
-				me.Log(err)
-			}
-		}
-	}()
-}
-
-// PersistState
-func (me *Service) PersistState(dest Storage) error {
-	me.Log("persist state: ", dest)
-	w, err := dest.Create()
+// PersistState persist the system to a configured Storage. Noop if not configured.
+func (me *Service) PersistState() error {
+	if me.dest == nil {
+		return nil
+	}
+	me.Log("persist state: ", me.dest)
+	w, err := me.dest.Create()
 	if err != nil {
 		return err
 	}

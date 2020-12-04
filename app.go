@@ -4,7 +4,6 @@ import (
 	"flag"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/gregoryv/ant"
 	"github.com/gregoryv/fox"
@@ -36,9 +35,9 @@ func (me *App) Run(cmd wolf.Command) int {
 
 func (me *App) run(cmd wolf.Command) error {
 	var (
-		fs            = flag.NewFlagSet(cmd.Args()[0], flag.ContinueOnError)
-		bind          = fs.String("bind", ":13001", "[host]:port to bind to")
-		stateFilename = fs.String("state", "system.state", "")
+		fs       = flag.NewFlagSet(cmd.Args()[0], flag.ContinueOnError)
+		bind     = fs.String("bind", ":13001", "[host]:port to bind to")
+		filename = fs.String("state", "system.state", "")
 	)
 	fs.SetOutput(cmd.Stderr())
 	err := fs.Parse(cmd.Args()[1:])
@@ -52,25 +51,17 @@ func (me *App) run(cmd wolf.Command) error {
 	srv := NewService()
 	ant.MustConfigure(srv, fox.Logging{me})
 
-	if err := me.initStateRestoration(srv, *stateFilename); err != nil {
-		return err
-	}
-	return me.ListenAndServe(*bind, srv.Router())
-}
+	srv.dest = NewFileStorage(*filename) // todo replace with ant Setting
 
-// initStateRestoration
-func (me *App) initStateRestoration(service *Service, filename string) error {
-	dest := NewFileStorage(filename)
-	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		if err := service.PersistState(dest); err != nil {
+	if _, err := os.Stat(*filename); os.IsNotExist(err) {
+		if err := srv.PersistState(); err != nil {
 			return err
 		}
 	} else {
-		if err := service.RestoreState(filename); err != nil {
+		if err := srv.RestoreState(*filename); err != nil {
 			return err
 		}
 	}
-	// todo replace this with something else
-	service.AutoPersist(dest, 3*time.Second)
-	return nil
+	me.Log("listening on:", *bind)
+	return me.ListenAndServe(*bind, srv.Router())
 }

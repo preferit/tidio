@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/gregoryv/ant"
 	"github.com/gregoryv/asserter"
@@ -45,47 +44,6 @@ func TestService_RestoreState_ok_file(t *testing.T) {
 	ok := asserter.Wrap(t).Ok
 	ok(srv.RestoreState(tmp.Name()))
 	os.RemoveAll(tmp.Name())
-}
-
-func TestService_AutoPersist(t *testing.T) {
-	srv := NewService()
-	buflog := Buflog(srv)
-
-	tmp, _ := ioutil.TempFile("", "restorestate")
-	tmp.Close()
-	defer os.RemoveAll(tmp.Name())
-
-	dest := NewFileStorage(tmp.Name())
-	srv.AutoPersist(dest, time.Millisecond)
-
-	// make a change
-	asRoot := rs.Root.Use(srv.sys)
-	asRoot.Exec("/bin/mkdir /tmp/x")
-
-	time.Sleep(10 * time.Millisecond)
-	got, err := ioutil.ReadFile(tmp.Name())
-	if err != nil {
-		t.Fatal(err, "\n", buflog.String())
-	}
-
-	assert := asserter.New(t)
-	assert(len(got) != 0).Error("empty state", "\n", buflog.String())
-}
-
-func TestService_AutoPersist_create_file_fails(t *testing.T) {
-	srv := NewService()
-	buflog := Buflog(srv)
-
-	dest := &brokenStorage{}
-	srv.AutoPersist(dest, time.Millisecond)
-
-	// make a change
-	asRoot := rs.Root.Use(srv.sys)
-	asRoot.Exec("/bin/mkdir /tmp/x")
-
-	time.Sleep(10 * time.Millisecond)
-	assert := asserter.New(t)
-	assert(dest.called).Error("state persisted", "\n", buflog.String())
 }
 
 func TestNewService_panics_on_bad_settings(t *testing.T) {
