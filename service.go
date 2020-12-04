@@ -1,7 +1,6 @@
 package tidio
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path"
@@ -50,12 +49,12 @@ func CreateAccount(sh *Shell, name, secret string) error {
 }
 
 // RestoreState restores the resource system from the given filename.
-func (me *Service) RestoreState(filename string) error {
-	me.Log("restore state: ", filename)
-	r, err := os.Open(filename)
-	if err != nil {
-		return fmt.Errorf("open state file: %w", err)
+func (me *Service) RestoreState() error {
+	if me.dest == nil {
+		return nil
 	}
+	me.Log("restoring state:", me.dest)
+	r, err := me.dest.Open()
 	defer r.Close()
 	err = me.sys.Import("/", r)
 	return err
@@ -75,8 +74,11 @@ func (me *Service) PersistState() error {
 	return me.sys.Export(w)
 }
 
+// ----------------------------------------
+
 type Storage interface {
 	Create() (io.WriteCloser, error)
+	Open() (io.ReadCloser, error)
 }
 
 func NewFileStorage(filename string) *FileStorage {
@@ -90,6 +92,11 @@ type FileStorage struct {
 // Create
 func (me *FileStorage) Create() (io.WriteCloser, error) {
 	return os.Create(me.filename)
+}
+
+// Open
+func (me *FileStorage) Open() (io.ReadCloser, error) {
+	return os.Open(me.filename)
 }
 
 func (me *FileStorage) String() string { return me.filename }

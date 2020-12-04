@@ -3,10 +3,8 @@ package tidio
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/gregoryv/ant"
@@ -32,18 +30,8 @@ func TestService_AddAccount(t *testing.T) {
 
 func TestService_RestoreState_missing_file(t *testing.T) {
 	srv := NewService()
-	bad := asserter.Wrap(t).Bad
-	bad(srv.RestoreState("no-such-file"))
-}
-
-func TestService_RestoreState_ok_file(t *testing.T) {
-	srv := NewService()
-	tmp, _ := ioutil.TempFile("", "restorestate")
-	srv.sys.Export(tmp)
-	tmp.Close()
 	ok := asserter.Wrap(t).Ok
-	ok(srv.RestoreState(tmp.Name()))
-	os.RemoveAll(tmp.Name())
+	ok(srv.RestoreState())
 }
 
 func TestNewService_panics_on_bad_settings(t *testing.T) {

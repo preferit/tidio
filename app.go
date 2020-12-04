@@ -60,7 +60,7 @@ func (me *App) run(cmd wolf.Command) error {
 			return err
 		}
 	} else {
-		if err := srv.RestoreState(filename); err != nil {
+		if err := srv.RestoreState(); err != nil {
 			return err
 		}
 	}
