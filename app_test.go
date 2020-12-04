@@ -47,6 +47,10 @@ func Test_can_specify_state_file(t *testing.T) {
 	if app.Run(cmd) != 0 {
 		t.Error("failed")
 	}
+
+	if app.Run(cmd) != 0 {
+		t.Error("should reload")
+	}
 }
 
 func Test_state_file_cannot_be_written(t *testing.T) {
