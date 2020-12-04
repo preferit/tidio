@@ -7,7 +7,6 @@ import (
 	"path"
 
 	"github.com/gregoryv/ant"
-	"github.com/gregoryv/go-timesheet"
 	"github.com/gregoryv/rs"
 )
 
@@ -30,20 +29,6 @@ type Service struct {
 
 	sys  *rs.System
 	dest Storage // for persisting the system to
-}
-
-// InitResources
-func (me *Service) InitResources() error {
-	// default templates
-	asRoot := rs.Root.Use(me.sys)
-	w, err := asRoot.Create("/api/timesheets/202001.timesheet")
-	if err != nil {
-		return err
-	}
-	timesheet.RenderTo(w, 2020, 1, 8)
-	w.Close()
-	me.Log(asRoot.Exec("/bin/chmod -m 05555 /api/timesheets/202001.timesheet"))
-	return nil
 }
 
 // AddAccount creates a system account and stores the secret in
