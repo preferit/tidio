@@ -35,10 +35,12 @@ func (me *App) Run(cmd wolf.Command) int {
 
 func (me *App) run(cmd wolf.Command) error {
 	var (
-		cli      = cmdline.NewParser(cmd.Args()...)
-		bind     = cli.Option("-bind").String(":13001")
-		filename = cli.Option("-state").String("system.state")
-		help     = cli.Flag("-h, --help")
+		cli  = cmdline.NewParser(cmd.Args()...)
+		help = cli.Flag("-h, --help")
+
+		a      = cli.Group("Actions", "ACTION")
+		_      = a.New("serveHTTP", &serveHTTP{})
+		action = a.Selected()
 	)
 	switch {
 	case !cli.Ok():
@@ -48,14 +50,32 @@ func (me *App) run(cmd wolf.Command) error {
 		cli.WriteUsageTo(cmd.Stdout())
 		return nil
 	}
+	return action.(runnable).Run(me)
 
+}
+
+// ----------------------------------------
+
+type serveHTTP struct {
+	cmdline.Item
+	bind     string
+	filename string
+}
+
+// ExtraOptions
+func (me *serveHTTP) ExtraOptions(p *cmdline.Parser) {
+	me.bind = p.Option("-bind").String(":13001")
+	me.filename = p.Option("-state").String("system.state")
+}
+
+func (me *serveHTTP) Run(app *App) error {
 	srv := NewService()
-	ant.MustConfigure(srv, fox.Logging{me})
+	ant.MustConfigure(srv, fox.Logging{app})
 
 	// configure persistence
-	srv.dest = NewFileStorage(filename)
+	srv.dest = NewFileStorage(me.filename)
 
-	if _, err := os.Stat(filename); os.IsNotExist(err) {
+	if _, err := os.Stat(me.filename); os.IsNotExist(err) {
 		if err := srv.PersistState(); err != nil {
 			return err
 		}
@@ -64,6 +84,12 @@ func (me *App) run(cmd wolf.Command) error {
 			return err
 		}
 	}
-	me.Log("listening on:", bind)
-	return me.ListenAndServe(bind, srv.Router())
+	app.Log("listening on:", me.bind)
+	return app.ListenAndServe(me.bind, srv.Router())
+}
+
+// ----------------------------------------
+
+type runnable interface {
+	Run(app *App) error
 }
