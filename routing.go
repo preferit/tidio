@@ -100,4 +100,5 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	io.Copy(res, r.Body)
 	res.Close() // important to flush the data
 	w.WriteHeader(http.StatusCreated)
+	go me.PersistState()
 }
