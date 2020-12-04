@@ -7,7 +7,38 @@ import (
 	"github.com/gregoryv/ant"
 	. "github.com/gregoryv/web"
 	"github.com/gregoryv/web/apidoc"
+	"github.com/gregoryv/web/toc"
 )
+
+func NewHelpView() *Page {
+	nav := Nav()
+	content := Article(
+		apiSection,
+		Section(
+			H2("Timesheet file format"),
+			P("Timesheets are plain text and are specific to year and month"),
+			Pre(Class("timesheet"), timesheet201506),
+		),
+	)
+	toc.MakeTOC(nav, content, "h2", "h3")
+	return NewPage(
+		Html(
+			Head(
+				Title("tidio - help"),
+				apidoc.DefaultStyle(),
+				Style(theme()),
+			),
+			Body(
+				Header(
+					H1("Tidio - API documentation"),
+				),
+				nav,
+				content,
+				footer(),
+			),
+		),
+	)
+}
 
 var apiSection *Element
 
@@ -18,8 +49,7 @@ func init() {
 	srv := NewService(john)
 	doc := apidoc.NewDoc(srv.Router())
 	api := NewAPI("https://tidio.preferit.se")
-	asJohn := NewCredentials(john.Account, john.Secret)
-	ant.MustConfigure(api, asJohn)
+	ant.MustConfigure(api, cred)
 
 	apiSection = Section(
 		H2("Timesheets"),
@@ -38,27 +68,6 @@ func init() {
 			"/api/timesheets/john/201506.timesheet",
 		).Request),
 		doc.Response(),
-	)
-}
-
-func NewHelpView() *Page {
-	content := Div(
-		apiSection,
-		Section(
-			H2("Timesheet file format"),
-			P("Timesheets are plain text and are specific to year and month"),
-			Pre(Class("timesheet"), timesheet201506),
-		),
-	)
-
-	return NewPage(Html(
-		Head(
-			apidoc.DefaultStyle(),
-			Style(theme()),
-			Title("tidio - help"),
-		),
-		Body(content, footer()),
-	),
 	)
 }
 
@@ -100,27 +109,46 @@ func theme() *CSS {
 	css.Style("html, body",
 		"margin: 0 0",
 		"padding: 0 0",
-		"background-color: #e2e2e2",
+		"background-color: #ffffff",
 	)
-	css.Style("div",
+	css.Style("a:link",
+		"color: rgb(55, 94, 171)", // golang blue
+		"text-decoration: none",
+	)
+	css.Style("a:link:hover",
+		"text-decoration: underline",
+	)
+	css.Style("header",
+		"padding-top: 1em",
+		"padding-left: 1.62em",
+	)
+	css.Style("nav",
+		"padding-left: 1.62em",
+		"font-family: Arial, Helvetica, sans-serif",
+	)
+	css.Style("article",
 		"background-color: white",
-		"padding: 1em 1em 2em 1em",
+		"padding: 1em 1em 2em 1.62em",
 		"min-height: 300",
 	)
 	css.Style("section",
-		"margin-bottom: 5em",
+		"margin-bottom: 1.62em",
 	)
 	css.Style("pre",
-		"margin-left: 1em",
+		"margin-left: 1.62em",
 	)
 	css.Style("footer",
 		"border-top: 1px solid #727272",
 		"padding: 0.6em 0.6em",
+		"background-color: #e2e2e2",
 	)
 	css.Style(".timesheet",
 		"border: 1px #e2e2e2 dotted",
 		"padding: 1em 1em",
 		"background-color: #ffffe6",
+	)
+	css.Style("p",
+		"font-family: Arial, Helvetica, sans-serif",
 	)
 	return css
 }

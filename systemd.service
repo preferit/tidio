@@ -6,7 +6,6 @@ After=auditd.service systemd-user-sessions.service time-sync.target
 User=gregory
 TimeoutStartSec=0
 Type=simple
-KillMode=process
 WorkingDirectory=/var/local/tidio
 ExecStart=/home/gregory/bin/tidio
 Restart=always
