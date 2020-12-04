@@ -1,11 +1,11 @@
 package tidio
 
 import (
-	"flag"
 	"net/http"
 	"os"
 
 	"github.com/gregoryv/ant"
+	"github.com/gregoryv/cmdline"
 	"github.com/gregoryv/fox"
 	"github.com/gregoryv/wolf"
 )
@@ -35,33 +35,35 @@ func (me *App) Run(cmd wolf.Command) int {
 
 func (me *App) run(cmd wolf.Command) error {
 	var (
-		fs       = flag.NewFlagSet(cmd.Args()[0], flag.ContinueOnError)
-		bind     = fs.String("bind", ":13001", "[host]:port to bind to")
-		filename = fs.String("state", "system.state", "")
+		cli      = cmdline.NewParser(cmd.Args()...)
+		bind     = cli.Option("-bind").String(":13001")
+		filename = cli.Option("-state").String("system.state")
+		help     = cli.Flag("-h, --help")
 	)
-	fs.SetOutput(cmd.Stderr())
-	err := fs.Parse(cmd.Args()[1:])
-	if err != nil {
-		if err != flag.ErrHelp {
-			return err
-		}
+	switch {
+	case !cli.Ok():
+		return cli.Error()
+
+	case help:
+		cli.WriteUsageTo(cmd.Stdout())
 		return nil
 	}
 
 	srv := NewService()
 	ant.MustConfigure(srv, fox.Logging{me})
 
-	srv.dest = NewFileStorage(*filename) // todo replace with ant Setting
+	// configure persistence
+	srv.dest = NewFileStorage(filename)
 
-	if _, err := os.Stat(*filename); os.IsNotExist(err) {
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		if err := srv.PersistState(); err != nil {
 			return err
 		}
 	} else {
-		if err := srv.RestoreState(*filename); err != nil {
+		if err := srv.RestoreState(filename); err != nil {
 			return err
 		}
 	}
-	me.Log("listening on:", *bind)
-	return me.ListenAndServe(*bind, srv.Router())
+	me.Log("listening on:", bind)
+	return me.ListenAndServe(bind, srv.Router())
 }

@@ -42,16 +42,10 @@ func TestApp_fails_on_wrong_option(t *testing.T) {
 func Test_can_specify_state_file(t *testing.T) {
 	app := NewApp()
 	app.ListenAndServe = noopListenAndServe
-	//app.SetLogger(t) fails as reload is done in the background
 	cmd := wolf.NewTCmd("x", "-state", "other.file")
 	defer cmd.Cleanup()
 	if app.Run(cmd) != 0 {
 		t.Error("failed")
-	}
-
-	// todo test reload without auto reload
-	if app.Run(cmd) != 0 {
-		t.Error("reload")
 	}
 }
 
@@ -63,17 +57,6 @@ func Test_state_file_cannot_be_written(t *testing.T) {
 	defer cmd.Cleanup()
 	if app.Run(cmd) == 0 {
 		t.Fail()
-	}
-}
-
-func Test_state_option_is_empty(t *testing.T) {
-	app := NewApp()
-	app.ListenAndServe = noopListenAndServe
-
-	cmd := wolf.NewTCmd("x", "-state", "")
-	defer cmd.Cleanup()
-	if app.Run(cmd) == 0 {
-		t.Error(cmd.Dump())
 	}
 }
 
