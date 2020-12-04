@@ -54,6 +54,7 @@ func NewHelpView() *Page {
 		Head(
 			apidoc.DefaultStyle(),
 			Style(theme()),
+			Title("tidio - help"),
 		),
 		Body(content, footer()),
 	),
