@@ -101,6 +101,14 @@ github.com/gregoryv/must v0.1.0/go.mod h1:1HQ/4FuSFr52clBKUWSaibQTnZRKnWtbBZRxC5
 github.com/gregoryv/nexus v0.3.0/go.mod h1:DJ2Ia6WpPX26edFW6LCl+9nYyX2h6Ot/kyJ83J+SAL0=
 github.com/gregoryv/nexus v0.4.0 h1:8LsAq8VDAhdGWsgudRtoi7vPqBYXja5wk9QttLDq9lc=
 github.com/gregoryv/nexus v0.4.0/go.mod h1:DJ2Ia6WpPX26edFW6LCl+9nYyX2h6Ot/kyJ83J+SAL0=
+github.com/gregoryv/nexus v0.4.1-0.20201204144246-11949c360f5f h1:SKlVc36nM64ZT+Fn4R8BBF2+QysRQve2v/r5hCV4DMU=
+github.com/gregoryv/nexus v0.4.1-0.20201204144246-11949c360f5f/go.mod h1:DJ2Ia6WpPX26edFW6LCl+9nYyX2h6Ot/kyJ83J+SAL0=
+github.com/gregoryv/nexus v0.4.1-0.20201204144755-713efee662eb h1:a4wUspfWzDI1GMHp45au7SfqyBzx9a3kmQkwU8nGu4c=
+github.com/gregoryv/nexus v0.4.1-0.20201204144755-713efee662eb/go.mod h1:DJ2Ia6WpPX26edFW6LCl+9nYyX2h6Ot/kyJ83J+SAL0=
+github.com/gregoryv/nexus v0.4.1-0.20201204145025-516c63f5d1e6 h1:gfF6SEqfso8FVLAwgt0Qy7UWCdN9NkztqeHYJQlyulI=
+github.com/gregoryv/nexus v0.4.1-0.20201204145025-516c63f5d1e6/go.mod h1:DJ2Ia6WpPX26edFW6LCl+9nYyX2h6Ot/kyJ83J+SAL0=
+github.com/gregoryv/nexus v0.4.1-0.20201204150433-fc4133ba9120 h1:dgGnNG9HEZpGDCp963sH478tFEukbKCg9pVEYe8T34c=
+github.com/gregoryv/nexus v0.4.1-0.20201204150433-fc4133ba9120/go.mod h1:DJ2Ia6WpPX26edFW6LCl+9nYyX2h6Ot/kyJ83J+SAL0=
 github.com/gregoryv/nugo v0.3.6 h1:arrrL+GqUn3+lhnSE6wG48wKSBCWMydS+7ODdPPWLX0=
 github.com/gregoryv/nugo v0.3.6/go.mod h1:va1vYkJFTGovPSmSVrJmoKQke7ipS2iXAbA8Fnt/jOU=
 github.com/gregoryv/qual v0.2.1/go.mod h1:5M5kejbZgxtswBGeoXC1yh4CP94W3FFv5o60BflBlnY=

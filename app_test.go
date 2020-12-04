@@ -58,12 +58,13 @@ func Test_can_specify_state_file(t *testing.T) {
 
 func Test_state_file_cannot_be_written(t *testing.T) {
 	app := NewApp()
+	app.SetLogger(t)
 	app.ListenAndServe = noopListenAndServe
 
 	cmd := wolf.NewTCmd("x", "-state", "/var/no-such")
 	defer cmd.Cleanup()
 	if app.Run(cmd) == 0 {
-		t.Fail()
+		t.Error(cmd.Out.String(), cmd.Err.String())
 	}
 }
 
