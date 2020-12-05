@@ -11,8 +11,10 @@ import (
 //go:generate stamp -clfile ../../changelog.md -go build_stamp.go
 
 func main() {
+	conf := tidio.Conf
+	conf.SetOutput(os.Stderr)
+
 	cmd := wolf.NewOSCmd()
-	tidio.Conf.SetOutput(os.Stderr)
 	app := tidio.NewApp()
 	code := app.Run(cmd)
 	os.Exit(code)

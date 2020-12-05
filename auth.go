@@ -37,8 +37,6 @@ func authenticate(sys *rs.System, r *http.Request) (*rs.Account, error) {
 	if h == "" {
 		return rs.Anonymous, nil
 	}
-	log := Log(r)
-	log.Info(h)
 
 	name, secret, ok := r.BasicAuth()
 	if !ok {
@@ -46,7 +44,7 @@ func authenticate(sys *rs.System, r *http.Request) (*rs.Account, error) {
 	}
 
 	asRoot := rs.Root.Use(sys)
-	asRoot.SetAuditer(log)
+	asRoot.SetAuditer(Log(r))
 	cmd := rs.NewCmd("/bin/secure", "-c", "-a", name, "-s", secret)
 	if err := asRoot.Run(cmd); err != nil {
 		return rs.Anonymous, err

@@ -90,24 +90,25 @@ func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
 
 func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	acc, err := authenticate(me.sys, r)
-	trace := Log(r)
-	trace.Info(acc.Name)
-	trace.Info(err)
+	log := Log(r)
+	log.Info(acc.Name)
+
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, err)
+		log.Info(err)
 		return
 	}
 	asAcc := acc.Use(me.sys)
-	asAcc.SetAuditer(trace)
+	asAcc.SetAuditer(log)
 
-	trace.Info(acc)
+	log.Info(acc)
 	// Check resource access permissions
 	_, err = asAcc.Stat(r.URL.Path)
 	if acc == rs.Anonymous && err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, err)
-		trace.Error(err)
+		log.Error(err)
 		return
 	}
 
@@ -115,7 +116,8 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	res, err := asAcc.Create(r.URL.Path)
 	if err != nil {
-		trace.Error(err)
+		log.Error(err)
+		// todo probably return an error here
 	}
 	// TODO when sharing is implemented and accounts have read but not write permissions
 	// Create will fail
