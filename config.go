@@ -19,12 +19,6 @@ type Config struct {
 	activeLoggers map[interface{}]*LogPrinter
 }
 
-// Register
-func (me *Config) Register(v interface{}) error {
-	me.activeLoggers[v] = NewLogPrinter(me.out)
-	return nil
-}
-
 // SetOutput
 func (me *Config) SetOutput(w io.Writer) { me.out = w }
 
@@ -47,8 +41,8 @@ func (me *Config) RLog(v ...interface{}) *LogPrinter {
 	}
 
 	first := v[0]
-	Register(first)
-	l := Log(first)
+	l := NewLogPrinter(me.out)
+	me.activeLoggers[first] = l
 	for _, other := range v[1:] {
 		me.activeLoggers[other] = l
 	}
@@ -62,5 +56,4 @@ var Conf = NewConfig()
 func RLog(v ...interface{}) *LogPrinter { return Conf.RLog(v...) }
 func Log(v interface{}) *LogPrinter     { return Conf.Log(v) }
 
-func Register(v interface{}) { Conf.Register(v) }
-func Unreg(v interface{})    { Conf.Unreg(v) }
+func Unreg(v interface{}) { Conf.Unreg(v) }

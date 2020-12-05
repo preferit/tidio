@@ -20,7 +20,7 @@ func NewService(settings ...ant.Setting) *Service {
 	srv := &Service{
 		sys: sys,
 	}
-	Register(srv)
+	RLog(srv)
 	ant.MustConfigure(srv, settings...)
 	return srv
 }

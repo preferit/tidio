@@ -15,7 +15,7 @@ func NewApp(settings ...ant.Setting) *App {
 		ListenAndServe: http.ListenAndServe,
 	}
 	ant.MustConfigure(app, settings...)
-	Register(app)
+	RLog(app)
 	return app
 }
 
