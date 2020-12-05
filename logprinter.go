@@ -22,11 +22,12 @@ type LogPrinter struct {
 	buf    bytes.Buffer // if buffered
 	lgr    *log.Logger
 	writes int
+	failed bool
 }
 
 // Buf makes the log printer buffered. Use Flush to get the contents.
 func (me *LogPrinter) Buf() *LogPrinter {
-	me.lgr.SetOutput(&me.buf)
+	me.SetOutput(&me.buf)
 	return me
 }
 
@@ -41,13 +42,25 @@ func (me *LogPrinter) Flush() []byte {
 	return me.buf.Bytes()
 }
 
+// Failed
+func (me *LogPrinter) Failed() bool { return me.failed }
+
 // Info
 func (me *LogPrinter) Info(v ...interface{}) {
 	me.lgr.Output(2, fmt.Sprintln(v...))
 	me.writes++
 }
 
+// Error
+func (me *LogPrinter) Error(v ...interface{}) {
+	me.lgr.Output(2, fmt.Sprintln(v...))
+	me.writes++
+	me.failed = true
+}
+
 func (me *LogPrinter) Log(v ...interface{}) {
 	me.lgr.Output(2, fmt.Sprintln(v...))
 	me.writes++
 }
+
+func (me *LogPrinter) SetOutput(w io.Writer) { me.lgr.SetOutput(w) }

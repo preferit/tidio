@@ -2,6 +2,7 @@ package tidio
 
 import (
 	"io"
+	"io/ioutil"
 	"os"
 	"path"
 
@@ -20,7 +21,7 @@ func NewService(settings ...ant.Setting) *Service {
 	srv := &Service{
 		sys: sys,
 	}
-	Register(srv)
+	RLog(srv).SetOutput(ioutil.Discard)
 	ant.MustConfigure(srv, settings...)
 	return srv
 }

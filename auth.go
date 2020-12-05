@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gregoryv/ant"
-	"github.com/gregoryv/fox"
 	"github.com/gregoryv/rs"
 )
 
@@ -33,12 +32,13 @@ func (me *BasicAuth) Set(v interface{}) error {
 	}
 }
 
-func authenticate(sys *rs.System, r *http.Request, trace fox.Logger) (*rs.Account, error) {
+func authenticate(sys *rs.System, r *http.Request) (*rs.Account, error) {
 	h := r.Header.Get("Authorization")
 	if h == "" {
 		return rs.Anonymous, nil
 	}
-	trace.Log(h)
+	log := Log(r)
+	log.Info(h)
 
 	name, secret, ok := r.BasicAuth()
 	if !ok {
@@ -46,7 +46,7 @@ func authenticate(sys *rs.System, r *http.Request, trace fox.Logger) (*rs.Accoun
 	}
 
 	asRoot := rs.Root.Use(sys)
-	asRoot.SetAuditer(trace)
+	asRoot.SetAuditer(log)
 	cmd := rs.NewCmd("/bin/secure", "-c", "-a", name, "-s", secret)
 	if err := asRoot.Run(cmd); err != nil {
 		return rs.Anonymous, err

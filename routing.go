@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -13,16 +14,38 @@ import (
 
 func (me *Service) Router() *mux.Router {
 	r := mux.NewRouter()
-	log := RLog(r)
 	r.Methods("GET").HandlerFunc(me.serveRead)
 	r.Methods("POST").HandlerFunc(me.serveCreate)
-	r.Use(foxhttp.NewRouteLog(log).Middleware)
+	log := RLog(r)
+	log.SetOutput(ioutil.Discard)
+	r.Use(
+		foxhttp.NewRouteLog(log).Middleware,
+		NewTracer(log).Middleware,
+	)
 	return r
 }
 
+func NewTracer(dst *LogPrinter) *tracer {
+	return &tracer{dst: dst}
+}
+
+type tracer struct {
+	dst *LogPrinter
+}
+
+func (me *tracer) Middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log := RLog(r).Buf()
+		log.lgr.SetPrefix("TRACE: ")
+		next.ServeHTTP(w, r)
+		if log.Failed() {
+			me.dst.Info(log.FlushString())
+		}
+		Unreg(r)
+	})
+}
+
 func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
-	trace := RLog(r).Buf()
-	defer Unreg(r)
 
 	if r.URL.Path == "/" {
 		w.WriteHeader(200)
@@ -30,10 +53,11 @@ func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	acc, err := authenticate(me.sys, r, trace)
+	acc, err := authenticate(me.sys, r)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, err)
+		Log(r).Error(err)
 		return
 	}
 	asAcc := acc.Use(me.sys)
@@ -69,7 +93,7 @@ func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
 func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	trace := RLog(r).Buf()
 	defer Unreg(r)
-	acc, err := authenticate(me.sys, r, trace)
+	acc, err := authenticate(me.sys, r)
 	trace.Info(acc.Name)
 	trace.Info(err)
 	defer func() {

@@ -1,18 +1,26 @@
 package tidio
 
 import (
-	"os"
+	"io"
+	"io/ioutil"
 )
 
 func NewBoard() *Board {
 	return &Board{
+		logDest:       ioutil.Discard,
 		activeLoggers: make(map[interface{}]*LogPrinter),
 	}
 }
 
+// Board holds reference to loggers for various objects.
+type Board struct {
+	logDest       io.Writer
+	activeLoggers map[interface{}]*LogPrinter
+}
+
 // Register
 func (me *Board) Register(v interface{}) error {
-	me.activeLoggers[v] = NewLogPrinter(os.Stderr)
+	me.activeLoggers[v] = NewLogPrinter(me.logDest)
 	return nil
 }
 
@@ -54,8 +62,3 @@ func Log(v interface{}) *LogPrinter { return reg.Log(v) }
 
 func Register(v interface{}) { reg.Register(v) }
 func Unreg(v interface{})    { reg.Unreg(v) }
-
-// Board holds reference to loggers for various objects.
-type Board struct {
-	activeLoggers map[interface{}]*LogPrinter
-}

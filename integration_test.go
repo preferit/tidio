@@ -18,4 +18,9 @@ func Test_integration(t *testing.T) {
 	if resp.Status != "200 OK" {
 		t.Error(resp.Status, "\n", log.FlushString())
 	}
+
+	resp = api.ReadTimesheet("/api/jibberish").MustSend()
+	if resp.Status != "401 Unauthorized" {
+		t.Errorf("%s\n%s", resp.Status, log.FlushString())
+	}
 }
