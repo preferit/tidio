@@ -53,12 +53,10 @@ func (me *Config) RLog(v ...interface{}) *LogPrinter {
 
 // ----------------------------------------
 
-var reg = NewConfig()
+var Conf = NewConfig()
 
-func RLog(v ...interface{}) *LogPrinter {
-	return reg.RLog(v...)
-}
-func Log(v interface{}) *LogPrinter { return reg.Log(v) }
+func RLog(v ...interface{}) *LogPrinter { return Conf.RLog(v...) }
+func Log(v interface{}) *LogPrinter     { return Conf.Log(v) }
 
-func Register(v interface{}) { reg.Register(v) }
-func Unreg(v interface{})    { reg.Unreg(v) }
+func Register(v interface{}) { Conf.Register(v) }
+func Unreg(v interface{})    { Conf.Unreg(v) }
