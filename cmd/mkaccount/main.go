@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/gregoryv/cmdline"
-	"github.com/gregoryv/fox"
 	"github.com/gregoryv/rs"
 	"github.com/preferit/tidio"
 )
@@ -34,25 +33,19 @@ func main() {
 }
 
 func createAccount(filename string, name, secret string) error {
-	log := fox.NewSyncLog(os.Stdout)
-	trace, cleanup := tidio.NewTrace(log)
-	defer cleanup("createAccount", name, "****")
-
 	r, err := os.Open(filename)
 	if err != nil {
-		trace.Log(err)
 		return fmt.Errorf("open state file: %w", err)
 	}
 	defer r.Close()
 	sys := rs.NewSystem()
 	err = sys.Import("/", r)
 	if err != nil {
-		trace.Log(err)
 		return err
 	}
 
 	asRoot := rs.Root.Use(sys)
-	asRoot.SetAuditer(trace)
+
 	sh := tidio.NewShell(asRoot)
 	err = tidio.CreateAccount(sh, name, secret)
 	if err != nil {
