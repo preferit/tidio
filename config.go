@@ -5,31 +5,31 @@ import (
 	"io/ioutil"
 )
 
-func NewBoard() *Board {
-	return &Board{
+func NewConfig() *Config {
+	return &Config{
 		logDest:       ioutil.Discard,
 		activeLoggers: make(map[interface{}]*LogPrinter),
 	}
 }
 
-// Board holds reference to loggers for various objects.
-type Board struct {
+// Config holds reference to loggers for various objects.
+type Config struct {
 	logDest       io.Writer
 	activeLoggers map[interface{}]*LogPrinter
 }
 
 // Register
-func (me *Board) Register(v interface{}) error {
+func (me *Config) Register(v interface{}) error {
 	me.activeLoggers[v] = NewLogPrinter(me.logDest)
 	return nil
 }
 
 // Unreg removes the previously registered item if any.
-func (me *Board) Unreg(v interface{}) {
+func (me *Config) Unreg(v interface{}) {
 	delete(me.activeLoggers, v)
 }
 
-func (me *Board) Log(v interface{}) *LogPrinter {
+func (me *Config) Log(v interface{}) *LogPrinter {
 	l, found := me.activeLoggers[v]
 	if !found {
 		return nolog
@@ -37,7 +37,7 @@ func (me *Board) Log(v interface{}) *LogPrinter {
 	return l
 }
 
-func (me *Board) RLog(v ...interface{}) *LogPrinter {
+func (me *Config) RLog(v ...interface{}) *LogPrinter {
 	if len(v) == 0 {
 		panic("missing values in MLog")
 	}
@@ -53,7 +53,7 @@ func (me *Board) RLog(v ...interface{}) *LogPrinter {
 
 // ----------------------------------------
 
-var reg = NewBoard()
+var reg = NewConfig()
 
 func RLog(v ...interface{}) *LogPrinter {
 	return reg.RLog(v...)
