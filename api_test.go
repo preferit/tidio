@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/gregoryv/asserter"
-	"github.com/gregoryv/fox"
 	"github.com/gregoryv/go-timesheet"
 )
 
@@ -57,8 +56,7 @@ func TestAPI_CreateTimesheet_asAnonymous(t *testing.T) {
 
 func TestAPI_ReadTimesheet_asJohn(t *testing.T) {
 	var (
-		log = fox.Logging{t}
-		srv = NewService(log, withJohnAccount)
+		srv = NewService(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
@@ -76,8 +74,7 @@ func TestAPI_ReadTimesheet_asJohn(t *testing.T) {
 
 func TestAPI_ReadTimesheet_noSuchResource(t *testing.T) {
 	var (
-		log = fox.Logging{t}
-		srv = NewService(log, withJohnAccount)
+		srv = NewService(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
@@ -92,8 +89,7 @@ func TestAPI_ReadTimesheet_noSuchResource(t *testing.T) {
 
 func TestAPI_ReadTimesheet_asAnonymous(t *testing.T) {
 	var (
-		log = fox.Logging{t}
-		srv = NewService(log, withJohnAccount)
+		srv = NewService(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
@@ -114,8 +110,7 @@ func TestAPI_ReadTimesheet_asAnonymous(t *testing.T) {
 
 func Test_hacks(t *testing.T) {
 	var (
-		log = fox.Logging{t}
-		srv = NewService(log, withJohnAccount)
+		srv = NewService(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()

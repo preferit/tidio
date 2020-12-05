@@ -4,7 +4,6 @@ package main
 import (
 	"os"
 
-	"github.com/gregoryv/fox"
 	"github.com/gregoryv/wolf"
 	"github.com/preferit/tidio"
 )
@@ -13,11 +12,7 @@ import (
 
 func main() {
 	cmd := wolf.NewOSCmd()
-	app := tidio.NewApp(
-		fox.Logging{
-			fox.NewSyncLog(os.Stderr),
-		},
-	)
+	app := tidio.NewApp()
 	code := app.Run(cmd)
 	os.Exit(code)
 }

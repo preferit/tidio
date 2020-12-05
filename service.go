@@ -17,11 +17,12 @@ func NewService(settings ...ant.Setting) *Service {
 	asRoot.Exec("/bin/mkdir /api")
 	asRoot.Exec("/bin/mkdir /api/timesheets")
 
-	srv := Service{
+	srv := &Service{
 		sys: sys,
 	}
-	ant.MustConfigure(&srv, settings...)
-	return &srv
+	Register(srv)
+	ant.MustConfigure(srv, settings...)
+	return srv
 }
 
 type Service struct {

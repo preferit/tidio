@@ -6,28 +6,27 @@ import (
 
 	"github.com/gregoryv/ant"
 	"github.com/gregoryv/cmdline"
-	"github.com/gregoryv/fox"
 	"github.com/gregoryv/wolf"
 )
 
 // NewApp returns a App with applied settings
 func NewApp(settings ...ant.Setting) *App {
-	app := App{
+	app := &App{
 		ListenAndServe: http.ListenAndServe,
 	}
-	ant.MustConfigure(&app, settings...)
-	return &app
+	ant.MustConfigure(app, settings...)
+	Register(app)
+	return app
 }
 
 type App struct {
-	OptionalLogger
 	wolf.Command
 	ListenAndServe func(string, http.Handler) error
 }
 
 func (me *App) Run(cmd wolf.Command) int {
 	if err := me.run(cmd); err != nil {
-		me.Log("Run", err)
+		Log(me).Info("Run", err)
 		return cmd.Stop(1)
 	}
 	return cmd.Stop(0)
@@ -73,7 +72,6 @@ func (me *serveHTTP) ExtraOptions(p *cmdline.Parser) {
 
 func (me *serveHTTP) Run(app *App) error {
 	srv := NewService()
-	ant.MustConfigure(srv, fox.Logging{app})
 
 	// configure persistence
 	srv.dest = NewFileStorage(me.filename)
@@ -88,7 +86,7 @@ func (me *serveHTTP) Run(app *App) error {
 	if err := srv.Error(); err != nil {
 		return err
 	}
-	app.Log("listening on:", me.bind)
+	Log(app).Info("listening on", me.bind)
 	return app.ListenAndServe(me.bind, srv.Router())
 }
 

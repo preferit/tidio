@@ -6,7 +6,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gregoryv/fox"
 	"github.com/gregoryv/wolf"
 )
 
@@ -19,7 +18,7 @@ func TestApp_supports_help_flag(t *testing.T) {
 }
 
 func TestApp_has_sane_default_values(t *testing.T) {
-	app := NewApp(fox.Logging{t})
+	app := NewApp()
 	var started bool
 	app.ListenAndServe = func(string, http.Handler) error {
 		started = true
@@ -37,7 +36,6 @@ func TestApp_fails_on_wrong_option(t *testing.T) {
 	cmd := wolf.NewTCmd("x", "-wrong-option", "value")
 	defer cmd.Cleanup()
 	app := NewApp()
-	app.SetLogger(t)
 	code := app.Run(cmd)
 	if code == 0 {
 		t.Error(cmd.Err.String())
@@ -60,7 +58,6 @@ func Test_can_specify_state_file(t *testing.T) {
 
 func Test_state_file_cannot_be_written(t *testing.T) {
 	app := NewApp()
-	app.SetLogger(t)
 	app.ListenAndServe = noopListenAndServe
 
 	cmd := wolf.NewTCmd("x", "-state", "/var/no-such")
@@ -72,7 +69,6 @@ func Test_state_file_cannot_be_written(t *testing.T) {
 
 func Test_state_file_cannot_be_read(t *testing.T) {
 	app := NewApp()
-	app.SetLogger(t)
 	app.ListenAndServe = noopListenAndServe
 
 	f, err := ioutil.TempFile("", "tidio")
