@@ -1,8 +1,6 @@
 package tidio
 
 import (
-	"io/ioutil"
-	"log"
 	"os"
 )
 
@@ -14,10 +12,7 @@ func NewBoard() *Board {
 
 // Register
 func (me *Board) Register(v interface{}) error {
-	out := os.Stderr
-	me.activeLoggers[v] = &LogPrinter{
-		log: log.New(out, "", log.Lshortfile),
-	}
+	me.activeLoggers[v] = NewLogPrinter(os.Stderr)
 	return nil
 }
 
@@ -29,10 +24,7 @@ func (me *Board) Unreg(v interface{}) {
 func (me *Board) Log(v interface{}) *LogPrinter {
 	l, found := me.activeLoggers[v]
 	if !found {
-		l = &LogPrinter{
-			log: log.New(ioutil.Discard, "", 0),
-		}
-		me.activeLoggers[v] = l
+		return nolog
 	}
 	return l
 }

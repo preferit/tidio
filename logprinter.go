@@ -3,19 +3,36 @@ package tidio
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 )
 
+func NewLogPrinter(w io.Writer) *LogPrinter {
+	return &LogPrinter{
+		lgr: log.New(w, "", log.Lshortfile),
+	}
+}
+
+var nolog = &LogPrinter{
+	lgr: log.New(ioutil.Discard, "", 0),
+}
+
 type LogPrinter struct {
 	buf    bytes.Buffer // if buffered
-	log    *log.Logger
+	lgr    *log.Logger
 	writes int
 }
 
 // Buf makes the log printer buffered. Use Flush to get the contents.
 func (me *LogPrinter) Buf() *LogPrinter {
-	me.log = log.New(&me.buf, "", log.Lshortfile)
+	me.lgr.SetOutput(&me.buf)
 	return me
+}
+
+// FlushString
+func (me *LogPrinter) FlushString() string {
+	return string(me.Flush())
 }
 
 // Flush returns the buffered bytes if any and resets the buffer.
@@ -24,18 +41,13 @@ func (me *LogPrinter) Flush() []byte {
 	return me.buf.Bytes()
 }
 
-// FlushString
-func (me *LogPrinter) FlushString() string {
-	return string(me.Flush())
-}
-
 // Info
 func (me *LogPrinter) Info(v ...interface{}) {
-	me.log.Output(2, fmt.Sprintln(v...))
+	me.lgr.Output(2, fmt.Sprintln(v...))
 	me.writes++
 }
 
 func (me *LogPrinter) Log(v ...interface{}) {
-	me.log.Output(2, fmt.Sprintln(v...))
+	me.lgr.Output(2, fmt.Sprintln(v...))
 	me.writes++
 }
