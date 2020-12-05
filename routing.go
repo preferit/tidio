@@ -23,7 +23,6 @@ func (me *Service) Router() *mux.Router {
 }
 
 func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
-
 	if r.URL.Path == "/" {
 		w.WriteHeader(200)
 		NewHelpView().WriteTo(w)

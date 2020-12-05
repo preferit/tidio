@@ -89,4 +89,13 @@ func Test_state_file_cannot_be_read(t *testing.T) {
 	}
 }
 
+func Test_mkAccount(t *testing.T) {
+	app := NewApp()
+	cmd := wolf.NewTCmd("x", "mkAccount", "-n", "john", "-s", "secret")
+	defer cmd.Cleanup()
+	if app.Run(cmd) != 0 {
+		t.Error(cmd.Out.String(), cmd.Err.String())
+	}
+}
+
 var noopListenAndServe = func(string, http.Handler) error { return nil }
