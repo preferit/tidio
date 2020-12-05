@@ -117,11 +117,13 @@ func Test_hacks(t *testing.T) {
 
 	t.Run("malformed basic auth", func(t *testing.T) {
 		api := NewAPI(ts.URL)
+		log := Log(api).Buf()
 		r := api.CreateTimesheet("", nil).Request
 		r.Header.Set("Authorization", "Basi")
 		resp := api.MustSend()
 		if resp.StatusCode != http.StatusUnauthorized {
 			t.Error("should fail:", resp.Status)
+			t.Log(log.FlushString())
 		}
 	})
 
@@ -132,7 +134,6 @@ func Test_hacks(t *testing.T) {
 			t.Error("should fail:", resp.Status)
 		}
 	})
-
 }
 
 func TestAPI_Send_nil_request(t *testing.T) {

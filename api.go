@@ -83,7 +83,7 @@ func (me *API) Send() (*http.Response, error) {
 	}
 	resp, err := me.client.Do(r)
 	if err != nil {
-		Log(me).Info(r.Method, r.URL, err)
+		Log(me).Error(r.Method, r.URL, err)
 		return resp, err
 	}
 	Log(me).Info(r.Method, r.URL, resp.StatusCode)

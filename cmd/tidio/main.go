@@ -12,6 +12,7 @@ import (
 
 func main() {
 	cmd := wolf.NewOSCmd()
+	tidio.Conf.SetOutput(os.Stderr)
 	app := tidio.NewApp()
 	code := app.Run(cmd)
 	os.Exit(code)

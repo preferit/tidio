@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -17,7 +16,6 @@ func (me *Service) Router() *mux.Router {
 	r.Methods("GET").HandlerFunc(me.serveRead)
 	r.Methods("POST").HandlerFunc(me.serveCreate)
 	log := RLog(r)
-	log.SetOutput(ioutil.Discard)
 	r.Use(
 		foxhttp.NewRouteLog(log).Middleware,
 		NewTracer(log).Middleware,
@@ -91,16 +89,10 @@ func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
 }
 
 func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
-	trace := RLog(r).Buf()
-	defer Unreg(r)
 	acc, err := authenticate(me.sys, r)
+	trace := Log(r)
 	trace.Info(acc.Name)
 	trace.Info(err)
-	defer func() {
-		if err != nil {
-			Log(me).Info("trace\n", trace.FlushString())
-		}
-	}()
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, err)
@@ -115,14 +107,16 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	if acc == rs.Anonymous && err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, err)
+		trace.Error(err)
 		return
 	}
 
 	// Serve the specific method
-
 	defer r.Body.Close()
 	res, err := asAcc.Create(r.URL.Path)
-	trace.Info(err)
+	if err != nil {
+		trace.Error(err)
+	}
 	// TODO when sharing is implemented and accounts have read but not write permissions
 	// Create will fail
 

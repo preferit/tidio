@@ -6,23 +6,27 @@ import (
 )
 
 func NewConfig() *Config {
-	return &Config{
-		logDest:       ioutil.Discard,
+	c := &Config{
 		activeLoggers: make(map[interface{}]*LogPrinter),
 	}
+	c.SetOutput(ioutil.Discard)
+	return c
 }
 
 // Config holds reference to loggers for various objects.
 type Config struct {
-	logDest       io.Writer
+	out           io.Writer
 	activeLoggers map[interface{}]*LogPrinter
 }
 
 // Register
 func (me *Config) Register(v interface{}) error {
-	me.activeLoggers[v] = NewLogPrinter(me.logDest)
+	me.activeLoggers[v] = NewLogPrinter(me.out)
 	return nil
 }
+
+// SetOutput
+func (me *Config) SetOutput(w io.Writer) { me.out = w }
 
 // Unreg removes the previously registered item if any.
 func (me *Config) Unreg(v interface{}) {
