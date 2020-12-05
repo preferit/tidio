@@ -15,12 +15,21 @@ func NewConfig() *Config {
 
 // Config holds reference to loggers for various objects.
 type Config struct {
-	out           io.Writer
+	out io.Writer
+
+	debug bool
+
 	activeLoggers map[interface{}]*LogPrinter
 }
 
 // SetOutput
 func (me *Config) SetOutput(w io.Writer) { me.out = w }
+
+// Debug
+func (me *Config) Debug() bool { return me.debug }
+func (me *Config) SetDebug(v bool) {
+	me.debug = v
+}
 
 // Unreg removes the previously registered item if any.
 func (me *Config) Unreg(v interface{}) {

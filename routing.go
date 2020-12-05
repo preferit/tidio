@@ -16,31 +16,11 @@ func (me *Service) Router() *mux.Router {
 	r.Methods("GET").HandlerFunc(me.serveRead)
 	r.Methods("POST").HandlerFunc(me.serveCreate)
 	log := RLog(r)
-	r.Use(
-		foxhttp.NewRouteLog(log).Middleware,
-		NewTracer(log).Middleware,
-	)
+	r.Use(foxhttp.NewRouteLog(log).Middleware)
+	if Conf.Debug() {
+		r.Use(NewTracer(log).Middleware)
+	}
 	return r
-}
-
-func NewTracer(dst *LogPrinter) *tracer {
-	return &tracer{dst: dst}
-}
-
-type tracer struct {
-	dst *LogPrinter
-}
-
-func (me *tracer) Middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log := RLog(r).Buf()
-		log.lgr.SetPrefix("TRACE: ")
-		next.ServeHTTP(w, r)
-		if log.Failed() {
-			me.dst.Info(log.FlushString())
-		}
-		Unreg(r)
-	})
 }
 
 func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {

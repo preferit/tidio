@@ -17,6 +17,10 @@ var (
 	asJohn          = NewCredentials("john", "secret")
 )
 
+func init() {
+	Conf.SetDebug(true)
+}
+
 func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 	var (
 		srv  = NewService(withJohnAccount)
