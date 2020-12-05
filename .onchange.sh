@@ -12,9 +12,10 @@ case $extension in
 esac
 
 #run="-run=hacks"
-#go install ./cmd/...
 go test -coverprofile /tmp/tidio.tprof $run ./...
 uncover -min 90 /tmp/tidio.tprof
 
-killall tidio
+sudo systemctl stop tidio
+go install ./cmd/...
+sudo systemctl start tidio
 
