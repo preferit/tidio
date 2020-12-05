@@ -78,7 +78,7 @@ func (me *LogPrinter) FlushString() string {
 
 // Info
 func (me *LogPrinter) Info(v ...interface{}) {
-	me.log.Output(2, fmt.Sprint(v...))
+	me.log.Output(2, fmt.Sprintln(v...))
 	me.writes++
 }
 

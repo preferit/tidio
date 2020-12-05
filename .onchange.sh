@@ -19,3 +19,5 @@ sudo systemctl stop tidio
 go install ./cmd/...
 sudo systemctl start tidio
 
+group=integration go test .
+
