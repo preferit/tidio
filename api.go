@@ -25,7 +25,6 @@ func NewAPI(host string, settings ...ant.Setting) *API {
 // API provides http request builders for the tidio service
 // The requests returned should be valid and complete.
 type API struct {
-	OptionalLogger
 	host   string
 	client *http.Client
 	auth   ant.Setting // applied
@@ -84,10 +83,10 @@ func (me *API) Send() (*http.Response, error) {
 	}
 	resp, err := me.client.Do(r)
 	if err != nil {
-		me.Log(r.Method, r.URL, err)
+		Log(me).Info(r.Method, r.URL, err)
 		return resp, err
 	}
-	me.Log(r.Method, r.URL, resp.StatusCode)
+	Log(me).Info(r.Method, r.URL, resp.StatusCode)
 	return resp, nil
 }
 
@@ -96,5 +95,5 @@ func (me *API) warn(err error) {
 	if err == nil {
 		return
 	}
-	me.Log(err)
+	Log(me).Info(err)
 }

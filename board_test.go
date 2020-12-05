@@ -13,11 +13,16 @@ func Test_loggers(t *testing.T) {
 	reg.Unreg(t)
 	somefunc(t) // no logger registered
 
-	got := string(log.Flush())
+	got := log.FlushString()
 	if strings.Count(got, "hello") != 1 {
 		t.Errorf("cached log\n%s", got)
 		t.Error("writes", log.writes)
 	}
+}
+
+func Test_RLog_panics(t *testing.T) {
+	defer catchPanic(t)
+	RLog()
 }
 
 func somefunc(t *testing.T) {

@@ -15,11 +15,12 @@ func NewBoard() *Board {
 }
 
 // Register
-func (me *Board) Register(v interface{}) {
+func (me *Board) Register(v interface{}) error {
 	out := os.Stderr
 	me.activeLoggers[v] = &LogPrinter{
 		log: log.New(out, "", log.Lshortfile),
 	}
+	return nil
 }
 
 // Unreg removes the previously registered item if any.
@@ -34,6 +35,20 @@ func (me *Board) Log(v interface{}) *LogPrinter {
 			log: log.New(ioutil.Discard, "", 0),
 		}
 		me.activeLoggers[v] = l
+	}
+	return l
+}
+
+func (me *Board) RLog(v ...interface{}) *LogPrinter {
+	if len(v) == 0 {
+		panic("missing values in MLog")
+	}
+
+	first := v[0]
+	Register(first)
+	l := Log(first)
+	for _, other := range v[1:] {
+		me.activeLoggers[other] = l
 	}
 	return l
 }
@@ -56,6 +71,11 @@ func (me *LogPrinter) Flush() []byte {
 	return me.buf.Bytes()
 }
 
+// FlushString
+func (me *LogPrinter) FlushString() string {
+	return string(me.Flush())
+}
+
 // Info
 func (me *LogPrinter) Info(v ...interface{}) {
 	me.log.Output(2, fmt.Sprint(v...))
@@ -66,9 +86,8 @@ func (me *LogPrinter) Info(v ...interface{}) {
 
 var reg = NewBoard()
 
-func RLog(v interface{}) *LogPrinter {
-	Register(v)
-	return Log(v)
+func RLog(v ...interface{}) *LogPrinter {
+	return reg.RLog(v...)
 }
 func Log(v interface{}) *LogPrinter { return reg.Log(v) }
 

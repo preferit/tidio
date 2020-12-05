@@ -20,37 +20,38 @@ var (
 
 func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 	var (
-		log = fox.Logging{t}
-		srv = NewService(log, withJohnAccount)
-		ts  = httptest.NewServer(srv.Router())
-	)
-	defer ts.Close()
-	var (
-		api  = NewAPI(ts.URL, asJohn, log)
+		srv  = NewService(withJohnAccount)
+		ts   = httptest.NewServer(srv.Router())
+		api  = NewAPI(ts.URL, asJohn)
+		log  = RLog(srv, api).Buf()
 		path = "/api/timesheets/john/202001.timesheet"
 		body = timesheet.Render(2020, 1, 8)
-		resp = api.CreateTimesheet(path, body).MustSend()
+		req  = api.CreateTimesheet(path, body)
 	)
+	defer ts.Close()
+
+	resp := req.MustSend()
 	if resp.StatusCode != 201 {
-		t.Error(resp.Status)
+		t.Error(resp.Status, "\n", log.FlushString())
 	}
 }
 
 func TestAPI_CreateTimesheet_asAnonymous(t *testing.T) {
 	var (
-		log = fox.Logging{t}
-		srv = NewService(log, withJohnAccount)
+		srv = NewService(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
-	)
-	defer ts.Close()
-	var (
-		api  = NewAPI(ts.URL, log)
+		api = NewAPI(ts.URL)
+		log = RLog(srv, api).Buf()
+
 		path = "/api/timesheets/john/202001.timesheet"
 		body = timesheet.Render(2020, 1, 8)
-		resp = api.CreateTimesheet(path, body).MustSend()
+		req  = api.CreateTimesheet(path, body)
 	)
+	defer ts.Close()
+
+	resp := req.MustSend()
 	if resp.StatusCode != 401 {
-		t.Error(resp.Status)
+		t.Error(resp.Status, "\n", log.FlushString())
 	}
 }
 
@@ -141,8 +142,7 @@ func Test_hacks(t *testing.T) {
 
 func TestAPI_Send_nil_request(t *testing.T) {
 	var (
-		log = fox.Logging{t}
-		api = NewAPI("http://localhost", log)
+		api = NewAPI("http://localhost")
 	)
 	if _, err := api.Send(); err == nil {
 		t.Error("should fail")
@@ -158,19 +158,18 @@ func TestAPI_Send_nil_request(t *testing.T) {
 
 func TestAPI_Send_failing_response(t *testing.T) {
 	var (
-		log = fox.Logging{t}
-		api = NewAPI("http://_1234nosuchhost.net", log)
+		api = NewAPI("http://_1234nosuchhost.net")
+		log = RLog(api).Buf()
 	)
 	api.Request, _ = http.NewRequest("GET", "/", nil)
 	if _, err := api.Send(); err == nil {
-		t.Error("should fail")
+		t.Error("should fail\n", log.FlushString())
 	}
 }
 
 func TestAPI_warnings(t *testing.T) {
 	var (
-		log = fox.Logging{t}
-		api = NewAPI("http://localhost", log)
+		api = NewAPI("http://localhost")
 	)
 	api.warn(nil)
 	api.warn(fmt.Errorf("failed"))
