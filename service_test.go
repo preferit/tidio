@@ -44,13 +44,6 @@ func TestNewService_panics_on_bad_settings(t *testing.T) {
 	t.Error("should panic")
 }
 
-func newTestService() (*Service, *BufferedLogger) {
-	srv := NewService()
-	buflog := Buflog(srv)
-	srv.AddAccount("john", "secret")
-	return srv, buflog
-}
-
 func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRecorder, *http.Request) {
 	t.Helper()
 	w := httptest.NewRecorder()

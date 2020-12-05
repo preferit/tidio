@@ -26,7 +26,6 @@ func NewService(settings ...ant.Setting) *Service {
 }
 
 type Service struct {
-	OptionalLogger
 	nexus.Failure
 
 	sys  *rs.System
@@ -56,7 +55,7 @@ func (me *Service) RestoreState() error {
 	if me.dest == nil || !me.Ok() {
 		return me.Error()
 	}
-	me.Log("restoring state:", me.dest)
+	Log(me).Info("restoring state:", me.dest)
 	r, err := me.dest.Open()
 	if err != nil {
 		return me.Fail(err)
@@ -77,7 +76,7 @@ func (me *Service) PersistState() error {
 		return me.Fail(err)
 	}
 	defer w.Close()
-	me.Log("persist state: ", me.dest)
+	Log(me).Info("persist state: ", me.dest)
 	return me.sys.Export(w)
 }
 

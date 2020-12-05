@@ -82,6 +82,11 @@ func (me *LogPrinter) Info(v ...interface{}) {
 	me.writes++
 }
 
+func (me *LogPrinter) Log(v ...interface{}) {
+	me.log.Output(2, fmt.Sprintln(v...))
+	me.writes++
+}
+
 // ----------------------------------------
 
 var reg = NewBoard()

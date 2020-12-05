@@ -13,15 +13,16 @@ import (
 
 func (me *Service) Router() *mux.Router {
 	r := mux.NewRouter()
+	log := RLog(r)
 	r.Methods("GET").HandlerFunc(me.serveRead)
 	r.Methods("POST").HandlerFunc(me.serveCreate)
-	r.Use(foxhttp.NewRouteLog(me).Middleware)
+	r.Use(foxhttp.NewRouteLog(log).Middleware)
 	return r
 }
 
 func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
-	trace, cleanup := newTrace(me, r)
-	defer cleanup()
+	trace := RLog(r).Buf()
+	defer Unreg(r)
 
 	if r.URL.Path == "/" {
 		w.WriteHeader(200)
@@ -66,12 +67,16 @@ func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
 }
 
 func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
-	trace, cleanup := newTrace(me, r)
-	defer cleanup()
-
+	trace := RLog(r).Buf()
+	defer Unreg(r)
 	acc, err := authenticate(me.sys, r, trace)
-	trace.Log(acc.Name)
-	trace.Log(err)
+	trace.Info(acc.Name)
+	trace.Info(err)
+	defer func() {
+		if err != nil {
+			Log(me).Info("trace\n", trace.FlushString())
+		}
+	}()
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintln(w, err)
@@ -80,7 +85,7 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 	asAcc := acc.Use(me.sys)
 	asAcc.SetAuditer(trace)
 
-	trace.Log(acc)
+	trace.Info(acc)
 	// Check resource access permissions
 	_, err = asAcc.Stat(r.URL.Path)
 	if acc == rs.Anonymous && err != nil {
@@ -93,7 +98,7 @@ func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 	res, err := asAcc.Create(r.URL.Path)
-	trace.Log(err)
+	trace.Info(err)
 	// TODO when sharing is implemented and accounts have read but not write permissions
 	// Create will fail
 
