@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/gregoryv/fox/foxhttp"
 	"github.com/gregoryv/rs"
 )
 
@@ -16,7 +15,7 @@ func (me *Service) Router() *mux.Router {
 	r.Methods("GET").HandlerFunc(me.serveRead)
 	r.Methods("POST").HandlerFunc(me.serveCreate)
 	log := RLog(r)
-	r.Use(foxhttp.NewRouteLog(log).Middleware)
+	r.Use(NewRouteLog(log).Middleware)
 	if Conf.Debug() {
 		r.Use(NewTracer(log).Middleware)
 	}
