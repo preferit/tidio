@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	withJohnAccount = InitialAccount{"john", "secret"}
 	asJohn          = NewCredentials("john", "secret")
+	withJohnAccount = asJohn
 )
 
 func init() {

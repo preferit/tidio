@@ -12,9 +12,9 @@ func NewIndex() *Page {
 		asJohn = tidio.NewCredentials("john", "secret")
 		api    = tidio.NewAPI("", asJohn)
 
-		srv = tidio.NewService(
-			tidio.NewInitialAccount(asJohn),
-		)
+		initAcc = asJohn
+		srv     = tidio.NewService(initAcc)
+
 		router = srv.Router()
 		doc    = apidoc.NewDoc(router)
 	)

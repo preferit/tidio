@@ -45,8 +45,7 @@ var apiSection *Element
 func init() {
 	// Cache api section
 	cred := NewCredentials("john", "secret")
-	john := NewInitialAccount(cred)
-	srv := NewService(john)
+	srv := NewService(cred)
 	doc := apidoc.NewDoc(srv.Router())
 	api := NewAPI("https://tidio.preferit.se")
 	ant.MustConfigure(api, cred)
