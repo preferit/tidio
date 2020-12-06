@@ -20,22 +20,24 @@ func NewHelpView() *Page {
 			Pre(Class("timesheet"), timesheet201506),
 		),
 	)
-	toc.MakeTOC(nav, content, "h2", "h3")
+	body := Body(
+		Header(
+			H1("Tidio - API documentation"),
+		),
+		nav,
+		content,
+		NewChangelog(),
+		footer(),
+	)
+	toc.MakeTOC(nav, body, "h1", "h2", "h3")
 	return NewPage(
 		Html(
 			Head(
 				Title("tidio - help"),
-				apidoc.DefaultStyle(),
+				//apidoc.DefaultStyle(),
 				Style(theme()),
 			),
-			Body(
-				Header(
-					H1("Tidio - API documentation"),
-				),
-				nav,
-				content,
-				footer(),
-			),
+			body,
 		),
 	)
 }
@@ -110,6 +112,9 @@ func theme() *CSS {
 		"padding: 0 0",
 		"background-color: #ffffff",
 	)
+	css.Style("h1:first-child",
+		"margin-top: 0",
+	)
 	css.Style("a:link",
 		"color: rgb(55, 94, 171)", // golang blue
 		"text-decoration: none",
@@ -140,6 +145,7 @@ func theme() *CSS {
 		"border-top: 1px solid #727272",
 		"padding: 0.6em 0.6em",
 		"background-color: #e2e2e2",
+		"min-height: 500px",
 	)
 	css.Style(".timesheet",
 		"border: 1px #e2e2e2 dotted",
@@ -148,7 +154,30 @@ func theme() *CSS {
 	)
 	css.Style("p",
 		"font-family: Arial, Helvetica, sans-serif",
+		"line-height: 1.3em",
 	)
+	css.Style(".request",
+		"padding: 1em 1.618em",
+		"border-radius: 1em",
+		"border: 1px dashed #929292",
+	)
+	css.Style(".response",
+		"padding: 1em 1.618em",
+		"background-color: #f2f2f2",
+		"border-radius: 1em",
+	)
+	css.Style("nav ul",
+		"list-style-type: none",
+		"padding-left: 0",
+		"line-height: 1.3em",
+	)
+	css.Style("nav ul .h2",
+		"margin-left: 1.62em",
+	)
+	css.Style("nav ul .h3",
+		"margin-left: 3.22em",
+	)
+
 	return css
 }
 
