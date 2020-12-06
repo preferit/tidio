@@ -42,6 +42,8 @@ github.com/gregoryv/asserter v0.3.1-0.20200620185907-332cdf62ce04/go.mod h1:WjMh
 github.com/gregoryv/asserter v0.3.1-0.20200710143923-04ff8e6a2edf/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
 github.com/gregoryv/asserter v0.4.0 h1:UkV6xSFVb/wvEidJ40Gt6WPSto/ODbtGOKWJ+uVTbZI=
 github.com/gregoryv/asserter v0.4.0/go.mod h1:WjMhNLh0zjyvgOQpWWx8Om0n7jlgMzTn7qgKhJeH8ew=
+github.com/gregoryv/asserter v0.4.1-0.20201128093127-74b8bb2743ca h1:9hfg2CtowsSyVYeT1WUuxZ3ROxLVWUOXglTZ9QlH/Xs=
+github.com/gregoryv/asserter v0.4.1-0.20201128093127-74b8bb2743ca/go.mod h1:z1mBb29IGWaSx97sT7+i5j+KCbl+kBth9mwmX56mrNU=
 github.com/gregoryv/cli v0.0.0-20180329083318-9f0f54cf147f/go.mod h1:zrYlwj1/vKPPQ7V++Jw7nIPSwM61ERFQmJ8YAh6zibA=
 github.com/gregoryv/cmdline v0.0.0-20200822134937-e77bcfd6d968 h1:EncwlkTqRhIw7jZ3uX6dgRIVNbeknBBNB717fzxfk4s=
 github.com/gregoryv/cmdline v0.0.0-20200822134937-e77bcfd6d968/go.mod h1:DfbcpIEh/WREYcrSnx3qeYY0qRxbLlmAgLLP6AeLXI8=
@@ -128,6 +130,8 @@ github.com/gregoryv/rs v0.4.1-0.20201127134535-1e0a4d8a86dd h1:mBrnBw4SEqXpaTp8S
 github.com/gregoryv/rs v0.4.1-0.20201127134535-1e0a4d8a86dd/go.mod h1:YyQSfkkbf3xkpWigJpk8hINWCMEa55aZ1TSOV647Hl4=
 github.com/gregoryv/rs v0.4.1-0.20201127140630-f31af5184cac h1:cQbouu6iZakjl0Wu2TPur/GqviEClT4wB2kKZwbjTnI=
 github.com/gregoryv/rs v0.4.1-0.20201127140630-f31af5184cac/go.mod h1:YyQSfkkbf3xkpWigJpk8hINWCMEa55aZ1TSOV647Hl4=
+github.com/gregoryv/rs v0.4.1 h1:yGoKnvp6BpIXyIUmmAQ1oLk9eM01kbwMWc6lTcBvM0k=
+github.com/gregoryv/rs v0.4.1/go.mod h1:KtPW7Oxz0Igq/CtqqJW7mI+pf3LxvV56u4yj0qS5gQ4=
 github.com/gregoryv/stamp v0.2.0 h1:03ivTobCyJam1Ipdh6pM8p/I/4kPYtJD8NyHux3QINY=
 github.com/gregoryv/stamp v0.2.0/go.mod h1:WshcWN15bpw0R0ZIh1XU2BseKfvpD/gWurz2NF+Mz6U=
 github.com/gregoryv/web v0.9.0 h1:LaZDImhdrkSFtvNT8//aRMAox258olhXgGQN+j1c1uk=
@@ -136,6 +140,8 @@ github.com/gregoryv/web v0.13.0 h1:I7iOsI/mfOVhe2FheDHlDOE5mBMYAl3pq511VT61A9Y=
 github.com/gregoryv/web v0.13.0/go.mod h1:rQLMOfw2Hny0Nvb24COmX96jKJyhNOfC/jAHITBn3vc=
 github.com/gregoryv/web v0.14.0 h1:UYw2k0+DwkV7Nqxh085Fz4qxO6NIU1KaD/Zn1wKCHpA=
 github.com/gregoryv/web v0.14.0/go.mod h1:rQLMOfw2Hny0Nvb24COmX96jKJyhNOfC/jAHITBn3vc=
+github.com/gregoryv/web v0.14.1-0.20201122044010-300efa487c7b h1:DJRvqLzf59ijUgMVwmyLupYmvMhKC0sy15gl60ncJes=
+github.com/gregoryv/web v0.14.1-0.20201122044010-300efa487c7b/go.mod h1:rQLMOfw2Hny0Nvb24COmX96jKJyhNOfC/jAHITBn3vc=
 github.com/gregoryv/wolf v0.2.0 h1:eR4DAvAKI+ai7A/Sc0sqLwCqHfKjinXjuRNUUDEFqfo=
 github.com/gregoryv/wolf v0.2.0/go.mod h1:LzWtB+U4NNVEWQskvah9wvoFOT4DUuB13nh79V526lE=
 github.com/gregoryv/wolf v0.3.0 h1:BOmhVjNeNOqgAeSFXJISkTZrpbIPD8JMc8puMwwJbuE=
@@ -171,6 +177,7 @@ github.com/onsi/ginkgo v1.10.1/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+
 github.com/onsi/gomega v0.0.0-20170829124025-dcabb60a477c/go.mod h1:C1qb7wdrVGGVU+Z6iS04AVkA3Q65CEZX59MT0QO5uiA=
 github.com/onsi/gomega v1.7.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
 github.com/pmezard/go-difflib v0.0.0-20151028094244-d8ed2627bdf0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sergi/go-diff v1.1.0/go.mod h1:STckp+ISIX8hZLjrqAeVduY0gWCT9IjLuqbuNXdaHfM=
 github.com/spf13/pflag v0.0.0-20170130214245-9ff6c6923cff/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
@@ -199,6 +206,8 @@ golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553 h1:efeOvDhwQ29Dj3SdAV/MJf8ou
 golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/net v0.0.0-20201110031124-69a78807bb2b h1:uwuIcX0g4Yl1NC5XAz37xsr2lTtcqevgzYNVt49waME=
 golang.org/x/net v0.0.0-20201110031124-69a78807bb2b/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb h1:eBmm0M9fYhWpKZLjQUUKka/LtIxf46G4fxeEz5KJr9U=
+golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
 golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sys v0.0.0-20170830134202-bb24a47a89ea/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
