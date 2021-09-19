@@ -45,7 +45,7 @@ func TestApp_fails_on_wrong_option(t *testing.T) {
 func Test_can_specify_state_file(t *testing.T) {
 	app := NewApp()
 	app.ListenAndServe = noopListenAndServe
-	cmd := wolf.NewTCmd("x", "-state", "other.file")
+	cmd := wolf.NewTCmd("x", "serveHTTP", "-state", "other.file")
 	defer cmd.Cleanup()
 	if app.Run(cmd) != 0 {
 		t.Error("failed")
@@ -60,7 +60,7 @@ func Test_state_file_cannot_be_written(t *testing.T) {
 	app := NewApp()
 	app.ListenAndServe = noopListenAndServe
 
-	cmd := wolf.NewTCmd("x", "-state", "/var/no-such")
+	cmd := wolf.NewTCmd("x", "serveHTTP", "-state", "/var/no-such")
 	defer cmd.Cleanup()
 	if app.Run(cmd) == 0 {
 		t.Error(cmd.Out.String(), cmd.Err.String())

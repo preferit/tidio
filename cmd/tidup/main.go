@@ -21,7 +21,7 @@ func main() {
 		pass = cli.Option("-p, --password").String(os.Getenv("PASSWORD"))
 		cred = tidio.NewCredentials(user, pass)
 
-		filename = cli.Required("FILE").String()
+		filename = cli.Required("FILE").String("")
 	)
 
 	switch {
