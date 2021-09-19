@@ -12,6 +12,6 @@ require (
 	github.com/gregoryv/nexus v0.4.1-0.20201204150433-fc4133ba9120
 	github.com/gregoryv/rs v0.4.1
 	github.com/gregoryv/web v0.14.1-0.20201206150754-bdabf0cab26e
-	github.com/gregoryv/wolf v0.5.1-0.20201206144017-dcd0f8208892
+	github.com/gregoryv/wolf v0.8.0
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb // indirect
 )
