@@ -10,7 +10,7 @@ func NewChangelog() *Element {
 		this file. Project adheres to semantic versioning(v2).`),
 
 		Section(
-			H2("[unreleased]"),
+			H2("[0.2.0-unreleased]"),
 			Ul(
 				Li("Export / Import system state on startup"),
 			),

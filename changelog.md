@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in
 this file. Project adheres to semantic versioning(v2).
 
-## [unreleased]
+## [0.2.0-unreleased]
 
 - Export / Import system state on startup
 

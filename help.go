@@ -13,7 +13,7 @@ import (
 func NewHelpView() *Page {
 	nav := Nav()
 	content := Article(
-		apiSection,
+		NewAPISection(),
 		Section(
 			H2("Timesheet file format"),
 			P("Timesheets are plain text and are specific to year and month"),
@@ -42,9 +42,7 @@ func NewHelpView() *Page {
 	)
 }
 
-var apiSection *Element
-
-func init() {
+func NewAPISection() *Element {
 	// Cache api section
 	cred := NewCredentials("john", "secret")
 	srv := NewService(cred)
@@ -52,7 +50,7 @@ func init() {
 	api := NewAPI("https://tidio.preferit.se")
 	ant.MustConfigure(api, cred)
 
-	apiSection = Section(
+	return Section(
 		H2("Timesheets"),
 		P(
 			``,
