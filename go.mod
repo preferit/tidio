@@ -13,6 +13,8 @@ require (
 	github.com/gregoryv/go-timesheet v0.3.0
 	github.com/gregoryv/nexus v0.5.1
 	github.com/gregoryv/rs v0.4.2
+	github.com/gregoryv/stamp v0.2.0 // indirect
+	github.com/gregoryv/uncover v0.5.0 // indirect
 	github.com/gregoryv/web v0.20.1-0.20210914200722-5edcda4d5067
 	github.com/gregoryv/wolf v0.8.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect

@@ -41,6 +41,7 @@ github.com/gregoryv/asserter v0.4.1-0.20201128093127-74b8bb2743ca/go.mod h1:z1mB
 github.com/gregoryv/cli v0.0.0-20180329083318-9f0f54cf147f/go.mod h1:zrYlwj1/vKPPQ7V++Jw7nIPSwM61ERFQmJ8YAh6zibA=
 github.com/gregoryv/cmdline v0.4.3-0.20201204142145-c9498140862a h1:jPopB71XMP5ok8yFwD+Y+C3Va7ZZmRa5wIfti06NjkM=
 github.com/gregoryv/cmdline v0.4.3-0.20201204142145-c9498140862a/go.mod h1:8Ko5CvEnFwZw7bSvmYVMPx6CQBWnQWdnYCt0xNZQmkQ=
+github.com/gregoryv/cmdline v0.5.2-0.20210321191213-95f0b7149ace/go.mod h1:Vuc1PDZWm/dKAJ4w+Y5FsEqWUTg2M/Wppr6gVFozRPQ=
 github.com/gregoryv/cmdline v0.5.2 h1:eufKtOVLAoNnL6dwdTBMEO4KE6lIpV/Q6oY9sQbboqc=
 github.com/gregoryv/cmdline v0.5.2/go.mod h1:Vuc1PDZWm/dKAJ4w+Y5FsEqWUTg2M/Wppr6gVFozRPQ=
 github.com/gregoryv/draw v0.9.0/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
@@ -83,6 +84,10 @@ github.com/gregoryv/rs v0.4.1 h1:yGoKnvp6BpIXyIUmmAQ1oLk9eM01kbwMWc6lTcBvM0k=
 github.com/gregoryv/rs v0.4.1/go.mod h1:KtPW7Oxz0Igq/CtqqJW7mI+pf3LxvV56u4yj0qS5gQ4=
 github.com/gregoryv/rs v0.4.2 h1:Vfh2fGBviPfNytNpu/ptU2HW3fBCMjUOWAbege9CeT0=
 github.com/gregoryv/rs v0.4.2/go.mod h1:KtPW7Oxz0Igq/CtqqJW7mI+pf3LxvV56u4yj0qS5gQ4=
+github.com/gregoryv/stamp v0.2.0 h1:03ivTobCyJam1Ipdh6pM8p/I/4kPYtJD8NyHux3QINY=
+github.com/gregoryv/stamp v0.2.0/go.mod h1:WshcWN15bpw0R0ZIh1XU2BseKfvpD/gWurz2NF+Mz6U=
+github.com/gregoryv/uncover v0.5.0 h1:fEbl4SKY3dCooEdS3nvBDVLBLwKBh9fTMCkbWEUyyi8=
+github.com/gregoryv/uncover v0.5.0/go.mod h1:9oYZ8CLTTgCHmvv/hr3y/0CSr860htJXRH/K6Snnyy8=
 github.com/gregoryv/web v0.14.0/go.mod h1:rQLMOfw2Hny0Nvb24COmX96jKJyhNOfC/jAHITBn3vc=
 github.com/gregoryv/web v0.14.1-0.20201206150754-bdabf0cab26e h1:FrVZBhgTVLp/vbKm+/f4QXqpZY1PNkYQUwmSphd1ysI=
 github.com/gregoryv/web v0.14.1-0.20201206150754-bdabf0cab26e/go.mod h1:rQLMOfw2Hny0Nvb24COmX96jKJyhNOfC/jAHITBn3vc=
@@ -93,6 +98,7 @@ github.com/gregoryv/web v0.20.1-0.20210914200722-5edcda4d5067 h1:RrLsA70Q4c50sdp
 github.com/gregoryv/web v0.20.1-0.20210914200722-5edcda4d5067/go.mod h1:DRjHH1V0vwEGHpzEhb9Y3XrQWioSSOGBz6nJMnHQ2NM=
 github.com/gregoryv/wolf v0.5.1-0.20201206144017-dcd0f8208892 h1:zMU+ElGNnMnfM16rtMhYAcNpy8xLLYOu5OdRfuWmbjY=
 github.com/gregoryv/wolf v0.5.1-0.20201206144017-dcd0f8208892/go.mod h1:LzWtB+U4NNVEWQskvah9wvoFOT4DUuB13nh79V526lE=
+github.com/gregoryv/wolf v0.7.0/go.mod h1:ZoXAExZzPax7lJuck8S/1npj9eROQJM4ocovg3AD9sg=
 github.com/gregoryv/wolf v0.8.0 h1:owlCB7pb/qnLte4kB6X2pylOrprokpyohXbXbLaifz0=
 github.com/gregoryv/wolf v0.8.0/go.mod h1:ZoXAExZzPax7lJuck8S/1npj9eROQJM4ocovg3AD9sg=
 github.com/gregoryv/workdir v0.2.0 h1:a0V87TpJpda5rHPj+lrJTiUD7pqdddUERYPWEJY8ufc=
