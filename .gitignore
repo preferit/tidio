@@ -3,3 +3,4 @@
 #*
 build_stamp.go
 cmd/tidio/*.json
+.onchange.sh
