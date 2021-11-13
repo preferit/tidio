@@ -34,8 +34,9 @@ jobs:
     - name: deploy
       env:
         LINODE_PRIVATE_KEY: ${{secrets.LINODE_PRIVATE_KEY}}
+        LINODE_USER: ${{secrets.LINODE_USER}}
       run: |
         mkdir -p $HOME/.ssh
         go run ./internal/cmd/setupGithubSSH/
-        rsync -av --delete-after /tmp/tidio/ ${{secrets.LINODE_USER}}@tidio.preferit.se:tidio/
-        ssh ${{secrets.LINODE_USER}}@tidio.preferit.se 'cd tidio; sudo ./install.sh'
+        rsync -av --delete-after /tmp/tidio/ $LINODE_USER@tidio.preferit.se:tidio/
+        ssh $LINODE_USER@tidio.preferit.se 'cd tidio; sudo ./install.sh'
