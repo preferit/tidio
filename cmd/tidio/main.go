@@ -8,14 +8,13 @@ import (
 
 	"github.com/gregoryv/cmdline"
 	"github.com/gregoryv/rs"
-	"github.com/gregoryv/wolf"
 	"github.com/preferit/tidio"
 )
 
 //go:generate stamp -clfile ../../changelog.md -go build_stamp.go
 
 // By default called from a os shell
-var cmd = wolf.NewOSCmd()
+var cmd = cmdline.NewShellOS()
 
 func main() {
 	conf := tidio.Conf
