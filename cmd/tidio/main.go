@@ -17,21 +17,18 @@ import (
 var cmd = cmdline.NewShellOS()
 
 func main() {
-	conf := tidio.Conf
-	conf.SetOutput(os.Stderr)
-
-	app := NewApp()
-
 	var (
 		cli = cmdline.NewBasicParser()
 
-		a      = cli.Group("Actions", "ACTION")
-		_      = a.New("serveHTTP", &serveHTTP{})
-		_      = a.New("mkAccount", &mkAccount{})
-		action = a.Selected()
+		actions = cli.Group("Actions", "ACTION")
+		_       = actions.New("serveHTTP", &serveHTTP{})
+		_       = actions.New("mkAccount", &mkAccount{})
+		action  = actions.Selected()
 	)
 	cli.Parse()
 
+	tidio.Conf.SetOutput(os.Stderr)
+	app := NewApp()
 	action.(runnable).Run(app)
 }
 
