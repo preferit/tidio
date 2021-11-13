@@ -24,17 +24,34 @@ case $1 in
     u|uncover)
 	uncover -min 77 /tmp/tidio.tprof	
 	;;
-    i|install)
-	# local installation
-	sudo systemctl stop tidio
-	go install ./cmd/...
-	sudo systemctl start tidio
-	;;
     c|clean)
 	rm -rf $dist
 	;;
+    d|deploy)
+
+	case $TIDIO_HOST in
+	    tidio.preferit.se)
+		mkdir -p $HOME/.ssh
+		go run ./internal/cmd/setupGithubSSH/
+		rsync -av --delete-after /tmp/tidio/ $LINODE_USER@$TIDIO_HOST:tidio/
+		ssh $LINODE_USER@$TIDIO_HOST 'cd tidio; sudo ./install.sh'
+		;;
+	    tidio.local)
+		# local installation
+		pushd $dist
+		sudo ./install.sh
+		popd
+		;;
+	    *)
+		echo "Missing TIDIO_HOST"
+		echo "Use tidio.local or tidio.preferit.se"
+		exit 1
+		;;
+	    esac
+
+	;;
     *)
-	echo "Usage: $0 [s]etup|[b]uild|[t]est|[u]ncover|[i]nstall|[c]lean"
+	echo "Usage: $0 [s]etup|[b]uild|[t]est|[u]ncover|[d]eploy|[c]lean"
 	echo ""
 	echo "$0 build test uncover"
 	echo "$0 b t u"

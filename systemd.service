@@ -7,7 +7,7 @@ User=gregory
 TimeoutStartSec=0
 Type=simple
 WorkingDirectory=/var/local/tidio
-ExecStart=/home/gregory/bin/tidio
+ExecStart=/usr/local/bin/tidio
 Restart=always
 LimitNOFILE=5555
 
