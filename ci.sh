@@ -8,7 +8,7 @@ case $1 in
 	go build ./...
 	;;
     t|test)
-	export group=integration
+	#export group=integration
 	go test -coverprofile /tmp/tidio.tprof $run ./...
 	;;
     u|uncover)
