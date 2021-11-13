@@ -3,6 +3,7 @@ package tidio
 import (
 	"io"
 	"io/ioutil"
+	"log"
 )
 
 func NewConfig() *Config {
@@ -71,3 +72,9 @@ func Log(v interface{}) *LogPrinter { return Conf.Log(v) }
 func Unregister(v interface{})      { Conf.Unregister(v) }
 
 var Conf = NewConfig()
+
+// ----------------------------------------
+
+var nolog = &LogPrinter{
+	lgr: log.New(ioutil.Discard, "", 0),
+}

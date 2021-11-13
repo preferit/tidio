@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 )
 
@@ -12,10 +11,6 @@ func NewLogPrinter(w io.Writer) *LogPrinter {
 	return &LogPrinter{
 		lgr: log.New(w, "", log.Lshortfile),
 	}
-}
-
-var nolog = &LogPrinter{
-	lgr: log.New(ioutil.Discard, "", 0),
 }
 
 type LogPrinter struct {
