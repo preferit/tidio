@@ -6,7 +6,7 @@ import (
 )
 
 func Test_loggers(t *testing.T) {
-	log := RLog(t).Buf()
+	log := Register(t).Buf()
 	defer Unreg(t)
 
 	somefunc(t) // should log
@@ -20,9 +20,9 @@ func Test_loggers(t *testing.T) {
 	}
 }
 
-func Test_RLog_panics(t *testing.T) {
+func Test_Register_panics(t *testing.T) {
 	defer catchPanic(t)
-	RLog()
+	Register()
 }
 
 func somefunc(t *testing.T) {

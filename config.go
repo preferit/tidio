@@ -44,7 +44,9 @@ func (me *Config) Log(v interface{}) *LogPrinter {
 	return l
 }
 
-func (me *Config) RLog(v ...interface{}) *LogPrinter {
+// Register creates a LogPrinter for the given objects.
+// The registered LogPrinter is later retrieved with Config.Log(v)
+func (me *Config) Register(v ...interface{}) *LogPrinter {
 	if len(v) == 0 {
 		panic("missing values in MLog")
 	}
@@ -60,9 +62,12 @@ func (me *Config) RLog(v ...interface{}) *LogPrinter {
 
 // ----------------------------------------
 
+// Wrappers for default config Conf
+
+func Register(v ...interface{}) *LogPrinter {
+	return Conf.Register(v...)
+}
+func Log(v interface{}) *LogPrinter { return Conf.Log(v) }
+func Unreg(v interface{})           { Conf.Unreg(v) }
+
 var Conf = NewConfig()
-
-func RLog(v ...interface{}) *LogPrinter { return Conf.RLog(v...) }
-func Log(v interface{}) *LogPrinter     { return Conf.Log(v) }
-
-func Unreg(v interface{}) { Conf.Unreg(v) }

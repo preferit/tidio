@@ -14,7 +14,7 @@ func (me *Service) Router() *mux.Router {
 	r := mux.NewRouter()
 	r.Methods("GET").HandlerFunc(me.serveRead)
 	r.Methods("POST").HandlerFunc(me.serveCreate)
-	log := RLog(r)
+	log := Register(r)
 	r.Use(NewRouteLog(log).Middleware)
 	if Conf.Debug() {
 		r.Use(NewTracer(log).Middleware)

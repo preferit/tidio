@@ -15,7 +15,7 @@ func NewApp() *App {
 	app := &App{
 		ListenAndServe: http.ListenAndServe,
 	}
-	RLog(app)
+	Register(app)
 	return app
 }
 

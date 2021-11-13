@@ -26,7 +26,7 @@ func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 		srv  = NewService(withJohnAccount)
 		ts   = httptest.NewServer(srv.Router())
 		api  = NewAPI(ts.URL, asJohn)
-		log  = RLog(srv, api).Buf()
+		log  = Register(srv, api).Buf()
 		path = "/api/timesheets/john/202001.timesheet"
 		body = timesheet.Render(2020, 1, 8)
 		req  = api.CreateTimesheet(path, body)
@@ -44,7 +44,7 @@ func TestAPI_CreateTimesheet_asAnonymous(t *testing.T) {
 		srv = NewService(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
 		api = NewAPI(ts.URL)
-		log = RLog(srv, api).Buf()
+		log = Register(srv, api).Buf()
 
 		path = "/api/timesheets/john/202001.timesheet"
 		body = timesheet.Render(2020, 1, 8)
@@ -159,7 +159,7 @@ func TestAPI_Send_nil_request(t *testing.T) {
 func TestAPI_Send_failing_response(t *testing.T) {
 	var (
 		api = NewAPI("http://_1234nosuchhost.net")
-		log = RLog(api).Buf()
+		log = Register(api).Buf()
 	)
 	api.Request, _ = http.NewRequest("GET", "/", nil)
 	if _, err := api.Send(); err == nil {
