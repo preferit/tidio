@@ -24,26 +24,16 @@ func main() {
 	app := NewApp()
 
 	var (
-		cli  = cmdline.NewParser(cmd.Args()...)
-		help = cli.Flag("-h, --help")
+		cli = cmdline.NewBasicParser()
 
 		a      = cli.Group("Actions", "ACTION")
 		_      = a.New("serveHTTP", &serveHTTP{})
 		_      = a.New("mkAccount", &mkAccount{})
 		action = a.Selected()
 	)
-	switch {
-	case !cli.Ok():
-		tidio.Log(app).Error(cli.Error())
-		cmd.Exit(1)
+	cli.Parse()
 
-	case help:
-		cli.WriteUsageTo(cmd.Stdout())
-		cmd.Exit(0)
-
-	default:
-		action.(runnable).Run(app)
-	}
+	action.(runnable).Run(app)
 }
 
 type runnable interface {
