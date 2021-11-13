@@ -4,23 +4,33 @@
 # project either from CI pipeline or on a developer computer.
 
 case $1 in
-    build)
+    b|build)
 	go build ./...
 	;;
-    test)
+    t|test)
 	export group=integration
 	go test -coverprofile /tmp/tidio.tprof $run ./...
-	uncover -min 90 /tmp/tidio.tprof
 	;;
-    install)
+    u|uncover)
+	uncover -min 96 /tmp/tidio.tprof	
+	;;
+    i|install)
 	# local installation
 	sudo systemctl stop tidio
 	go install ./cmd/...
 	sudo systemctl start tidio
 	;;
     *)
-	echo "Usage: $0 build|test|install"
+	echo "Usage: $0 [b]uild|[t]est|[u]ncover|[i]nstall"
+	echo ""
+	echo "$0 build test uncover"
+	echo "$0 b t u"
 	exit 1
 	;;
 esac
 
+
+# Run next target if any
+shift
+[[ -z "$@" ]] && exit 0
+$0 $@
