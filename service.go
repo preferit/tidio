@@ -32,6 +32,19 @@ type Service struct {
 	dest Storage // for persisting the system to
 }
 
+func (me *Service) UseFileStorage(filename string) error {
+	me.dest = NewFileStorage(filename)
+
+	_, err := os.Stat(filename)
+	switch {
+	case os.IsNotExist(err):
+		me.PersistState()
+	default:
+		me.RestoreState()
+	}
+	return me.Error()
+}
+
 // AddAccount creates a system account and stores the secret in
 // /etc/basic
 func (me *Service) AddAccount(name, secret string) error {
