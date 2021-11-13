@@ -6,7 +6,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gregoryv/ant v0.0.0-20201022113027-b550c4e3aba5
 	github.com/gregoryv/asserter v0.4.1
-	github.com/gregoryv/cmdline v0.8.0
+	github.com/gregoryv/cmdline v0.8.1
 	github.com/gregoryv/fox v0.6.3-0.20201113145101-022212e5f6eb
 	github.com/gregoryv/go-timesheet v0.3.0
 	github.com/gregoryv/nexus v0.5.1

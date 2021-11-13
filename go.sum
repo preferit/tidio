@@ -13,8 +13,8 @@ github.com/gregoryv/asserter v0.3.1-0.20200620185907-332cdf62ce04/go.mod h1:WjMh
 github.com/gregoryv/asserter v0.4.1-0.20201128093127-74b8bb2743ca/go.mod h1:z1mBb29IGWaSx97sT7+i5j+KCbl+kBth9mwmX56mrNU=
 github.com/gregoryv/asserter v0.4.1 h1:NGQW1rdiNbX0Teu4sgcVHtOG64idTEPLafif+AePYyY=
 github.com/gregoryv/asserter v0.4.1/go.mod h1:0WJPXw6UYkoTQlbkm8fvRghp0CeOo7oliS5JTvnv6pM=
-github.com/gregoryv/cmdline v0.8.0 h1:o1WcZGCfPAmyR9hOsW9PAZ7gevTkvqzWnbLmTKy4/QY=
-github.com/gregoryv/cmdline v0.8.0/go.mod h1:15MFjQA5LRL9Ot2YXhNGBXjP91lZnN1CkkR5VthI5H0=
+github.com/gregoryv/cmdline v0.8.1 h1:vdGWYDpwj1cI2teMcjgdOCKyBvO5KWH2wZ4htHqLnXQ=
+github.com/gregoryv/cmdline v0.8.1/go.mod h1:15MFjQA5LRL9Ot2YXhNGBXjP91lZnN1CkkR5VthI5H0=
 github.com/gregoryv/draw v0.9.0/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
 github.com/gregoryv/draw v0.13.0/go.mod h1:ZjcU2lJq2eA+jQAdIslryahmUzp8aAvTrBdEZIQ4V6I=
 github.com/gregoryv/find v0.0.0-20180328085109-1bbc2d70c482/go.mod h1:/xxQlO62bzxhyabf2iKJzGJa+VAJy25spLI/6ICTrxU=
