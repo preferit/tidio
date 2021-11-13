@@ -6,20 +6,48 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gregoryv/cmdline"
+	"github.com/gregoryv/rs"
 	"github.com/gregoryv/wolf"
 	"github.com/preferit/tidio"
 )
 
 //go:generate stamp -clfile ../../changelog.md -go build_stamp.go
 
+// By default called from a os shell
+var cmd = wolf.NewOSCmd()
+
 func main() {
 	conf := tidio.Conf
 	conf.SetOutput(os.Stderr)
 
-	cmd := wolf.NewOSCmd()
 	app := NewApp()
-	code := app.Run(cmd)
-	os.Exit(code)
+
+	var (
+		cli  = cmdline.NewParser(cmd.Args()...)
+		help = cli.Flag("-h, --help")
+
+		a      = cli.Group("Actions", "ACTION")
+		_      = a.New("serveHTTP", &serveHTTP{})
+		_      = a.New("mkAccount", &mkAccount{})
+		action = a.Selected()
+	)
+	switch {
+	case !cli.Ok():
+		tidio.Log(app).Error(cli.Error())
+		cmd.Exit(1)
+
+	case help:
+		cli.WriteUsageTo(cmd.Stdout())
+		cmd.Exit(0)
+
+	default:
+		action.(runnable).Run(app)
+	}
+}
+
+type runnable interface {
+	Run(app *App) error
 }
 
 // NewApp returns a App with applied settings
@@ -32,43 +60,7 @@ func NewApp() *App {
 }
 
 type App struct {
-	wolf.Command
 	ListenAndServe func(string, http.Handler) error
-}
-
-func (me *App) Run(cmd wolf.Command) int {
-	if err := me.run(cmd); err != nil {
-		tidio.Log(me).Info(err)
-		return 1
-	}
-	return 0
-}
-
-func (me *App) run(cmd wolf.Command) error {
-	me.Command = cmd
-	var (
-		cli  = cmdline.NewParser(cmd.Args()...)
-		help = cli.Flag("-h, --help")
-
-		a      = cli.Group("Actions", "ACTION")
-		_      = a.New("serveHTTP", &serveHTTP{})
-		_      = a.New("mkAccount", &mkAccount{})
-		action = a.Selected()
-	)
-	switch {
-	case !cli.Ok():
-		return cli.Error()
-
-	case help:
-		cli.WriteUsageTo(cmd.Stdout())
-		return nil
-	}
-	return action.(runnable).Run(me)
-
-}
-
-type runnable interface {
-	Run(app *App) error
 }
 
 // ----------------------------------------
@@ -132,7 +124,7 @@ func (me *mkAccount) Run(app *App) error {
 	if err != nil {
 		return err
 	}
-	out := app.Stdout()
+	out := cmd.Stdout()
 	if me.writeBack {
 		out, err := os.Create(me.filename)
 		if err != nil {
