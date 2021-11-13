@@ -5,18 +5,16 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gregoryv/ant"
 	"github.com/gregoryv/cmdline"
 	"github.com/gregoryv/rs"
 	"github.com/gregoryv/wolf"
 )
 
 // NewApp returns a App with applied settings
-func NewApp(settings ...ant.Setting) *App {
+func NewApp() *App {
 	app := &App{
 		ListenAndServe: http.ListenAndServe,
 	}
-	ant.MustConfigure(app, settings...)
 	RLog(app)
 	return app
 }
