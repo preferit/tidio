@@ -18,6 +18,6 @@ func (me *Tracer) Middleware(next http.Handler) http.Handler {
 		if log.Failed() {
 			me.dst.Info(log.FlushString())
 		}
-		Unreg(r)
+		Unregister(r)
 	})
 }

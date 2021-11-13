@@ -7,10 +7,10 @@ import (
 
 func Test_loggers(t *testing.T) {
 	log := Register(t).Buf()
-	defer Unreg(t)
+	defer Unregister(t)
 
 	somefunc(t) // should log
-	Conf.Unreg(t)
+	Conf.Unregister(t)
 	somefunc(t) // no logger registered
 
 	got := log.FlushString()

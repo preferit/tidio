@@ -31,8 +31,8 @@ func (me *Config) SetDebug(v bool) {
 	me.debug = v
 }
 
-// Unreg removes the previously registered item if any.
-func (me *Config) Unreg(v interface{}) {
+// Unregister removes the previously registered item if any.
+func (me *Config) Unregister(v interface{}) {
 	delete(me.activeLoggers, v)
 }
 
@@ -68,6 +68,6 @@ func Register(v ...interface{}) *LogPrinter {
 	return Conf.Register(v...)
 }
 func Log(v interface{}) *LogPrinter { return Conf.Log(v) }
-func Unreg(v interface{})           { Conf.Unreg(v) }
+func Unregister(v interface{})      { Conf.Unregister(v) }
 
 var Conf = NewConfig()
