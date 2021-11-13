@@ -7,8 +7,8 @@ dist=/tmp/tidio
 
 case $1 in
     s|setup)
-        go install github.com/gregoryv/stamp/cmd/stamp
-	go install github.com/gregoryv/uncover/cmd/uncover
+	go install github.com/gregoryv/stamp/cmd/stamp@latest
+	go install github.com/gregoryv/uncover/cmd/uncover@latest
 	;;
     b|build)
 	mkdir -p $dist
