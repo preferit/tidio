@@ -12,7 +12,7 @@ case $1 in
 	go test -coverprofile /tmp/tidio.tprof $run ./...
 	;;
     u|uncover)
-	uncover -min 96 /tmp/tidio.tprof	
+	uncover -min 77 /tmp/tidio.tprof	
 	;;
     i|install)
 	# local installation

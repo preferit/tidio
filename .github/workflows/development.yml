@@ -35,8 +35,7 @@ jobs:
         GOPATH: "/tmp"
       run: |
           go install github.com/gregoryv/uncover/cmd/uncover
-          go test -coverprofile /tmp/c.out ./...
-          $GOPATH/bin/uncover -min 96 /tmp/c.out
+          ./ci.sh test
 
     - name: deploy
       env:
