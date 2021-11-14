@@ -52,6 +52,14 @@ func NewChangelog() *Element {
 	)
 }
 
+// Version returns the latest version according to the embeded
+// changelog.
+func Version() string {
+	from := strings.Index(changelog, "[")
+	to := strings.Index(changelog, "]")
+	return changelog[from+1 : to]
+}
+
 //go:embed changelog.md
 var changelog string
 

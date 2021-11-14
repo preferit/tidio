@@ -18,7 +18,8 @@ var cmd = cmdline.NewShellOS()
 
 func main() {
 	var (
-		cli = cmdline.NewBasicParser()
+		cli     = cmdline.NewBasicParser()
+		version = cli.Flag("-v, --version")
 
 		actions = cli.Group("Actions", "ACTION")
 		_       = actions.New("serveHTTP", &serveHTTP{})
@@ -27,9 +28,15 @@ func main() {
 	)
 	cli.Parse()
 
-	tidio.Conf.SetOutput(os.Stderr)
-	app := NewApp()
-	action.(runnable).Run(app)
+	switch {
+	case version:
+		fmt.Fprint(cmd.Stdout(), tidio.Version())
+
+	default:
+		tidio.Conf.SetOutput(os.Stderr)
+		app := NewApp()
+		action.(runnable).Run(app)
+	}
 }
 
 type runnable interface {

@@ -28,9 +28,15 @@ case $1 in
 	rm -rf $dist
 	;;
     d|deploy)
-
 	case $TIDIO_HOST in
 	    tidio.preferit.se)
+		# Guard against releasing untagged
+		version=$($dist/tidio --version)
+		if [[ "$version" == "unreleased" ]]; then
+		    echo "cannot deploy unreleased version to production"
+		    exit 0
+		fi
+
 		mkdir -p $HOME/.ssh
 		go run ./internal/cmd/setupGithubSSH/
 		rsync -av --delete-after /tmp/tidio/ $LINODE_USER@$TIDIO_HOST:tidio/
@@ -48,7 +54,6 @@ case $1 in
 		exit 1
 		;;
 	    esac
-
 	;;
     *)
 	echo "Usage: $0 [s]etup|[b]uild|[t]est|[u]ncover|[d]eploy|[c]lean"
