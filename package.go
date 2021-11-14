@@ -1,5 +1,5 @@
 /*
-Package tidio provides a web service for timesheet reports.
+Package tidio provides a web System for timesheet reports.
 
 */
 package tidio

@@ -66,7 +66,7 @@ var changelog string
 func NewAPISection() *Element {
 	// Cache api section
 	cred := NewCredentials("john", "secret")
-	srv := NewService(cred)
+	srv := NewSystem(cred)
 	doc := apidoc.NewDoc(srv.Router())
 	api := NewAPI("https://tidio.preferit.se")
 	ant.MustConfigure(api, cred)
@@ -200,7 +200,7 @@ func theme() *CSS {
 	return css
 }
 
-// When the service started so we know the uptime
+// When the System started so we know the uptime
 var serviceStarted = time.Now()
 
 func footer() *Element {

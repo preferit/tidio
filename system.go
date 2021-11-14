@@ -10,14 +10,14 @@ import (
 	"github.com/gregoryv/rs"
 )
 
-func NewService(settings ...ant.Setting) *Service {
+func NewSystem(settings ...ant.Setting) *System {
 	sys := rs.NewSystem()
 	asRoot := rs.Root.Use(sys)
 	asRoot.Exec("/bin/mkdir /etc/basic")
 	asRoot.Exec("/bin/mkdir /api")
 	asRoot.Exec("/bin/mkdir /api/timesheets")
 
-	srv := &Service{
+	srv := &System{
 		sys: sys,
 	}
 	Register(srv)
@@ -25,14 +25,14 @@ func NewService(settings ...ant.Setting) *Service {
 	return srv
 }
 
-type Service struct {
+type System struct {
 	nexus.Failure
 
 	sys  *rs.System
 	dest Storage // for persisting the system to
 }
 
-func (me *Service) UseFileStorage(filename string) error {
+func (me *System) UseFileStorage(filename string) error {
 	me.dest = NewFileStorage(filename)
 
 	_, err := os.Stat(filename)
@@ -47,7 +47,7 @@ func (me *Service) UseFileStorage(filename string) error {
 
 // AddAccount creates a system account and stores the secret in
 // /etc/basic
-func (me *Service) AddAccount(name, secret string) error {
+func (me *System) AddAccount(name, secret string) error {
 	sh := NewShell(rs.Root.Use(me.sys))
 	return CreateAccount(sh, name, secret)
 }
@@ -64,7 +64,7 @@ func CreateAccount(sh *Shell, name, secret string) error {
 }
 
 // RestoreState restores the resource system from the given filename.
-func (me *Service) RestoreState() error {
+func (me *System) RestoreState() error {
 	if me.dest == nil || !me.Ok() {
 		return me.Error()
 	}
@@ -80,7 +80,7 @@ func (me *Service) RestoreState() error {
 
 // PersistState persist the system to a configured Storage. Noop if
 // not configured.
-func (me *Service) PersistState() error {
+func (me *System) PersistState() error {
 	if me.dest == nil || !me.Ok() {
 		return me.Error()
 	}

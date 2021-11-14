@@ -23,7 +23,7 @@ func init() {
 
 func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 	var (
-		srv  = NewService(withJohnAccount)
+		srv  = NewSystem(withJohnAccount)
 		ts   = httptest.NewServer(srv.Router())
 		api  = NewAPI(ts.URL, asJohn)
 		log  = Register(srv, api).Buf()
@@ -41,7 +41,7 @@ func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 
 func TestAPI_CreateTimesheet_asAnonymous(t *testing.T) {
 	var (
-		srv = NewService(withJohnAccount)
+		srv = NewSystem(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
 		api = NewAPI(ts.URL)
 		log = Register(srv, api).Buf()
@@ -60,7 +60,7 @@ func TestAPI_CreateTimesheet_asAnonymous(t *testing.T) {
 
 func TestAPI_ReadTimesheet_asJohn(t *testing.T) {
 	var (
-		srv = NewService(withJohnAccount)
+		srv = NewSystem(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
@@ -78,7 +78,7 @@ func TestAPI_ReadTimesheet_asJohn(t *testing.T) {
 
 func TestAPI_ReadTimesheet_noSuchResource(t *testing.T) {
 	var (
-		srv = NewService(withJohnAccount)
+		srv = NewSystem(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
@@ -93,7 +93,7 @@ func TestAPI_ReadTimesheet_noSuchResource(t *testing.T) {
 
 func TestAPI_ReadTimesheet_asAnonymous(t *testing.T) {
 	var (
-		srv = NewService(withJohnAccount)
+		srv = NewSystem(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
@@ -114,7 +114,7 @@ func TestAPI_ReadTimesheet_asAnonymous(t *testing.T) {
 
 func Test_hacks(t *testing.T) {
 	var (
-		srv = NewService(withJohnAccount)
+		srv = NewSystem(withJohnAccount)
 		ts  = httptest.NewServer(srv.Router())
 	)
 	defer ts.Close()
@@ -181,7 +181,7 @@ func TestAPI_Auth_nil_request(t *testing.T) {
 }
 
 func Test_defaults(t *testing.T) {
-	srv := NewService()
+	srv := NewSystem()
 	assert := asserter.New(t)
 	exp := assert().ResponseFrom(srv.Router())
 	exp.StatusCode(200, "GET", "/")

@@ -12,8 +12,8 @@ import (
 	"github.com/gregoryv/rs"
 )
 
-func TestService_AddAccount(t *testing.T) {
-	srv := NewService()
+func TestSystem_AddAccount(t *testing.T) {
+	srv := NewSystem()
 	ok := asserter.Wrap(t).Ok
 	ok(srv.AddAccount("john", "secret"))
 
@@ -28,15 +28,15 @@ func TestService_AddAccount(t *testing.T) {
 	xok(asJohn.Stat("/api/timesheets/john"))
 }
 
-func TestService_RestoreState_missing_file(t *testing.T) {
-	srv := NewService()
+func TestSystem_RestoreState_missing_file(t *testing.T) {
+	srv := NewSystem()
 	ok := asserter.Wrap(t).Ok
 	ok(srv.RestoreState())
 }
 
 func TestNewService_panics_on_bad_settings(t *testing.T) {
 	defer catchPanic(t)
-	NewService(
+	NewSystem(
 		ant.SetFunc(func(interface{}) error {
 			return fmt.Errorf("option failed")
 		}),

@@ -10,7 +10,7 @@ import (
 	"github.com/gregoryv/rs"
 )
 
-func (me *Service) Router() *mux.Router {
+func (me *System) Router() *mux.Router {
 	r := mux.NewRouter()
 	r.Methods("GET").HandlerFunc(me.serveRead)
 	r.Methods("POST").HandlerFunc(me.serveCreate)
@@ -22,7 +22,7 @@ func (me *Service) Router() *mux.Router {
 	return r
 }
 
-func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
+func (me *System) serveRead(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
 		w.WriteHeader(200)
 		NewHelpView().WriteTo(w)
@@ -66,7 +66,7 @@ func (me *Service) serveRead(w http.ResponseWriter, r *http.Request) {
 	io.Copy(w, resource)
 }
 
-func (me *Service) serveCreate(w http.ResponseWriter, r *http.Request) {
+func (me *System) serveCreate(w http.ResponseWriter, r *http.Request) {
 	acc, err := authenticate(me.sys, r)
 	log := Log(r)
 	log.Info(acc.Name)

@@ -70,7 +70,7 @@ func (me *serveHTTP) ExtraOptions(p *cmdline.Parser) {
 }
 
 func (me *serveHTTP) Run(app *App) error {
-	srv := tidio.NewService()
+	srv := tidio.NewSystem()
 
 	// configure persistence
 	srv.UseFileStorage(me.filename)

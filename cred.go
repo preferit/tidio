@@ -22,7 +22,7 @@ func (me *Credentials) Set(v interface{}) error {
 	switch v := v.(type) {
 	case usesCredentials:
 		v.SetCredentials(me)
-	case *Service:
+	case *System:
 		v.AddAccount(me.account, me.secret)
 	default:
 		return ant.SetFailed(v, me)
