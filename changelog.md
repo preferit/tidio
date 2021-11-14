@@ -1,5 +1,3 @@
-# Changelog
-
 All notable changes to this project will be documented in
 this file. Project adheres to semantic versioning(v2).
 
@@ -15,6 +13,4 @@ this file. Project adheres to semantic versioning(v2).
 
 
 ## [0.1.0] 2020-06-02
-
-
 

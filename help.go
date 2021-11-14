@@ -1,6 +1,7 @@
 package tidio
 
 import (
+	_ "embed"
 	"strings"
 	"time"
 
@@ -19,6 +20,8 @@ func NewHelpView() *Page {
 			P("Timesheets are plain text and are specific to year and month"),
 			Pre(Class("timesheet"), timesheet201506),
 		),
+
+		NewChangelog(),
 	)
 	body := Body(
 		Header(
@@ -26,7 +29,6 @@ func NewHelpView() *Page {
 		),
 		nav,
 		content,
-		NewChangelog(),
 		footer(),
 	)
 	toc.MakeTOC(nav, body, "h1", "h2", "h3")
@@ -41,6 +43,17 @@ func NewHelpView() *Page {
 		),
 	)
 }
+
+func NewChangelog() *Element {
+	return Article(
+		H1("Changelog"),
+
+		Pre(changelog),
+	)
+}
+
+//go:embed changelog.md
+var changelog string
 
 func NewAPISection() *Element {
 	// Cache api section
