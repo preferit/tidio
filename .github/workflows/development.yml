@@ -26,7 +26,6 @@ jobs:
           ./ci.sh setup
 
     - name: build
-      needs: setup
       env:
         GOPATH: "/tmp"
         PATH: "/bin:/usr/bin:/tmp/bin"
