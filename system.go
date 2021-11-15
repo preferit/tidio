@@ -38,9 +38,9 @@ func (me *System) UseFileStorage(filename string) error {
 	_, err := os.Stat(filename)
 	switch {
 	case os.IsNotExist(err):
-		me.PersistState()
+		return me.PersistState()
 	default:
-		me.RestoreState()
+		return me.RestoreState()
 	}
 	return me.Error()
 }
