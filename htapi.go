@@ -177,17 +177,18 @@ type Tracer struct {
 
 func (me *Tracer) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log := Register(r).Buf()
+		log := Register(r).Buf() // use buffered logger for each request
 		log.lgr.SetPrefix("TRACE: ")
 		next.ServeHTTP(w, r)
 		if log.Failed() {
+			// if this request logged an error we make sure all of
+			// it's logs show up
 			me.dst.Info(log.FlushString())
 		}
 		Unregister(r)
 	})
 }
 
-// NewRouteLog returns RouteLog using the package logger.
 func NewRouteLog(dst *LogPrinter) *RouteLog {
 	return &RouteLog{LogPrinter: dst}
 }
