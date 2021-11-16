@@ -615,25 +615,27 @@ func (me *LogPrinter) Flush() []byte {
 	return me.buf.Bytes()
 }
 
-// Failed
-func (me *LogPrinter) Failed() bool { return me.failed }
+// Log is same as Info, here to make embedded logging more readable, eg.
+// me.Log(...) over me.log.Info(...)
+func (me *LogPrinter) Log(v ...interface{}) {
+	me.lgr.Output(2, fmt.Sprintln(v...))
+	me.writes++
+}
 
-// Info
 func (me *LogPrinter) Info(v ...interface{}) {
 	me.lgr.Output(2, fmt.Sprintln(v...))
 	me.writes++
 }
+
+// Failed returns true if an Error call has been made by this log
+// printer.
+func (me *LogPrinter) Failed() bool { return me.failed }
 
 // Error
 func (me *LogPrinter) Error(v ...interface{}) {
 	me.lgr.Output(2, fmt.Sprintln(v...))
 	me.writes++
 	me.failed = true
-}
-
-func (me *LogPrinter) Log(v ...interface{}) {
-	me.lgr.Output(2, fmt.Sprintln(v...))
-	me.writes++
 }
 
 func (me *LogPrinter) SetOutput(w io.Writer) { me.lgr.SetOutput(w) }
