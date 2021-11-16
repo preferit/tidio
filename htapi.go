@@ -2,11 +2,13 @@ package tidio
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/gregoryv/ant"
 	"github.com/gregoryv/rs"
 )
 
@@ -104,4 +106,69 @@ func (me *System) serveCreate(w http.ResponseWriter, r *http.Request) {
 	res.Close() // important to flush the data
 	w.WriteHeader(http.StatusCreated)
 	go me.PersistState()
+}
+
+func NewBasicAuth(c *Credentials) *BasicAuth {
+	return &BasicAuth{cred: c}
+}
+
+type BasicAuth struct {
+	cred *Credentials
+}
+
+func (me *BasicAuth) Set(v interface{}) error {
+	if me.cred == nil { // anonymous
+		return nil
+	}
+	switch v := v.(type) {
+	case *http.Request:
+		plain := []byte(me.cred.account + ":" + me.cred.secret)
+		b := base64.StdEncoding.EncodeToString(plain)
+		v.Header.Set("Authorization", "Basic "+b)
+		return nil
+	default:
+		return ant.SetFailed(v, me)
+	}
+}
+
+func authenticate(sys *rs.System, r *http.Request) (*rs.Account, error) {
+	h := r.Header.Get("Authorization")
+	if h == "" {
+		return rs.Anonymous, nil
+	}
+
+	name, secret, ok := r.BasicAuth()
+	if !ok {
+		return rs.Anonymous, fmt.Errorf("authentication failed")
+	}
+
+	asRoot := rs.Root.Use(sys)
+	asRoot.SetAuditer(Log(r))
+	cmd := rs.NewCmd("/bin/secure", "-c", "-a", name, "-s", secret)
+	if err := asRoot.Run(cmd); err != nil {
+		return rs.Anonymous, err
+	}
+	var acc rs.Account
+	err := asRoot.LoadAccount(&acc, name)
+	return &acc, err
+}
+
+func NewTracer(dst *LogPrinter) *Tracer {
+	return &Tracer{dst: dst}
+}
+
+type Tracer struct {
+	dst *LogPrinter
+}
+
+func (me *Tracer) Middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log := Register(r).Buf()
+		log.lgr.SetPrefix("TRACE: ")
+		next.ServeHTTP(w, r)
+		if log.Failed() {
+			me.dst.Info(log.FlushString())
+		}
+		Unregister(r)
+	})
 }
