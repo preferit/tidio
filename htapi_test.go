@@ -25,14 +25,13 @@ func init() {
 
 func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 	var (
-		sys   = NewSystem(withJohnAccount)
-		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.NewRouter())
-		api   = NewAPI(ts.URL, asJohn)
-		log   = Register(sys, api).Buf()
-		path  = "/api/timesheets/john/202001.timesheet"
-		body  = timesheet.Render(2020, 1, 8)
-		req   = api.CreateTimesheet(path, body)
+		sys  = NewSystem(withJohnAccount)
+		ts   = httptest.NewServer(NewRouter(sys))
+		api  = NewAPI(ts.URL, asJohn)
+		log  = Register(sys, api).Buf()
+		path = "/api/timesheets/john/202001.timesheet"
+		body = timesheet.Render(2020, 1, 8)
+		req  = api.CreateTimesheet(path, body)
 	)
 	defer ts.Close()
 
@@ -44,11 +43,10 @@ func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 
 func TestAPI_CreateTimesheet_asAnonymous(t *testing.T) {
 	var (
-		sys   = NewSystem(withJohnAccount)
-		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.NewRouter())
-		api   = NewAPI(ts.URL)
-		log   = Register(sys, api).Buf()
+		sys = NewSystem(withJohnAccount)
+		ts  = httptest.NewServer(NewRouter(sys))
+		api = NewAPI(ts.URL)
+		log = Register(sys, api).Buf()
 
 		path = "/api/timesheets/john/202001.timesheet"
 		body = timesheet.Render(2020, 1, 8)
@@ -64,9 +62,8 @@ func TestAPI_CreateTimesheet_asAnonymous(t *testing.T) {
 
 func TestAPI_ReadTimesheet_asJohn(t *testing.T) {
 	var (
-		sys   = NewSystem(withJohnAccount)
-		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.NewRouter())
+		sys = NewSystem(withJohnAccount)
+		ts  = httptest.NewServer(NewRouter(sys))
 	)
 	defer ts.Close()
 	var (
@@ -83,9 +80,8 @@ func TestAPI_ReadTimesheet_asJohn(t *testing.T) {
 
 func TestAPI_ReadTimesheet_noSuchResource(t *testing.T) {
 	var (
-		sys   = NewSystem(withJohnAccount)
-		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.NewRouter())
+		sys = NewSystem(withJohnAccount)
+		ts  = httptest.NewServer(NewRouter(sys))
 	)
 	defer ts.Close()
 	var (
@@ -99,9 +95,8 @@ func TestAPI_ReadTimesheet_noSuchResource(t *testing.T) {
 
 func TestAPI_ReadTimesheet_asAnonymous(t *testing.T) {
 	var (
-		sys   = NewSystem(withJohnAccount)
-		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.NewRouter())
+		sys = NewSystem(withJohnAccount)
+		ts  = httptest.NewServer(NewRouter(sys))
 	)
 	defer ts.Close()
 	var (
@@ -121,9 +116,8 @@ func TestAPI_ReadTimesheet_asAnonymous(t *testing.T) {
 
 func Test_hacks(t *testing.T) {
 	var (
-		sys   = NewSystem(withJohnAccount)
-		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.NewRouter())
+		sys = NewSystem(withJohnAccount)
+		ts  = httptest.NewServer(NewRouter(sys))
 	)
 	defer ts.Close()
 
@@ -190,9 +184,8 @@ func TestAPI_Auth_nil_request(t *testing.T) {
 
 func Test_defaults(t *testing.T) {
 	sys := NewSystem()
-	htapi := HTAPI{System: sys}
 	assert := asserter.New(t)
-	exp := assert().ResponseFrom(htapi.NewRouter())
+	exp := assert().ResponseFrom(NewRouter(sys))
 	exp.StatusCode(200, "GET", "/")
 	exp.StatusCode(200, "GET", "/api")
 	exp.StatusCode(405, "X", "/api")

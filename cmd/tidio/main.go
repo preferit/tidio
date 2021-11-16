@@ -78,9 +78,8 @@ func (me *serveHTTP) Run(app *App) error {
 	// configure persistence
 	sys.UseFileStorage(me.filename)
 
-	htapi := tidio.HTAPI{System: sys}
 	tidio.Log(app).Info("listening on", me.bind)
-	return app.ListenAndServe(me.bind, htapi.NewRouter())
+	return app.ListenAndServe(me.bind, tidio.NewRouter(sys))
 }
 
 // ----------------------------------------

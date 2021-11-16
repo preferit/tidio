@@ -21,20 +21,21 @@ import (
 	"github.com/gregoryv/rs"
 )
 
-type HTAPI struct {
-	*System
-}
-
-func (me *HTAPI) NewRouter() *mux.Router {
+func NewRouter(sys *System) *mux.Router {
 	r := mux.NewRouter()
-	r.Methods("GET").HandlerFunc(me.serveRead)
-	r.Methods("POST").HandlerFunc(me.serveCreate)
+	ht := HTAPI{System: sys}
+	r.Methods("GET").HandlerFunc(ht.serveRead)
+	r.Methods("POST").HandlerFunc(ht.serveCreate)
 	log := Register(r)
 	r.Use(NewRouteLog(log).Middleware)
 	if Conf.Debug() {
 		r.Use(NewTracer(log).Middleware)
 	}
 	return r
+}
+
+type HTAPI struct {
+	*System
 }
 
 func (me *HTAPI) serveRead(w http.ResponseWriter, r *http.Request) {
@@ -438,8 +439,7 @@ func NewAPISection() *Element {
 	// Cache api section
 	cred := NewCredentials("john", "secret")
 	sys := NewSystem(cred)
-	htapi := HTAPI{sys}
-	doc := apidoc.NewDoc(htapi.NewRouter())
+	doc := apidoc.NewDoc(NewRouter(sys))
 	api := NewAPI("https://tidio.preferit.se")
 	ant.MustConfigure(api, cred)
 
