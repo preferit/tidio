@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -35,7 +36,9 @@ func main() {
 	default:
 		tidio.Conf.SetOutput(os.Stderr)
 		app := NewApp()
-		action.(runnable).Run(app)
+		if err := action.(runnable).Run(app); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
@@ -117,13 +120,16 @@ func (me *mkAccount) Run(app *App) error {
 	if err != nil {
 		return err
 	}
-	out := cmd.Stdout()
 	if me.writeBack {
-		out, err := os.Create(me.filename)
+		fh, err := os.Create(me.filename)
 		if err != nil {
 			return err
 		}
-		defer out.Close()
+		defer fh.Close()
+		if err := sys.Export(fh); err != nil {
+			return err
+		}
+		log.Println("account created")
 	}
-	return sys.Export(out)
+	return nil
 }

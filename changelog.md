@@ -4,7 +4,7 @@ this file. Project adheres to semantic versioning(v2).
 ## [unreleased]
 
 - Add MIT license
-	
+
 ## [0.3.0] 2021-11-14
 
 - Export / Import system state on startup
