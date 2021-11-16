@@ -44,6 +44,13 @@ func TestNewService_panics_on_bad_settings(t *testing.T) {
 	t.Error("should panic")
 }
 
+func TestCredentials_Set_on_nil(t *testing.T) {
+	c := &Credentials{}
+	if err := c.Set(nil); err == nil {
+		t.Error("should fail")
+	}
+}
+
 func wr(t *testing.T, method, url string, body io.Reader) (*httptest.ResponseRecorder, *http.Request) {
 	t.Helper()
 	w := httptest.NewRecorder()

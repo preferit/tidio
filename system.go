@@ -1,3 +1,4 @@
+// Package tidio provides a web System for timesheet reports.
 package tidio
 
 import (
@@ -117,3 +118,57 @@ func (me *FileStorage) Open() (io.ReadCloser, error) {
 }
 
 func (me *FileStorage) String() string { return me.filename }
+
+// ----------------------------------------
+
+// NewShell returns a new shell. Once an error occurs the shell no
+// longer functions, similar to bash -e flag.
+func NewShell(acc *rs.Syscall) *Shell {
+	return &Shell{account: acc}
+}
+
+type Shell struct {
+	account *rs.Syscall
+	err     error
+}
+
+// Execf
+func (me *Shell) Execf(format string, args ...interface{}) error {
+	if me.err != nil {
+		return me.err
+	}
+	me.err = me.account.Execf(format, args...)
+	return me.err
+}
+
+// ----------------------------------------
+
+// Credentials provides ways to authenticate a requests via header
+// manipulation. Zero value credentials means anonymous.
+func NewCredentials(account, secret string) *Credentials {
+	return &Credentials{
+		account: account,
+		secret:  secret,
+	}
+}
+
+type Credentials struct {
+	account string
+	secret  string
+}
+
+func (me *Credentials) Set(v interface{}) error {
+	switch v := v.(type) {
+	case usesCredentials:
+		v.SetCredentials(me)
+	case *System:
+		v.AddAccount(me.account, me.secret)
+	default:
+		return ant.SetFailed(v, me)
+	}
+	return nil
+}
+
+type usesCredentials interface {
+	SetCredentials(*Credentials)
+}
