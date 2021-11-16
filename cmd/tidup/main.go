@@ -7,14 +7,13 @@ import (
 	"path"
 
 	"github.com/gregoryv/cmdline"
-	"github.com/gregoryv/fox"
 	"github.com/preferit/tidio"
 )
 
 func main() {
 	var (
 		cli  = cmdline.NewBasicParser()
-		host = cli.Option("--host").String("https://tidio.preferit.se")
+		host = cli.Option("-H, --host").String("https://tidio.preferit.se")
 
 		user = cli.Option("-u, --username").String(os.Getenv("USER"))
 		pass = cli.Option("-p, --password").String(os.Getenv("PASSWORD"))
@@ -34,13 +33,7 @@ func uploadFile(cred *tidio.Credentials, host, filename string) error {
 	}
 	defer fh.Close()
 
-	api := tidio.NewAPI(
-		host,
-		cred,
-		fox.Logging{
-			fox.NewSyncLog(os.Stderr),
-		},
-	)
+	api := tidio.NewAPI(host, cred)
 	// todo optional path
 	path := path.Join("/api/timesheets/john/", filename)
 	resp := api.CreateTimesheet(path, fh).MustSend()
