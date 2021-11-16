@@ -73,13 +73,14 @@ func (me *serveHTTP) ExtraOptions(p *cmdline.Parser) {
 }
 
 func (me *serveHTTP) Run(app *App) error {
-	srv := tidio.NewSystem()
+	sys := tidio.NewSystem()
 
 	// configure persistence
-	srv.UseFileStorage(me.filename)
+	sys.UseFileStorage(me.filename)
 
+	htapi := tidio.HTAPI{System: sys}
 	tidio.Log(app).Info("listening on", me.bind)
-	return app.ListenAndServe(me.bind, srv.Router())
+	return app.ListenAndServe(me.bind, htapi.Router())
 }
 
 // ----------------------------------------

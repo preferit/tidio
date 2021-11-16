@@ -21,7 +21,11 @@ import (
 	"github.com/gregoryv/rs"
 )
 
-func (me *System) Router() *mux.Router {
+type HTAPI struct {
+	*System
+}
+
+func (me *HTAPI) Router() *mux.Router {
 	r := mux.NewRouter()
 	r.Methods("GET").HandlerFunc(me.serveRead)
 	r.Methods("POST").HandlerFunc(me.serveCreate)
@@ -33,7 +37,7 @@ func (me *System) Router() *mux.Router {
 	return r
 }
 
-func (me *System) serveRead(w http.ResponseWriter, r *http.Request) {
+func (me *HTAPI) serveRead(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
 		w.WriteHeader(200)
 		NewHelpView().WriteTo(w)
@@ -77,7 +81,7 @@ func (me *System) serveRead(w http.ResponseWriter, r *http.Request) {
 	io.Copy(w, resource)
 }
 
-func (me *System) serveCreate(w http.ResponseWriter, r *http.Request) {
+func (me *HTAPI) serveCreate(w http.ResponseWriter, r *http.Request) {
 	acc, err := authenticate(me.sys, r)
 	log := Log(r)
 	log.Info(acc.Name)
@@ -433,8 +437,9 @@ var changelog string
 func NewAPISection() *Element {
 	// Cache api section
 	cred := NewCredentials("john", "secret")
-	srv := NewSystem(cred)
-	doc := apidoc.NewDoc(srv.Router())
+	sys := NewSystem(cred)
+	htapi := HTAPI{sys}
+	doc := apidoc.NewDoc(htapi.Router())
 	api := NewAPI("https://tidio.preferit.se")
 	ant.MustConfigure(api, cred)
 
