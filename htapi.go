@@ -25,7 +25,7 @@ type HTAPI struct {
 	*System
 }
 
-func (me *HTAPI) Router() *mux.Router {
+func (me *HTAPI) NewRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.Methods("GET").HandlerFunc(me.serveRead)
 	r.Methods("POST").HandlerFunc(me.serveCreate)
@@ -439,7 +439,7 @@ func NewAPISection() *Element {
 	cred := NewCredentials("john", "secret")
 	sys := NewSystem(cred)
 	htapi := HTAPI{sys}
-	doc := apidoc.NewDoc(htapi.Router())
+	doc := apidoc.NewDoc(htapi.NewRouter())
 	api := NewAPI("https://tidio.preferit.se")
 	ant.MustConfigure(api, cred)
 

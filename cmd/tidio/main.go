@@ -80,7 +80,7 @@ func (me *serveHTTP) Run(app *App) error {
 
 	htapi := tidio.HTAPI{System: sys}
 	tidio.Log(app).Info("listening on", me.bind)
-	return app.ListenAndServe(me.bind, htapi.Router())
+	return app.ListenAndServe(me.bind, htapi.NewRouter())
 }
 
 // ----------------------------------------

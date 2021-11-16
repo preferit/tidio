@@ -27,7 +27,7 @@ func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 	var (
 		sys   = NewSystem(withJohnAccount)
 		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.Router())
+		ts    = httptest.NewServer(htapi.NewRouter())
 		api   = NewAPI(ts.URL, asJohn)
 		log   = Register(sys, api).Buf()
 		path  = "/api/timesheets/john/202001.timesheet"
@@ -46,7 +46,7 @@ func TestAPI_CreateTimesheet_asAnonymous(t *testing.T) {
 	var (
 		sys   = NewSystem(withJohnAccount)
 		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.Router())
+		ts    = httptest.NewServer(htapi.NewRouter())
 		api   = NewAPI(ts.URL)
 		log   = Register(sys, api).Buf()
 
@@ -66,7 +66,7 @@ func TestAPI_ReadTimesheet_asJohn(t *testing.T) {
 	var (
 		sys   = NewSystem(withJohnAccount)
 		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.Router())
+		ts    = httptest.NewServer(htapi.NewRouter())
 	)
 	defer ts.Close()
 	var (
@@ -85,7 +85,7 @@ func TestAPI_ReadTimesheet_noSuchResource(t *testing.T) {
 	var (
 		sys   = NewSystem(withJohnAccount)
 		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.Router())
+		ts    = httptest.NewServer(htapi.NewRouter())
 	)
 	defer ts.Close()
 	var (
@@ -101,7 +101,7 @@ func TestAPI_ReadTimesheet_asAnonymous(t *testing.T) {
 	var (
 		sys   = NewSystem(withJohnAccount)
 		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.Router())
+		ts    = httptest.NewServer(htapi.NewRouter())
 	)
 	defer ts.Close()
 	var (
@@ -123,7 +123,7 @@ func Test_hacks(t *testing.T) {
 	var (
 		sys   = NewSystem(withJohnAccount)
 		htapi = HTAPI{System: sys}
-		ts    = httptest.NewServer(htapi.Router())
+		ts    = httptest.NewServer(htapi.NewRouter())
 	)
 	defer ts.Close()
 
@@ -192,7 +192,7 @@ func Test_defaults(t *testing.T) {
 	sys := NewSystem()
 	htapi := HTAPI{System: sys}
 	assert := asserter.New(t)
-	exp := assert().ResponseFrom(htapi.Router())
+	exp := assert().ResponseFrom(htapi.NewRouter())
 	exp.StatusCode(200, "GET", "/")
 	exp.StatusCode(200, "GET", "/api")
 	exp.StatusCode(405, "X", "/api")
