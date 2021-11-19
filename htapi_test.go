@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/gregoryv/asserter"
-	"github.com/gregoryv/go-timesheet"
+	"github.com/gregoryv/worklog"
 )
 
 var (
@@ -30,7 +30,7 @@ func TestAPI_CreateTimesheet_asJohn(t *testing.T) {
 		api  = NewAPI(ts.URL, asJohn)
 		log  = Register(sys, api).Buf()
 		path = "/api/timesheets/john/202001.timesheet"
-		body = timesheet.Render(2020, 1, 8)
+		body = worklog.Render(2020, 1, 8)
 		req  = api.CreateTimesheet(path, body)
 	)
 	defer ts.Close()
@@ -49,7 +49,7 @@ func TestAPI_CreateTimesheet_asAnonymous(t *testing.T) {
 		log = Register(sys, api).Buf()
 
 		path = "/api/timesheets/john/202001.timesheet"
-		body = timesheet.Render(2020, 1, 8)
+		body = worklog.Render(2020, 1, 8)
 		req  = api.CreateTimesheet(path, body)
 	)
 	defer ts.Close()
@@ -69,7 +69,7 @@ func TestAPI_ReadTimesheet_asJohn(t *testing.T) {
 	var (
 		api  = NewAPI(ts.URL, asJohn)
 		path = "/api/timesheets/john/202001.timesheet"
-		body = timesheet.Render(2020, 1, 8)
+		body = worklog.Render(2020, 1, 8)
 		_    = api.CreateTimesheet(path, body).MustSend()
 		resp = api.ReadTimesheet(path).MustSend()
 	)
@@ -102,7 +102,7 @@ func TestAPI_ReadTimesheet_asAnonymous(t *testing.T) {
 	var (
 		api  = NewAPI(ts.URL, asJohn)
 		path = "/api/timesheets/john/202001.timesheet"
-		body = timesheet.Render(2020, 1, 8)
+		body = worklog.Render(2020, 1, 8)
 		_    = api.CreateTimesheet(path, body).MustSend()
 	)
 	api = NewAPI(ts.URL) // anonymous
