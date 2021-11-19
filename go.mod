@@ -10,7 +10,7 @@ require (
 	github.com/gregoryv/nexus v0.5.1
 	github.com/gregoryv/rs v0.4.2
 	github.com/gregoryv/stamp v0.2.0
-	github.com/gregoryv/web v0.21.0
+	github.com/gregoryv/web v0.22.0
 	github.com/gregoryv/worklog v0.4.1-0.20211119055456-069c4dc63372
 	golang.org/x/net v0.0.0-20210917221730-978cfadd31cf // indirect
 )
