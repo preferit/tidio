@@ -16,8 +16,10 @@ github.com/gregoryv/asserter v0.4.1-0.20201128093127-74b8bb2743ca/go.mod h1:z1mB
 github.com/gregoryv/asserter v0.4.1 h1:NGQW1rdiNbX0Teu4sgcVHtOG64idTEPLafif+AePYyY=
 github.com/gregoryv/asserter v0.4.1/go.mod h1:0WJPXw6UYkoTQlbkm8fvRghp0CeOo7oliS5JTvnv6pM=
 github.com/gregoryv/cmdline v0.7.0/go.mod h1:HMy8QMZfta+VoVCmU97HFm+UR5/Cj03n9uA+7sQyuJU=
-github.com/gregoryv/cmdline v0.8.1 h1:vdGWYDpwj1cI2teMcjgdOCKyBvO5KWH2wZ4htHqLnXQ=
-github.com/gregoryv/cmdline v0.8.1/go.mod h1:15MFjQA5LRL9Ot2YXhNGBXjP91lZnN1CkkR5VthI5H0=
+github.com/gregoryv/cmdline v0.9.0 h1:Z75SX7U5x81HuMB5OsyCfQ1NXJHXtff1EGnui9s/ejE=
+github.com/gregoryv/cmdline v0.9.0/go.mod h1:15MFjQA5LRL9Ot2YXhNGBXjP91lZnN1CkkR5VthI5H0=
+github.com/gregoryv/cmdline v0.9.1-0.20211121103725-a4eaa657761d h1:Nwmj3h2f8UthSZ1LLiuw8TIibpwYFuhY7DiGVKNFvSQ=
+github.com/gregoryv/cmdline v0.9.1-0.20211121103725-a4eaa657761d/go.mod h1:15MFjQA5LRL9Ot2YXhNGBXjP91lZnN1CkkR5VthI5H0=
 github.com/gregoryv/draw v0.9.0/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
 github.com/gregoryv/draw v0.13.0/go.mod h1:ZjcU2lJq2eA+jQAdIslryahmUzp8aAvTrBdEZIQ4V6I=
 github.com/gregoryv/english v0.4.1/go.mod h1:5kcVzgVHvYWLxmJ/ymSmMhW30EHaP11iB5kWOx5FChw=

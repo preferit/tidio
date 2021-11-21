@@ -19,11 +19,11 @@ func main() {
 		pass = cli.Option("-p, --password").String(os.Getenv("PASSWORD"))
 		cred = tidio.NewCredentials(user, pass)
 
-		filename = cli.Required("FILE").String("")
+		filename = cli.NamedArg("FILES...").Strings()
 	)
 	cli.Parse()
 
-	uploadFile(cred, host, filename)
+	uploadFile(cred, host, filename[0])
 }
 
 func uploadFile(cred *tidio.Credentials, host, filename string) error {
