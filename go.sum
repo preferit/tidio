@@ -20,6 +20,8 @@ github.com/gregoryv/cmdline v0.9.0 h1:Z75SX7U5x81HuMB5OsyCfQ1NXJHXtff1EGnui9s/ej
 github.com/gregoryv/cmdline v0.9.0/go.mod h1:15MFjQA5LRL9Ot2YXhNGBXjP91lZnN1CkkR5VthI5H0=
 github.com/gregoryv/cmdline v0.9.1-0.20211121103725-a4eaa657761d h1:Nwmj3h2f8UthSZ1LLiuw8TIibpwYFuhY7DiGVKNFvSQ=
 github.com/gregoryv/cmdline v0.9.1-0.20211121103725-a4eaa657761d/go.mod h1:15MFjQA5LRL9Ot2YXhNGBXjP91lZnN1CkkR5VthI5H0=
+github.com/gregoryv/cmdline v0.9.1 h1:B9QitOJ25O0zGLUpt8SV0Q8UqcT0k8cT5v8PiKJ71uQ=
+github.com/gregoryv/cmdline v0.9.1/go.mod h1:15MFjQA5LRL9Ot2YXhNGBXjP91lZnN1CkkR5VthI5H0=
 github.com/gregoryv/draw v0.9.0/go.mod h1:aIBRpJ6WIOpnpgHjb2t2kthKZM74x55TGea+ZIElVwg=
 github.com/gregoryv/draw v0.13.0/go.mod h1:ZjcU2lJq2eA+jQAdIslryahmUzp8aAvTrBdEZIQ4V6I=
 github.com/gregoryv/english v0.4.1/go.mod h1:5kcVzgVHvYWLxmJ/ymSmMhW30EHaP11iB5kWOx5FChw=
